@@ -1,5 +1,7 @@
 (* Definition for the lustre AST. *)
 
+(* Hao: I don't think we can save int or float now. Maybe they should be string. *)
+
 type ident = string
 type comment = string option
 type clock = string option
@@ -61,6 +63,12 @@ type expr =
     | ArrSliceExpr of kind * clock * expr * expr * expr
     | ApplyExpr of kind * clock * applyBlk * expr list
     | DynamicProjExpr of kind * clock * expr * expr list * expr
+(* Hao: Q1: How to use input value?
+        Q2: How to use constant? 
+        Guess1: 'value' is a kind of 'expr'.
+        Guess2: 'Ident' in 'value' is a 'lhs', which is more complex. Or 'lhs' or something similar is a kind of 'expr'.
+                'ConstructExpr' has a similar expression, but I can't find the keyword 'construct' in ast file.
+*)
 
 and labelIdx =
     | Ident of ident
