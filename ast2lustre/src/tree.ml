@@ -1,8 +1,12 @@
 (* Definition for the lustre AST. *)
 
 type ident = string
-type comment = Comment of ident option
-type clock = Clock of ident option
+type comment =
+    | Comment of ident
+    | NULL_COMMENT
+type clock =
+    | Clock of ident
+    | NOCLOCK
 
 type kind =
     | Bool
@@ -78,10 +82,14 @@ and applyBlk =
 and mapwDefaultStmt = MapwDefaultStmt of prefixStmt * int * expr * expr
 
 type nodeKind = Node | Function
-type guid = GUID of ident
-type lhs = LHS of (ident * kind * clock) option
-type guidOp = GUIDOp of ident option
-type guidVal = GUIDVal of guid option
+type guid = string
+type lhs = ID of (ident * kind * clock)
+type guidOp =
+    | GUIDOp of ident
+    | NOCALL
+type guidVal =
+    | GUIDVal of guid
+    | NOGUID
 type imported = NOIMPORT | IMPORTED
 type importCode = ImportCode of ident
 
@@ -94,7 +102,7 @@ type bodyBlk = BodyBlk of declStmt list * assignStmt list
 
 type typeStmt = TypeStmt of ident * kind * comment
 type constStmt = ConstStmt of ident * kind * value * comment
-type nodeStmt = NodeStmt of nodeKind * guid * ident * comment * paramBlk * returnBlk * bodyBlk
+type nodeStmt = NodeStmt of nodeKind * guid option * ident * comment * paramBlk * returnBlk * bodyBlk
 
 type stmtBlk =
     | TypeBlk of typeStmt list
