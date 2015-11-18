@@ -82,7 +82,7 @@ type guid = GUID of string
 type lhs = LHS of (ident * kind * clock) option
 type guidOp = GUIDOp of ident option
 type guidVal = GUIDVal of guid option
-type imported = Imported of string
+type imported = NOIMPORT | IMPORTED
 type importCode = ImportCode of string
 
 type declStmt = DeclStmt of ident * kind * comment
