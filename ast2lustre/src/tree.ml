@@ -1,8 +1,8 @@
 (* Definition for the lustre AST. *)
 
-type ident = string
-type comment = string option
-type clock = string option
+type ident = Ident of string
+type comment = Comment of string option
+type clock = Clock of string option
 
 type kind =
     | Bool
@@ -21,17 +21,17 @@ type kind =
 type construct = (ident * kind) list
 
 type value =
-    | Ident of ident
-    | Bool of bool
-    | Short of int
-    | UShort of int
-    | Int of int
-    | UInt of int
-    | Float of float
-    | Real of float
-    | Char of int
-    | Constructor of (ident * value) list
-    | Array of value
+    | VIdent of string
+    | VBool of string
+    | VShort of string
+    | VUShort of string
+    | VInt of string
+    | VUInt of string
+    | VFloat of string
+    | VReal of string
+    | VChar of string
+    | VConstructor of (ident * value) list
+    | VArray of value
 
 type unOp = SHORT | INT | FLOAT | REAL | NOT | POS | NEG
 type binOp = ADD | SUB | MUL | DIVF | DIV | MOD | AND | OR | XOR | GT | LT | GE | LE | EQ | NE
@@ -75,35 +75,35 @@ and applyBlk =
     | FlodwIfStmt of prefixStmt * int * expr
     | FlodwiStmt of prefixStmt * int * expr
 
-and mapwDefaultStmt = prefixStmt * int * expr * expr
+and mapwDefaultStmt = MapwDefaultStmt of prefixStmt * int * expr * expr
 
 type nodeKind = Node | Function
-type guid = string
-type lhs = (ident * kind * clock) option
-type guidOp = ident option
-type guidVal = guid option
-type imported = bool
-type importCode = int
+type guid = GUID of string
+type lhs = LHS of (ident * kind * clock) option
+type guidOp = GUIDOp of ident option
+type guidVal = GUIDVal of guid option
+type imported = Imported of string
+type importCode = ImportCode of string
 
-type declStmt = ident * kind * comment
-type assignStmt = lhs * expr * guidOp * guidVal * imported * importCode
+type declStmt = DeclStmt of ident * kind * comment
+type assignStmt = AssignStmt of lhs * expr * guidOp * guidVal * imported * importCode
 
-type paramBlk = declStmt list
-type returnBlk = declStmt list
-type bodyBlk = declStmt list * assignStmt list
+type paramBlk = ParamBlk of declStmt list
+type returnBlk = ReturnBlk of declStmt list
+type bodyBlk = BodyBlk of declStmt list * assignStmt list
 
-type typeStmt = ident * kind * comment
-type constStmt = ident * kind * value * comment
-type nodeStmt = nodeKind * guid * ident * comment * paramBlk * returnBlk * bodyBlk
+type typeStmt = TypeStmt of ident * kind * comment
+type constStmt = ConstStmt of ident * kind * value * comment
+type nodeStmt = NodeStmt of nodeKind * guid * ident * comment * paramBlk * returnBlk * bodyBlk
 
 type stmtBlk =
     | TypeBlk of typeStmt list
     | ConstBlk of constStmt list
     | NodeBlk of nodeStmt list
 
-type mainBlk = ident
-type programBlk = stmtBlk list
-type tree = mainBlk * programBlk
+type mainBlk = MainBlk of ident
+type programBlk = ProgramBlk of stmtBlk list
+type topLevel = TopLevel of mainBlk * programBlk
 ;;
 
 let () =
