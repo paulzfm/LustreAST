@@ -1,6 +1,6 @@
 (* Definition for the lustre AST. *)
 
-module Tree = struct
+(* module Tree = struct *)
 
 type ident = string
 
@@ -119,12 +119,11 @@ type bodyBlk = BodyBlk of declStmt list * assignStmt list
 
 type typeStmt = TypeStmt of ident * kind * comment
 type constStmt = ConstStmt of ident * kind * value * comment
-type nodeStmt = NodeStmt of nodeKind * guid option * ident * comment * paramBlk * returnBlk * bodyBlk
 
 type stmtBlk =
     | TypeBlk of typeStmt list
     | ConstBlk of constStmt list
-    | NodeBlk of nodeStmt list
+    | NodeBlk of nodeKind * guid * ident * comment * paramBlk * returnBlk * bodyBlk
 
 type mainBlk = MainBlk of ident
 type programBlk = ProgramBlk of stmtBlk list
@@ -141,6 +140,7 @@ type topLevel = TopLevel of mainBlk * programBlk
     TopLevel (mainBlk, programBlk) -> String.concat "TopLevel(" [
         mainBlkToAST mainBlk; ","; programBlkToAST programBlk; ")"
     ] *)
+(*
 end;;
 
 open Tree;;
@@ -179,3 +179,4 @@ let sampleTree =
 ;;
 
 (* Tree.toAST;; *)
+*)
