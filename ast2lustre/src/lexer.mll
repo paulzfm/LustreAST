@@ -41,34 +41,10 @@ rule token = parse
 
 	| "params"	{ PARAMS }
 
-	| '+'		{ PLUS }
-	| '-'		{ MINUS }
-	| '*'		{ TIMES }
-	| '/'		{ DIVIDE }
-
-
-	| '='		{ EQUAL }
-	| "<>"		{ NEQUAL }
-	| '<'		{ SMALL }
-	| '>'		{ LARGE }
-	| "<="		{ ESMALL }
-	| ">="		{ ELARGE }
 
 	| '('		{ LPAREN }
 	| ')'		{ RPAREN }
-	| '['		{ LBRACK }
-	| ']'		{ RBRACK }
-	| '{'		{ LBRACE }
-	| '}'		{ RBRACE }
 
-	| ':'		{ COLON }
-	| ';'		{ SEMICO }
-	| ','		{ COMMA }
-	| '^'		{ CARET }
-	| '_'		{ UNDERLINE }
-	
-	| '|'		{ VERBAR }
-	| '.'		{ DOT }
 
 	| ['0'-'9']+ as lxm	{ CONST_INT lxm }
 	| "true" 			{ TRUE }
