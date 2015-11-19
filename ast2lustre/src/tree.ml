@@ -130,17 +130,40 @@ type mainBlk = MainBlk of ident
 type programBlk = ProgramBlk of stmtBlk list
 type topLevel = TopLevel of mainBlk * programBlk
 
-(* let toAST =
-    let mainBlkToAST = function
-        MainBlk (ident) -> String.concat "main(" [ident, ")"]
-    in
-    let programBlkToAST = function
-        ProgramBlk (stmtBlk :: stmtList) -> "program"
-    in
-    function
-    TopLevel (mainBlk, programBlk) -> String.concat "TopLevel(" [
-        mainBlkToAST mainBlk; ","; programBlkToAST programBlk; ")"
-    ] *)
+(* to AST *)
+let mainBlkToAST = function
+    MainBlk (ident) -> String.concat "" ["main("; ident; ")"]
+;;
+
+let programBlkToAST = function
+    ProgramBlk _ -> "program"
+;;
+
+let toAST = function
+    TopLevel (m, p) -> String.concat "" [
+        "TopLevel("; mainBlkToAST m; ","; programBlkToAST p; ")"
+    ]
+;;
+
+(* to lustre *)
+let nodeStmtToLustre = function
+    NodeStmt (k, g, i, c, p, r, b) ->
+
+let stmtBlkToLustre = function
+    | TypeBlk _ -> []
+    | ConstBlk _ -> []
+    | NodeBlk [] -> []
+    | NodeBlk (stmt :: stmts) ->
+
+let programBlkToLustre = function
+    | ProgramBlk [] -> []
+    | ProgramBlk (stmt :: stmts) -> stmtBlkToLustre stmt :: programBlkToLustre stmts
+
+
+let toLustre = function
+    TopLevel (m, p) -> programBlkToLustre p
+
+
 end;;
 
 open Tree;;
@@ -174,8 +197,10 @@ let sampleTree =
                     );
                 ]
             )
-        )];]
+        )]]
     )
 ;;
 
-(* Tree.toAST;; *)
+let () =
+    print_string (toAST sampleTree)
+;;
