@@ -12,25 +12,28 @@ rule token = parse
 	
 	| "NullComment"	{ NULLCOMMENT }
 	| "int"			{ INT }
-	| "real"		{ REAL }
 	| "vars" 		{ VARS }
-	| "uint" 		{ UINT }
 	| "short" 		{ SHORT }
+	| "SHORT"		{ SHORT }
 	| "ushort" 		{ USHORT }
+	| "USHORT" 		{ USHORT }
+	| "INT"			{ INT }
+	| "UINT"		{ UINT }
+	| "uint" 		{ UINT }
+	| "REAL" 		{ REAL }
+	| "real"		{ REAL }
+	| "FLOAT" 		{ FLOAT }
 	| "float" 		{ FLOAT }
+
 	| "body" 		{ BODY }
 	| "var_decls" 	{ VAR_DECLS }
-	| "uint" 		{ UINT }
 	| "body"		{ BODY }
 	| "lvalue"		{ LVALUE }
 	| "ID"			{ ID }
 	| "binop_add"	{ BINOP_ADD }
-	| "INT"			{ INT }
-	| "UINT"		{ UINT }
 	| "NOCALL"		{ NOCALL }
 	| "NOGUID"		{ NOGUID }
 	| "NOIMPORT"	{ NOIMPORT }
-	| "SHORT"		{ SHORT }
 	| "NOIMPORT"	{ NOIMPORT }
 
 
