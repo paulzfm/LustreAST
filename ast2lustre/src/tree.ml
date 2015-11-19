@@ -1,9 +1,13 @@
 (* Definition for the lustre AST. *)
 
+module Tree = struct
+
 type ident = string
+
 type comment =
     | Comment of ident
     | NULL_COMMENT
+
 type clock =
     | Clock of ident
     | NOCLOCK
@@ -48,7 +52,20 @@ type prefixStmt =
     | UnOpStmt of prefixUnOp
     | BinOpStmt of prefixBinOp
 
+type atomExpr =
+    | EID of ident * kind * clock
+    | EIdent of ident
+    | EBool of ident
+    | EChar of ident
+    | EShort of ident
+    | EUShort of ident
+    | EInt of ident
+    | EUInt of ident
+    | EFloat of ident
+    | EReal of ident
+
 type expr =
+    | AtomExpr of atomExpr
     | BinOpExpr of binOp * kind * clock * expr * expr
     | UnOpExpr of unOp * kind * clock * expr
     | IfExpr of kind * clock * expr * expr * expr
@@ -112,8 +129,18 @@ type stmtBlk =
 type mainBlk = MainBlk of ident
 type programBlk = ProgramBlk of stmtBlk list
 type topLevel = TopLevel of mainBlk * programBlk
-;;
 
-let () =
-    Printf.printf "Test ok!\n"
-;;
+(* let toAST =
+    let mainBlkToAST = function
+        MainBlk (ident) -> String.concat "main(" [ident, ")"]
+    in
+    let programBlkToAST = function
+        ProgramBlk (stmtBlk :: stmtList) -> "program"
+    in
+    function
+    TopLevel (mainBlk, programBlk) -> String.concat "TopLevel(" [
+        mainBlkToAST mainBlk; ","; programBlkToAST programBlk; ")"
+    ] *)
+end;;
+
+(* Tree.toAST;; *)
