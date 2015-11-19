@@ -14,43 +14,44 @@
 %token PARAMS RETURNS BODY LOCALVARS
 %token ID
 %token COMMA
-%token LBRACKET RBRACKET
+%token LPAREN RPAREN
 %token EOF
 
 %token EQUAL LVALUE CLOCK
 
-%token UNIMPORT IMPORTED
+%token NOIMPORT IMPORTED
 
 %token VAR_DECLS VARS
 
 %token BINOP_ADD
-/* const */
-%token INTC UINTC SHORTC USHORTC REALC FLOATC
-/* kind */
-%token INTK UINTK SHORTK USHORTK REALK FLOATK
+
+%token INT UINT SHORT USHORT REAL FLOAT
+
+%token NOCALL NOGUID
 
 /* value */
-%token CONST_INT CONST_FLO CONST_CHAR TRUEV FALSEV
-%token <string> IDENT GUID COMMENT
+%token TRUE FALSE
+%token <string> IDENT GUID COMMENT CONST_INT CONST_FLO CONST_CHAR
+%token NULLCOMMENT
 
 
 %start programY			/* the entry point */
-%type <Tree.tree> programY
+%type <Tree.topLevel> programY
 %%
 
 programY:
-	TOPLEVEL LBRACKET mainY COMMA programBlkY RBRACKET
-		{tree ($3, $5)}
+	TOPLEVEL LPAREN mainY COMMA programBlkY RPAREN
+		{TopLevel ($3, $5)}
 ;
 
 mainY:
-	MAIN LBRACKET IDENT RBRACKET
-		{mainBlk $3}
+	MAIN LPAREN IDENT RPAREN
+		{MainBlk $3}
 ;
 
 programBlkY:
-		stmtBlkYs	{[$1]}
-	|				{[]}
+		stmtBlkYs	{ProgramBlk $1}
+	|				{ProgramBlk []}
 ;
 
 stmtBlkYs:
@@ -59,14 +60,14 @@ stmtBlkYs:
 ;
 
 stmtBlkY:
-		typeStmtY	{$1}
-	|	constStmtY	{$1}
-	|	nodeStmtY	{$1}
+		typeBlkY	{$1}
+	|	constBlkY	{$1}
+	|	nodeBlkY	{$1}
 ;
 
-nodeStmtY:
-	NODE LBRACKET nodeKindY COMMA GUID COMMA IDENT COMMA commentY COMMA paramBlkY COMMA returnBlkY COMMA bodyBlkY
-		{nodeStmt ($3, $5, $7, $9, $11, $13, $15)}
+nodeBlkY:
+	NODE LPAREN nodeKindY COMMA GUID COMMA IDENT COMMA commentY COMMA paramBlkY COMMA returnBlkY COMMA bodyBlkY RPAREN
+		{NodeBlk ($3, $5, $7, $9, $11, $13, $15)}
 ;
 
 nodeKindY:
@@ -75,22 +76,22 @@ nodeKindY:
 ;
 
 paramBlkY:
-	PARAMS LBRACKET declStmtYs RBRACKET
-		{paramBlk($3)}
+	PARAMS LPAREN declStmtYs RPAREN
+		{ParamBlk $3}
 ;
 
 returnBlkY:
-	RETURNS LBRACKET declStmtYs RBRACKET
-		{returnBlk($3)}
+	RETURNS LPAREN declStmtYs RPAREN
+		{ReturnBlk $3}
 ;
 
 bodyBlkY:
-	BODY LBRACKET localVarYs assignStmtYs RBRACKET
-		{bodyBlk($3,$5)}
+	BODY LPAREN localVarYs assignStmtYs RPAREN
+		{BodyBlk($3,$4)}
 ;
 
 localVarYs:
-		LOCALVARS LBRACKET declStmtYs RBRACKET COMMA	{$3}
+		LOCALVARS LPAREN declStmtYs RPAREN COMMA	{$3}
 	|													{[]}
 ;
 
@@ -100,24 +101,25 @@ assignStmtYs:
 ;
 
 assignStmtY:
-	EQUAL LBRACKET LVALUE LBRACKET lhsY RBRACKET COMMA exprY COMMA guidOpY COMMA guidValY COMMA importedY COMMA importCodeY
-		{assignStmtY($5, %8, $10, $12, $14, $16)}
+	EQUAL LPAREN LVALUE LPAREN lhsY RPAREN COMMA exprY COMMA guidOpY COMMA guidValY COMMA importedY COMMA importCodeY
+		{AssignStmt($5, $8, $10, $12, $14, $16)}
 ;
 
 lhsY:
-		ID LBRACKET IDENT COMMA kindY COMMA clockY RBRACKET	{lhs($3, $5, $7)}
-	|														{lhs()}
+		ID LPAREN IDENT COMMA kindY COMMA clockY RPAREN	{ID($3, $5, $7)}
+/*	|													{ID("", BOOL, NOCLOCK)} 
+Q:annoymous_id */
+
 ;
 
 exprY:
-		BinOpExprY		{$1}
-/*	|	ConstructExprY	{$1} */
-	|	valueY			{$1}
+		BinOpExprY			{$1}
+	|	atomExprY			{AtomExpr $1}
 /* todo */
 ;
 
 BinOpExprY:
-		binOpY LBRACKET kindY COMMA clockY COMMA exprY COMMA exprY RBRACKET
+		binOpY LPAREN kindY COMMA clockY COMMA exprY COMMA exprY RPAREN
 			{BinOpExpr($1, $3, $5, $7, $9)}
 ;
 
@@ -126,39 +128,40 @@ binOpY:
 /* todo */
 ;
 
-valueY:
-		lhsY		{$1}
-	|	INTC LBRACKET CONST_INT RBRACKET	{Int($3)}
-	|	UINTC LBRACKET CONST_INT RBRACKET	{UInt($3)}
-	|	SHORTC LBRACKET CONST_INT RBRACKET	{Short($3)}
-	|	USHORTC LBRACKET CONST_INT RBRACKET	{UShort($3)}
-	|	REALC LBRACKET CONST_FLO RBRACKET	{Real($3)}
-	|	FLOATC LBRACKET CONST_FLO RBRACKET	{Float($3)}
+atomExprY:
+		ID LPAREN IDENT COMMA kindY COMMA clockY RPAREN	{EID($3, $5, $7)}
+	|	ID LPAREN IDENT RPAREN							{EIdent($3)}
+	|	INT LPAREN CONST_INT RPAREN						{EInt($3)}
+	|	UINT LPAREN CONST_INT RPAREN					{EUInt($3)}
+	|	SHORT LPAREN CONST_INT RPAREN					{EShort($3)}
+	|	USHORT LPAREN CONST_INT RPAREN					{EUShort($3)}
+	|	REAL LPAREN CONST_FLO RPAREN					{EReal($3)}
+	|	FLOAT LPAREN CONST_FLO RPAREN					{EFloat($3)}
 /* todo*/
 ;
 
 guidOpY:
-		IDENT 	{$1}
-	|			{[]}
+		IDENT 	{GUIDOp $1}
+	|			{NOCALL}
 ;
 
 guidValY:
-		GUID 	{$1}
-	|			{[]}
+		GUID 	{GUIDVal $1}
+	|			{NOGUID}
 ;
 
 importedY:
-		UNIMPORT	{false}
-	|	IMPORTED	{true}
+		NOIMPORT	{NOIMPORT}
+	|	IMPORTED	{IMPORTED}
 ;
 
 importCodeY:
-	CONST_INT	{$1}
+	CONST_INT	{ImportCode $1}
 ;
 
 clockY:
-		LBRACKET CLOCK RBRACKET	{clock($2)}
-	|	LBRACKET RBRACKET		{clock()}
+		LPAREN clockY RPAREN	{$2}
+	|	LPAREN RPAREN		{NOCLOCK}
 ;
 
 
@@ -168,30 +171,30 @@ declStmtYs:
 ;
 
 declStmtY:
-	VAR_DECLS LBRACKET VARS LBRACKET IDENT RBRACKET COMMA kindY COMMA commentY
-		{declStmt($5, $8, $10)}
+	VAR_DECLS LPAREN VARS LPAREN IDENT RPAREN COMMA kindY COMMA commentY
+		{DeclStmt($5, $8, $10)}
 ;
 
 kindY:
-		INTK	{Int}
-	|	UINTK	{UInt}
-	|	SHORTK	{Short}
-	|	USHORTK	{UShort}
-	|	REALK	{Real}
-	|	FLOATK	{Float}
+		INT	{Int}
+	|	UINT	{UInt}
+	|	SHORT	{Short}
+	|	USHORT	{UShort}
+	|	REAL	{Real}
+	|	FLOAT	{Float}
 /* todo */
 ;
 
 commentY:
-		COMMENT						{$1}
-	|	LBRACKET commentY RBRACKET	{$2}
+		COMMENT						{Comment $1}
+	|	LPAREN commentY RPAREN	{$2}
+	|	NULLCOMMENT					{NULL_COMMENT}
 ;
 
 /* todo */
-constStmtY:
-		{[]}
+constBlkY:
+		{ConstBlk[]}
 ;
-typeStmtY:
-		{[]}
+typeBlkY:
+		{TypeBlk[]}
 ;
-	
