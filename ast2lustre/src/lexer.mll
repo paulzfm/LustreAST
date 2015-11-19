@@ -38,33 +38,14 @@ rule token = parse
 
 
 	| "returns"	{ RETURNS }
-	| "let"		{ LET }
-	| "tel"		{ TEL }
 
-	| "params"	{ params }
-	| "clock"	{ CLOCK }
-	| "var"		{ VAR }
-	| "pre"		{ PRE }
-	| "fby"		{ FBY }
+	| "params"	{ PARAMS }
 
-	| "if"		{ IF }
-	| "then" 	{ THEN }
-	| "else"	{ ELSE }
-	| "case" 	{ CASE }
-	| "of"		{ OF }
-
-	| "->"		{ ARROW }
 	| '+'		{ PLUS }
 	| '-'		{ MINUS }
 	| '*'		{ TIMES }
 	| '/'		{ DIVIDE }
-	| "mod"		{ MOD }
-	| "div"		{ DIV }
 
-	| "and"		{ AND }
-	| "or"		{ OR }
-	| "xor"		{ XOR }
-	| "not"		{ NOT }
 
 	| '='		{ EQUAL }
 	| "<>"		{ NEQUAL }
