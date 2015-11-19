@@ -143,4 +143,39 @@ type topLevel = TopLevel of mainBlk * programBlk
     ] *)
 end;;
 
+open Tree;;
+
+let sampleTree =
+    TopLevel (
+        MainBlk "fun1",
+        ProgramBlk [NodeBlk [NodeStmt (
+            Node,
+            None,
+            "fun1",
+            NULL_COMMENT,
+            ParamBlk [
+                DeclStmt ("var1", Int, NULL_COMMENT);
+                DeclStmt ("var2", UInt, NULL_COMMENT)
+            ],
+            ReturnBlk [
+                DeclStmt ("y1", Int, NULL_COMMENT);
+                DeclStmt ("y2", UInt, NULL_COMMENT)
+            ],
+            BodyBlk (
+                [],
+                [
+                    AssignStmt (
+                        ID ("y1", Int, NOCLOCK),
+                        BinOpExpr (ADD, Int, NOCLOCK, AtomExpr (EID ("var1", Int, NOCLOCK)), AtomExpr (EInt "1")),
+                        NOCALL,
+                        NOGUID,
+                        NOIMPORT,
+                        ImportCode "0"
+                    );
+                ]
+            )
+        )];]
+    )
+;;
+
 (* Tree.toAST;; *)
