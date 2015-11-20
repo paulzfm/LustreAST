@@ -49,7 +49,14 @@ let importCodeToAST = function
 let atomExprToAST = function
     | EID (ident, kind, clock) -> String.concat "" ["ID("; ident; ","; kindToAST kind; ","; clockToAST clock; ")"]
     | EIdent ident -> ident
+    | EBool ident -> ident
+    | EChar ident -> ident
+    | EShort ident -> ident
+    | EUShort ident -> ident
     | EInt ident -> ident
+    | EUInt ident -> ident
+    | EFloat ident -> ident
+    | EReal ident -> ident
 
 let binOpToAST = function
     | ADD -> "add"
