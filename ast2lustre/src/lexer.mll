@@ -5,11 +5,11 @@ exception Eof
 }
 rule token = parse
 	[' ' '\t' '\n' '\r']	{ token lexbuf }     (* skip blanks *)
-	| "TopLevel"	{ TOPLEVEL }
+	| "TopLevel"	{ TOPLEVEL}
 	| "main"	{ MAIN }
 	| "program"	{ PROGRAM }
 	| "node"	{ NODE }
-	
+
 	| "NullComment"	{ NULLCOMMENT }
 	| "int"			{ INT }
 	| "vars" 		{ VARS }
@@ -44,16 +44,18 @@ rule token = parse
 
 	| '('		{ LPAREN }
 	| ')'		{ RPAREN }
+    | ','       { COMMA  }
 
 
 	| ['0'-'9']+ as lxm	{ CONST_INT lxm }
 	| "true" 			{ TRUE }
 	| "false"			{ FALSE }
-	(*************definition of float***************) 
+	(*************definition of float***************)
 	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
 	| '\''['a'-'z''A'-'Z']'\'' as lxm	{ CONST_CHAR (String.sub lxm 1 1) }
-	| ['a'-'z''A'-'Z''_''$']['a'-'z''A'-'Z''0'-'9''_''$']* as lxm	{ IDENT (lxm) }	
+	| ['a'-'z''A'-'Z''_''$']['a'-'z''A'-'Z''0'-'9''_''$']* as lxm	{ print_string lxm; IDENT (lxm) }
 
   	| eof            { EOF }
-	
+    | _              { print_string "unexpected token"; token lexbuf}
+
 	(*error |		 {} *)
