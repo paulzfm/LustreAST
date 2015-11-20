@@ -47,7 +47,7 @@ type unOp = SHORT | INT | FLOAT | REAL | NOT | POS | NEG
 type binOp = ADD | SUB | MUL | DIVF | DIV | MOD | AND | OR | XOR | GT | LT | GE | LE | EQ | NE
 type prefixUnOp = PSHORT | PINT | PFLOAT | PREAL | PNOT | PPOS | PNEG
 type prefixBinOp = PADD | PSUB | PMUL | PDIVF | PDIV | PMOD | PAND | POR | PXOR | PGT | PLT | PGE | PLE | PEQ | PNE
-type highOrderOp = MAP | FLOD | MAPFLOD | MAPI | FLODI
+type highOrderOp = MAP | FOLD | MAPFOLD | MAPI | FOLDI
 
 type prefixStmt =
     | FuncStmt of ident * kind list * kind list
