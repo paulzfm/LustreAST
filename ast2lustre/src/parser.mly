@@ -3,7 +3,7 @@
 /* header */
 %{
 	let parse_error s =
-		prerr_endline "Systax Error"
+		print_string s
 	;;
 	open Tree
 %}
@@ -40,7 +40,7 @@
 %%
 
 programY:
-	TOPLEVEL LPAREN mainY COMMA programBlkY RPAREN
+	TOPLEVEL LPAREN mainY COMMA programBlkY RPAREN EOF
 		{TopLevel ($3, $5)}
 ;
 
@@ -107,7 +107,7 @@ assignStmtY:
 
 lhsY:
 		ID LPAREN IDENT COMMA kindY COMMA clockY RPAREN	{ID($3, $5, $7)}
-/*	|													{ID("", BOOL, NOCLOCK)} 
+/*	|													{ID("", BOOL, NOCLOCK)}
 Q:annoymous_id */
 
 ;
