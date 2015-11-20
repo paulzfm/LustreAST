@@ -12,6 +12,8 @@ type clock =
     | Clock of ident
     | NOCLOCK
 
+type integer = string
+
 type kind =
     | Bool
     | Short
@@ -23,7 +25,7 @@ type kind =
     | Char
     | Enum of ident list
     | Construct of (ident * kind) list
-    | Array of kind * int
+    | Array of kind * integer
     | TypeName of ident
 
 type construct = (ident * kind) list
