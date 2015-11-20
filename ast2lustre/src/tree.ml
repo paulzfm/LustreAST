@@ -18,14 +18,14 @@ type kind =
     | Bool
     | Short
     | UShort
-    | Int
-    | UInt
+    | integer
+    | Uinteger
     | Float
     | Real
     | Char
     | Enum of ident list
     | Construct of (ident * kind) list
-    | Array of kind * integer
+    | Array of kind * integereger
     | TypeName of ident
 
 type construct = (ident * kind) list
@@ -35,17 +35,17 @@ type value =
     | VBool of ident
     | VShort of ident
     | VUShort of ident
-    | VInt of ident
-    | VUInt of ident
+    | Vinteger of ident
+    | VUinteger of ident
     | VFloat of ident
     | VReal of ident
     | VChar of ident
     | VConstructor of (ident * value) list
     | VArray of value
 
-type unOp = SHORT | INT | FLOAT | REAL | NOT | POS | NEG
+type unOp = SHORT | integer | FLOAT | REAL | NOT | POS | NEG
 type binOp = ADD | SUB | MUL | DIVF | DIV | MOD | AND | OR | XOR | GT | LT | GE | LE | EQ | NE
-type prefixUnOp = PSHORT | PINT | PFLOAT | PREAL | PNOT | PPOS | PNEG
+type prefixUnOp = PSHORT | Pinteger | PFLOAT | PREAL | PNOT | PPOS | PNEG
 type prefixBinOp = PADD | PSUB | PMUL | PDIVF | PDIV | PMOD | PAND | POR | PXOR | PGT | PLT | PGE | PLE | PEQ | PNE
 type highOrderOp = MAP | FOLD | MAPFOLD | MAPI | FOLDI
 
@@ -61,8 +61,8 @@ type atomExpr =
     | EChar of ident
     | EShort of ident
     | EUShort of ident
-    | EInt of ident
-    | EUInt of ident
+    | Einteger of ident
+    | EUinteger of ident
     | EFloat of ident
     | EReal of ident
 
@@ -71,7 +71,7 @@ type expr =
     | BinOpExpr of binOp * kind * clock * expr * expr
     | UnOpExpr of unOp * kind * clock * expr
     | IfExpr of kind * clock * expr * expr * expr
-    | SwitchExpr of kind * clock * (value * expr) list
+    | SwitchExpr of kind * clock * expr * (value * expr) list
     | TempoPreExpr of kind * clock * expr
     | TempoArrowExpr of kind * clock * expr * expr
     | TempoFbyExpr of kind * clock * expr list * expr * expr list
@@ -79,8 +79,8 @@ type expr =
     | ConstructExpr of ident * construct * clock
     | ConstructArrExpr of kind * clock * expr list
     | MixedConstructorExpr of kind * clock * expr * labelIdx list * expr
-    | ArrDimExpr of kind * clock * expr * int
-    | ArrIdxExpr of kind * clock * expr * int
+    | ArrDimExpr of kind * clock * expr * integer
+    | ArrIdxExpr of kind * clock * expr * integer
     | ArrSliceExpr of kind * clock * expr * expr * expr
     | ApplyExpr of kind * clock * applyBlk * expr list
     | DynamicProjExpr of kind * clock * expr * expr list * expr
@@ -92,13 +92,13 @@ and labelIdx =
 and applyBlk =
     | MakeStmt of ident * kind
     | FlattenStmt of ident * kind
-    | HighOrderStmt of highOrderOp * prefixStmt * int
+    | HighOrderStmt of highOrderOp * prefixStmt * integer
     | MapStmt of prefixStmt * mapwDefaultStmt
-    | MapwiDefaultStmt of prefixStmt * int * expr * expr
-    | FlodwIfStmt of prefixStmt * int * expr
-    | FlodwiStmt of prefixStmt * int * expr
+    | MapwiDefaultStmt of prefixStmt * integer * expr * expr
+    | FlodwIfStmt of prefixStmt * integer * expr
+    | FlodwiStmt of prefixStmt * integer * expr
 
-and mapwDefaultStmt = MapwDefaultStmt of prefixStmt * int * expr * expr
+and mapwDefaultStmt = MapwDefaultStmt of prefixStmt * integer * expr * expr
 
 type nodeKind = Node | Function
 type guid = string
@@ -130,7 +130,7 @@ type stmtBlk =
 type mainBlk = MainBlk of ident
 type programBlk = ProgramBlk of stmtBlk list
 type topLevel = TopLevel of mainBlk * programBlk
-
+;;
 
 (* to lustre *)
 (* let nodeStmtToLustre = function
@@ -150,7 +150,7 @@ let toLustre = function
 
 (* end;; *)
 
-let sampleTree =
+(* let sampleTree =
     TopLevel (
         MainBlk "fun1",
         ProgramBlk [NodeBlk (
@@ -160,18 +160,18 @@ let sampleTree =
             NULL_COMMENT,
             ParamBlk [
                 DeclStmt ("var1", Int, NULL_COMMENT);
-                DeclStmt ("var2", UInt, NULL_COMMENT)
+                DeclStmt ("var2", Uinteger, NULL_COMMENT)
             ],
             ReturnBlk [
-                DeclStmt ("y1", Int, NULL_COMMENT);
-                DeclStmt ("y2", UInt, NULL_COMMENT)
+                DeclStmt ("y1", integer, NULL_COMMENT);
+                DeclStmt ("y2", Uinteger, NULL_COMMENT)
             ],
             BodyBlk (
                 [],
                 [
                     AssignStmt (
-                        ID ("y1", Int, NOCLOCK),
-                        BinOpExpr (ADD, Int, NOCLOCK, AtomExpr (EID ("var1", Int, NOCLOCK)), AtomExpr (EInt "1")),
+                        ID ("y1", integer, NOCLOCK),
+                        BinOpExpr (ADD, integer, NOCLOCK, AtomExpr (EID ("var1", integer, NOCLOCK)), AtomExpr (Einteger "1")),
                         NOCALL,
                         NOGUID,
                         NOIMPORT,
@@ -181,4 +181,4 @@ let sampleTree =
             )
         )]
     )
-;;
+;; *)
