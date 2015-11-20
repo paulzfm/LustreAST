@@ -45,6 +45,7 @@ rule token = parse
 	| '('		{ LPAREN }
 	| ')'		{ RPAREN }
     | ','       { COMMA  }
+    | '='		{ EQUAL  }
 
 
 	| ['0'-'9']+ as lxm	{ CONST_INT lxm }

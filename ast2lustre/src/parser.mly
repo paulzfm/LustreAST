@@ -3,7 +3,7 @@
 /* header */
 %{
 	let parse_error s =
-		print_string s
+		print_string s;
 	;;
 	open Tree
 %}
@@ -31,7 +31,7 @@
 
 /* value */
 %token TRUE FALSE
-%token <string> IDENT GUID COMMENT CONST_INT CONST_FLO CONST_CHAR
+%token <string> IDENT COMMENT CONST_INT CONST_FLO CONST_CHAR
 %token NULLCOMMENT
 
 
@@ -50,8 +50,8 @@ mainY:
 ;
 
 programBlkY:
-		stmtBlkYs	{ProgramBlk $1}
-	|				{ProgramBlk []}
+	PROGRAM LPAREN stmtBlkYs RPAREN
+		{ProgramBlk $3}
 ;
 
 stmtBlkYs:
@@ -60,13 +60,13 @@ stmtBlkYs:
 ;
 
 stmtBlkY:
-		typeBlkY	{$1}
+/*		typeBlkY	{$1}
 	|	constBlkY	{$1}
-	|	nodeBlkY	{$1}
+	|*/	nodeBlkY	{$1} 
 ;
 
 nodeBlkY:
-	NODE LPAREN nodeKindY COMMA GUID COMMA IDENT COMMA commentY COMMA paramBlkY COMMA returnBlkY COMMA bodyBlkY RPAREN
+	NODE LPAREN nodeKindY COMMA IDENT COMMA IDENT COMMA commentY COMMA paramBlkY COMMA returnBlkY COMMA bodyBlkY RPAREN
 		{NodeBlk ($3, $5, $7, $9, $11, $13, $15)}
 ;
 
@@ -97,11 +97,11 @@ localVarYs:
 
 assignStmtYs:
 		assignStmtY COMMA assignStmtYs	{$1::$3}
-	|									{[]}
+	|	assignStmtY						{[$1]}
 ;
 
 assignStmtY:
-	EQUAL LPAREN LVALUE LPAREN lhsY RPAREN COMMA exprY COMMA guidOpY COMMA guidValY COMMA importedY COMMA importCodeY
+	EQUAL LPAREN LVALUE LPAREN lhsY RPAREN COMMA exprY COMMA guidOpY COMMA guidValY COMMA importedY COMMA importCodeY RPAREN
 		{AssignStmt($5, $8, $10, $12, $14, $16)}
 ;
 
@@ -142,12 +142,12 @@ atomExprY:
 
 guidOpY:
 		IDENT 	{GUIDOp $1}
-	|			{NOCALL}
+	|	NOCALL	{NOCALL}
 ;
 
 guidValY:
-		GUID 	{GUIDVal $1}
-	|			{NOGUID}
+		IDENT 	{GUIDVal $1}
+	|	NOGUID	{NOGUID}
 ;
 
 importedY:
@@ -167,11 +167,11 @@ clockY:
 
 declStmtYs:
 		declStmtY COMMA declStmtYs	{$1::$3}
-	|								{[]}
+	|	declStmtY					{[$1]}
 ;
 
 declStmtY:
-	VAR_DECLS LPAREN VARS LPAREN IDENT RPAREN COMMA kindY COMMA commentY
+	VAR_DECLS LPAREN VARS LPAREN IDENT RPAREN COMMA kindY COMMA commentY RPAREN
 		{DeclStmt($5, $8, $10)}
 ;
 
@@ -191,10 +191,11 @@ commentY:
 	|	NULLCOMMENT					{NULL_COMMENT}
 ;
 
-/* todo */
+/* todo 
 constBlkY:
 		{ConstBlk[]}
 ;
 typeBlkY:
 		{TypeBlk[]}
 ;
+*/
