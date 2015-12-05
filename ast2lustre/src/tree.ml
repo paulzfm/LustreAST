@@ -93,12 +93,11 @@ and applyBlk =
     | MakeStmt of ident * kind
     | FlattenStmt of ident * kind
     | HighOrderStmt of highOrderOp * prefixStmt * integer
-    | MapStmt of prefixStmt * mapwDefaultStmt
-    | MapwiDefaultStmt of prefixStmt * integer * expr * expr
+    | PrefixStmt of prefixStmt
+    | MapwDefaultStmt of prefixStmt * integer * expr * expr list
+    | MapwiDefaultStmt of prefixStmt * integer * expr * expr list
     | FlodwIfStmt of prefixStmt * integer * expr
     | FlodwiStmt of prefixStmt * integer * expr
-
-and mapwDefaultStmt = MapwDefaultStmt of prefixStmt * integer * expr * expr
 
 type nodeKind = Node | Function
 type guid = string
