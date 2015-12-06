@@ -8,22 +8,39 @@ rule token = parse
 	| "TopLevel"	{ TOPLEVEL}
 	| "main"	{ MAIN }
 	| "program"	{ PROGRAM }
-	| "node"	{ NODE }
 
 	| "NullComment"	{ NULLCOMMENT }
+	| "type_block"	{ TYPE_BLOCK }
+	| "type"		{ TYPE }
+	| "filed"		{ FILED }
+	| "construct_enum" { CONSTRUCT_ENUM }
+	| "array"		{ ARRAY }
+	| "typename"	{ TYPENAME }
+	| "bool"		{ BOOL }
 	| "int"			{ INT }
 	| "vars" 		{ VARS }
+	| "char"		{ CHAR }
 	| "short" 		{ SHORT }
-	| "SHORT"		{ SHORT }
 	| "ushort" 		{ USHORT }
-	| "USHORT" 		{ USHORT }
+	| "uint" 		{ UINT }
+	| "real"		{ REAL }
+	| "float" 		{ FLOAT }
+
+	| "const"		{ CONST }
+	| "true"		{ TRUE }
+	| "false"		{ FALSE }
+	| "ID"			{ ID }
+	| "BOOL"		{ BOOL }
+	| "CHAR"		{ CHAR }
+	| "SHORT"		{ SHORT }
+	| "USHORT"		{ USHORT }
 	| "INT"			{ INT }
 	| "UINT"		{ UINT }
-	| "uint" 		{ UINT }
 	| "REAL" 		{ REAL }
-	| "real"		{ REAL }
+	| "construct"	{ CONSTRUCT }
+	| "label_const"	{ LABEL_CONST }
+	| "construct_array"	{ CONSTRUCT_ARRAY }
 	| "FLOAT" 		{ FLOAT }
-	| "float" 		{ FLOAT }
 
 	| "body" 		{ BODY }
 	| "var_decls" 	{ VAR_DECLS }
@@ -31,15 +48,64 @@ rule token = parse
 	| "lvalue"		{ LVALUE }
 	| "ID"			{ ID }
 	| "binop_add"	{ BINOP_ADD }
+
+	| "node"		{ NODE }
+	| "function"	{ FUNCTION }
+	| "params"		{ PARAMS }
+	| "returns"		{ RETURNS }
+	| "localvars"	{ LOCALVARS }
+	| "anonymous_id"{ ANONYMOUS_ID }
 	| "NOCALL"		{ NOCALL }
 	| "NOGUID"		{ NOGUID }
+	| "IMPORTED"	{ IMPORTED }
 	| "NOIMPORT"	{ NOIMPORT }
-	| "NOIMPORT"	{ NOIMPORT }
 
-
-	| "returns"	{ RETURNS }
-
-	| "params"	{ PARAMS }
+	| "binop_add"	{ BINOP_ADD }
+	| "binop_substract"	{ BINOP_SUBSTRACT }
+	| "binop_multiply"	{ BINOP_MULTIPLY }
+	| "binop_divide"	{ BINOP_DIVIDE }
+	| "binop_div"	{ BINOP_DIV }
+	| "binop_mod"	{ BINOP_MOD }
+	| "binop_and"	{ BINOP_AND }
+	| "binop_or"	{ BINOP_OR }
+	| "binop_xor"	{ BINOP_XOR }
+	| "binop_gt"	{ BINOP_GT }
+	| "binop_lt"	{ BINOP_LT }
+	| "binop_ge"	{ BINOP_GE }
+	| "binop_le"	{ BINOP_LE }
+	| "binop_eq"	{ BINOP_EQ }
+	| "binop_neq"	{ BINOP_NEQ }
+	| "unop_shortcast"	{ UNOP_SHORTCAST }
+	| "unop_intcast"	{ UNOP_INTCAST }
+	| "unop_floatcast"	{ UNOP_FLOATCAST }
+	| "unop_realcast"	{ UNOP_REALCAST }
+	| "unop_not"	{ UNOP_NOT }
+	| "unop_pos"	{ UNOP_POS }
+	| "unop_neg"	{ UNOP_NEG }
+	| "if_expr"	{ IF_EXPR }
+	| "switch_expr"	{ SWITCH_EXPR }
+	| "case"	{ CASE }
+	| "tempo_pre"	{ TEMPO_PRE }
+	| "tempo_arrow"	{ TEMPO_ARROW }
+	| "tempo_fby"	{ TEMPO_FBY }
+	| "mixed_constructor"	{ MIXED_CONSTRUCTOR }
+	| "struct_iterm"	{ STRUCT_ITERM }
+	| "field_access"	{ FIELD_ACCESS }
+	| "list_expr"	{ LIST_EXPR }
+	| "apply_expr"	{ APPLY_EXPR }
+	| "make"	{ MAKE }
+	| "flatten"	{ FLATTEN }
+	| "high_order"	{ HIGH_ORDER }
+	| "prefix"	{ PREFIX }
+	| "highorder_map"	{ HIGHORDER_MAP }
+	| "highorder_fold"	{ HIGHORDER_FOLD }
+	| "highorder_mapfold"	{ HIGHORDER_MAPFOLD }
+	| "highorder_mapapi"	{ HIGHORDER_MAPAPI }
+	| "highorder_foldi"	{ HIGHORDER_FOLDI }
+	| "mapwi_default"	{ MAPWI_DEFAULT }
+	| "mapw_default"	{ MAPW_DEFAULT }
+	| "foldw_if"	{ FOLDW_IF }
+	| "foldwi"	{ FOLDWI }
 
 
 	| '('		{ LPAREN }
