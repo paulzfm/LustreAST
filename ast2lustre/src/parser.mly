@@ -184,6 +184,7 @@ applyBlkY:
 	|	mapwDefaultStmtY	{$1}
 	|	mapwiDefaultStmtY	{$1}
 	/* ? for zhu: the last parameter of constructor for mapw(i)DefaultStmt should be expr, no list */
+	/* ask TA */
 	|	foldwIfStmtY		{$1}
 	|	foldwiStmtY			{$1}
 	/* ? for zhu: It's fold, not flod. */
@@ -311,6 +312,7 @@ switchExprY:
 	SWITCH_EXPR LPAREN kindY COMMA clockY COMMA caseStmtsY RPAREN
 		{SwitchExpr($3,$5,$7)}
 	/* ? for zhu: I'm not sure SwitchExpr should receive 1-2 caseStmts or more, but it shouldn't receive single value or expr.*/
+	/* ask TA */
 ;
 
 caseStmtsY:
@@ -392,8 +394,8 @@ binOpY:
 		BINOP_ADD		{ADD}
 	|	BINOP_SUBSTRACT	{SUB}
 	|	BINOP_MULTIPLY	{MUL}
-	|	BINOP_DIVIDE	{DIV}		/*? for zhu: please tell me what means DIV and DIVF*/
-	|	BINOP_DIV		{DIVF}		/*?*/
+	|	BINOP_DIVIDE	{DIVF}
+	|	BINOP_DIV		{DIV}
 	|	BINOP_MOD		{MOD}
 	|	BINOP_AND		{AND}
 	|	BINOP_OR		{OR}
