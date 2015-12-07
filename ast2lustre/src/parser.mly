@@ -40,6 +40,7 @@
 
 %token IF_EXPR SWITCH_EXPR CASE LABEL_CONST CONSTRUCT_ARRAY LIST_EXPR TEMPO_FBY TEMPO_ARROW TEMPO_PRE FIELD_ACCESS
 %token STRUCT_ITERM MIXED_CONSTRUCTOR CONSTRUCT_ARRAY
+%token ARRAY_DIM ARRAY_INDEX ARRAY_SLICE DYNAMIC_PROJECT
 
 %token APPLY_EXPR MAKE FLATTEN HIGH_ORDER MAPW_DEFAULT MAPWI_DEFAULT FOLDW_IF FOLDWI
 
@@ -145,23 +146,29 @@ exprY:
 	|	mixedConstructorExprY	{$1}
 	|	applyExprY				{$1}
 	|	arrDimExprY				{$1}
+	|	arrIdxExprY				{$1}
 	|	arrSliceExprY			{$1}
 	|	dynamicProjExprY		{$1}
 ;
 
 arrDimExprY:
-	LPAREN kindY COMMA clockY COMMA exprY COMMA intValueY RPAREN
-		{ArrDimExpr($2,$4,$6,$8)}
+	ARRAY_DIM LPAREN kindY COMMA clockY COMMA exprY COMMA intValueY RPAREN
+		{ArrDimExpr($3,$5,$7,$9)}
+;
+
+arrIdxExprY:
+	ARRAY_INDEX LPAREN kindY COMMA clockY COMMA exprY COMMA intValueY RPAREN
+		{ArrDimExpr($3,$5,$7,$9)}
 ;
 
 arrSliceExprY:
-	LPAREN kindY COMMA clockY COMMA exprY COMMA exprY COMMA exprY RPAREN
-		{ArrSliceExpr($2,$4,$6,$8,$10)}
+	ARRAY_SLICE LPAREN kindY COMMA clockY COMMA exprY COMMA exprY COMMA exprY RPAREN
+		{ArrSliceExpr($3,$5,$7,$9,$11)}
 ;
 
 dynamicProjExprY:
-	LPAREN kindY COMMA clockY COMMA exprY COMMA listExprY COMMA exprY RPAREN
-		{DynamicProjExpr($2,$4,$6,$8,$10)}
+	DYNAMIC_PROJECT LPAREN kindY COMMA clockY COMMA exprY COMMA listExprY COMMA exprY RPAREN
+		{DynamicProjExpr($3,$5,$7,$9,$11)}
 ;
 
 applyExprY:
