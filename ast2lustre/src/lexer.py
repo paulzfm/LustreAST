@@ -10,7 +10,6 @@ class Refiner(object):
         self.extract()
         self.check_if_one_keyword_contains_another()
         assert self.check_repeat()
-        #from IPython import embed;embed()
 
     def extract(self):
         self.keyword_index = []
