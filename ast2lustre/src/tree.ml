@@ -95,8 +95,8 @@ and applyBlk =
     | FlattenStmt of ident * kind
     | HighOrderStmt of highOrderOp * prefixStmt * integer
     | PrefixStmt of prefixStmt
-    | MapwDefaultStmt of prefixStmt * integer * expr * expr list
-    | MapwiDefaultStmt of prefixStmt * integer * expr * expr list
+    | MapwDefaultStmt of prefixStmt * integer * expr * expr
+    | MapwiDefaultStmt of prefixStmt * integer * expr * expr
     | FoldwIfStmt of prefixStmt * integer * expr
     | FoldwiStmt of prefixStmt * integer * expr
 
