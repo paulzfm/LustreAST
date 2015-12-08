@@ -149,6 +149,7 @@ exprY:
 	|	arrIdxExprY				{$1}
 	|	arrSliceExprY			{$1}
 	|	dynamicProjExprY		{$1}
+	|	listExprY				{ListExpr($1)}
 ;
 
 arrDimExprY:
@@ -309,10 +310,8 @@ tempoPreExprY:
 ;
 
 switchExprY:
-	SWITCH_EXPR LPAREN kindY COMMA clockY COMMA caseStmtsY RPAREN
-		{SwitchExpr($3,$5,$7)}
-	/* ? for zhu: I'm not sure SwitchExpr should receive 1-2 caseStmts or more, but it shouldn't receive single value or expr.*/
-	/* ask TA */
+	SWITCH_EXPR LPAREN kindY COMMA clockY COMMA exprY COMMA caseStmtsY RPAREN
+		{SwitchExpr($3,$5,$7,$9)}
 ;
 
 caseStmtsY:
