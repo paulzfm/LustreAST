@@ -84,6 +84,7 @@ type expr =
     | ArrSliceExpr of kind * clock * expr * expr * expr
     | ApplyExpr of kind * clock * applyBlk * expr list
     | DynamicProjExpr of kind * clock * expr * expr list * expr
+    | ListExpr of expr list
 
 and labelIdx =
     | Ident of ident
