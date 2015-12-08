@@ -87,8 +87,10 @@ stmtBlkY:
 ;
 
 nodeBlkY:
-	NODE LPAREN nodeKindY COMMA IDENT COMMA IDENT COMMA commentY COMMA paramBlkY COMMA returnBlkY COMMA bodyBlkY RPAREN
-		{NodeBlk ($3, $5, $7, $9, $11, $13, $15)}
+		NODE LPAREN nodeKindY COMMA IDENT COMMA IDENT COMMA commentY COMMA paramBlkY COMMA returnBlkY COMMA bodyBlkY RPAREN
+			{NodeBlk ($3, $5, $7, $9, $11, $13, $15)}
+	|	NODE LPAREN nodeKindY COMMA COMMA IDENT COMMA commentY COMMA paramBlkY COMMA returnBlkY COMMA bodyBlkY RPAREN
+			{NodeBlk ($3, "", $6, $8, $10, $12, $14)}
 ;
 
 nodeKindY:
