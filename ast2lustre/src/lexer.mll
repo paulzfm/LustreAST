@@ -54,13 +54,12 @@ rule token = parse
 	| "params"		{ PARAMS }
 	| "returns"		{ RETURNS }
 	| "localvars"	{ LOCALVARS }
-	| "#anonymous_id"{ ANONYMOUS_ID }
+	| "#anonymous_id" { ANONYMOUS_ID }
 	| "NOCALL"		{ NOCALL }
 	| "NOGUID"		{ NOGUID }
 	| "IMPORTED"	{ IMPORTED }
 	| "NOIMPORT"	{ NOIMPORT }
 
-	| "#binop_add"	{ BINOP_ADD }
 	| "#binop_substract"	{ BINOP_SUBSTRACT }
 	| "#binop_multiply"	{ BINOP_MULTIPLY }
 	| "#binop_divide"	{ BINOP_DIVIDE }
