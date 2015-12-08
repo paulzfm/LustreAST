@@ -102,7 +102,9 @@ and applyBlk =
 
 type nodeKind = Node | Function
 type guid = string
-type lhs = ID of (ident * kind * clock)
+type lhs =
+    | ID of (ident * kind * clock)
+    | ANONYMOUS_ID
 type guidOp =
     | GUIDOp of ident
     | NOCALL
