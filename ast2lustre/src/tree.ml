@@ -18,14 +18,14 @@ type kind =
     | Bool
     | Short
     | UShort
-    | integer
-    | Uinteger
+    | Int
+    | UInt
     | Float
     | Real
     | Char
     | Enum of ident list
     | Construct of (ident * kind) list
-    | Array of kind * integereger
+    | Array of kind * integer
     | TypeName of ident
 
 type construct = (ident * kind) list
@@ -35,17 +35,17 @@ type value =
     | VBool of ident
     | VShort of ident
     | VUShort of ident
-    | Vinteger of ident
-    | VUinteger of ident
+    | VInt of ident
+    | VUInt of ident
     | VFloat of ident
     | VReal of ident
     | VChar of ident
     | VConstructor of (ident * value) list
-    | VArray of value
+    | VArray of value list
 
-type unOp = SHORT | integer | FLOAT | REAL | NOT | POS | NEG
+type unOp = SHORT | INT | FLOAT | REAL | NOT | POS | NEG
 type binOp = ADD | SUB | MUL | DIVF | DIV | MOD | AND | OR | XOR | GT | LT | GE | LE | EQ | NE
-type prefixUnOp = PSHORT | Pinteger | PFLOAT | PREAL | PNOT | PPOS | PNEG
+type prefixUnOp = PSHORT | PINT | PFLOAT | PREAL | PNOT | PPOS | PNEG
 type prefixBinOp = PADD | PSUB | PMUL | PDIVF | PDIV | PMOD | PAND | POR | PXOR | PGT | PLT | PGE | PLE | PEQ | PNE
 type highOrderOp = MAP | FOLD | MAPFOLD | MAPI | FOLDI
 
@@ -61,8 +61,8 @@ type atomExpr =
     | EChar of ident
     | EShort of ident
     | EUShort of ident
-    | Einteger of ident
-    | EUinteger of ident
+    | EInt of ident
+    | EUInt of ident
     | EFloat of ident
     | EReal of ident
 
@@ -96,8 +96,8 @@ and applyBlk =
     | PrefixStmt of prefixStmt
     | MapwDefaultStmt of prefixStmt * integer * expr * expr list
     | MapwiDefaultStmt of prefixStmt * integer * expr * expr list
-    | FlodwIfStmt of prefixStmt * integer * expr
-    | FlodwiStmt of prefixStmt * integer * expr
+    | FoldwIfStmt of prefixStmt * integer * expr
+    | FoldwiStmt of prefixStmt * integer * expr
 
 type nodeKind = Node | Function
 type guid = string
@@ -123,7 +123,7 @@ type constStmt = ConstStmt of ident * kind * value * comment
 
 type stmtBlk =
     | TypeBlk of typeStmt list
-    | ConstBlk of constStmt list
+    | ConstBlk of constStmt
     | NodeBlk of nodeKind * guid * ident * comment * paramBlk * returnBlk * bodyBlk
 
 type mainBlk = MainBlk of ident
