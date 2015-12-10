@@ -166,9 +166,9 @@ let returnBlkToLustre = function
     ReturnBlk (decls) -> String.concat "; " (List.map declStmtToLustre decls)
 
 let bodyBlkToLustre depth blk = match blk with
-    BodyBlk (decls, eqs) -> String.concat "\n" [
+    BodyBlk (decls, eqs) -> String.concat "" [
         indent depth "let";
-        String.concat "\n" (List.map (assignStmtToLustre (depth + 1)) eqs);
+        String.concat "" (List.map (assignStmtToLustre (depth + 1)) eqs);
         indent depth "tel";
     ]
 
@@ -176,29 +176,27 @@ let typeStmtToLustre depth stmt = match stmt with
     TypeStmt (ident, kind, comment) -> indent depth (Printf.sprintf "%s = %s;" ident (kindToLustre kind))
 
 let constStmtToLustre depth stmt = match stmt with
-    (* ConstStmt (ident, kind, val, _) -> indent depth (Printf.sprintf "%s: %s = %s;" ident (kindToLustre kind) (valueToLustre val)) *)
-    ConstStmt _ -> ""
+    ConstStmt (ident, kind, value, comment) -> indent depth (Printf.sprintf "%s: %s = %s;" ident (kindToLustre kind) (valueToLustre value))
 
 let stmtBlkToLustre depth blk = match blk with
-    | TypeBlk blk -> String.concat "\n" [
+    | TypeBlk blk -> String.concat "" [
         indent depth "type";
-        String.concat "\n" (List.map (typeStmtToLustre (depth + 1)) blk);
+        String.concat "" (List.map (typeStmtToLustre (depth + 1)) blk);
         "\n"
       ]
-    | ConstBlk stmt -> String.concat "\n" [
+    | ConstBlk stmt -> String.concat "" [
         indent depth "const";
         constStmtToLustre (depth + 1) stmt;
         "\n"
       ]
-    | NodeBlk (kind, _, ident, comment, paramBlk, returnBlk, bodyBlk) -> String.concat "\n" [
+    | NodeBlk (kind, _, ident, comment, paramBlk, returnBlk, bodyBlk) -> String.concat "" [
         indent depth (Printf.sprintf "function %s(%s)" ident (paramBlkToLustre paramBlk));
         indent depth (Printf.sprintf "returns(%s)" (returnBlkToLustre returnBlk));
         bodyBlkToLustre (depth + 1) bodyBlk;
-        "\n"
       ]
 
 let programBlkToLustre depth blks = match blks with
-    ProgramBlk (blks) -> String.concat "\n" (List.map (stmtBlkToLustre 0) blks)
+    ProgramBlk (blks) -> String.concat "" (List.map (stmtBlkToLustre 0) blks)
 
 let toLustre = function
     TopLevel (_, blk) -> programBlkToLustre 0 blk
