@@ -1,7 +1,5 @@
 (* Definition for the lustre AST. *)
 
-(* module Tree = struct *)
-
 type ident = string
 
 type comment =
@@ -133,54 +131,3 @@ type mainBlk = MainBlk of ident
 type programBlk = ProgramBlk of stmtBlk list
 type topLevel = TopLevel of mainBlk * programBlk
 ;;
-
-(* to lustre *)
-(* let nodeStmtToLustre = function
-    NodeStmt (k, g, i, c, p, r, b) ->
-
-let stmtBlkToLustre = function
-    | TypeBlk _ -> []
-    | ConstBlk _ -> []
-    | NodeBlk [] -> []
-    | NodeBlk (stmt :: stmts) ->
-
-let programBlkToLustre = function
-    program -> String.concat "," (map stmtBlkToLustre )
-
-let toLustre = function
-    TopLevel (m, p) -> programBlkToLustre p *)
-
-(* end;; *)
-
-(* let sampleTree =
-    TopLevel (
-        MainBlk "fun1",
-        ProgramBlk [NodeBlk (
-            Node,
-            "",
-            "fun1",
-            NULL_COMMENT,
-            ParamBlk [
-                DeclStmt ("var1", Int, NULL_COMMENT);
-                DeclStmt ("var2", Uinteger, NULL_COMMENT)
-            ],
-            ReturnBlk [
-                DeclStmt ("y1", integer, NULL_COMMENT);
-                DeclStmt ("y2", Uinteger, NULL_COMMENT)
-            ],
-            BodyBlk (
-                [],
-                [
-                    AssignStmt (
-                        ID ("y1", integer, NOCLOCK),
-                        BinOpExpr (ADD, integer, NOCLOCK, AtomExpr (EID ("var1", integer, NOCLOCK)), AtomExpr (Einteger "1")),
-                        NOCALL,
-                        NOGUID,
-                        NOIMPORT,
-                        ImportCode "0"
-                    );
-                ]
-            )
-        )]
-    )
-;; *)
