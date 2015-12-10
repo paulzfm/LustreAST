@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-MLL_PATH = './lexer.mll'
-INPUT_PATH = './test/binary_add.ast'
 
 
 class Refiner(object):
@@ -38,14 +36,26 @@ class Refiner(object):
 
     def handle(self, input_file):
         source = open(input_file).read()
-        with open(input_file, 'w') as f:
-            for each in self.keyword_index:
-                if each in self.ignore:
-                    continue
-                source = source.replace(each, '#'+each)
-            f.write(source)
+
+        for each in self.keyword_index:
+            if each in self.ignore:
+                continue
+            source = source.replace(each, '#'+each)
+        print source
+        return source
 
 
 if __name__ == '__main__':
-    r = Refiner(MLL_PATH)
-    r.handle(INPUT_PATH)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--MLL_PATH', default='./lexer.mll')
+    parser.add_argument('-i', '--INPUT_PATH')
+    args = parser.parse_args()
+    r = Refiner(args.MLL_PATH)
+    r.handle(args.INPUT_PATH)
+
+
+
+
+
+
