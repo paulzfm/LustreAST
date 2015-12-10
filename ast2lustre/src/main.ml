@@ -157,7 +157,7 @@ let declStmtToLustre = function
     DeclStmt (ident, kind, comment) -> Printf.sprintf "%s: %s" ident (kindToLustre kind)
 
 let assignStmtToLustre depth stmt = match stmt with
-    AssignStmt (lhs, expr, _, _, _, _) -> indent depth (Printf.sprintf "%s = %s" (lhsToLustre lhs) (exprToLustre expr))
+    AssignStmt (lhs, expr, _, _, _, _) -> indent depth (Printf.sprintf "%s = %s;" (lhsToLustre lhs) (exprToLustre expr))
 
 let paramBlkToLustre = function
     ParamBlk (decls) -> String.concat "; " (List.map declStmtToLustre decls)
