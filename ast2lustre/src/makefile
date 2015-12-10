@@ -2,7 +2,7 @@ COM = ocamlc
 LEX = ocamllex
 YACC = ocamlyacc
 
-lc : lexer.cmo parser.cmo main.cmo tree.cmo
+lc : lexer.cmo parser.cmo main.cmo
 	$(COM) -o $@ lexer.cmo parser.cmo main.cmo
 
 lexer.cmo : lexer.ml parser.cmi
