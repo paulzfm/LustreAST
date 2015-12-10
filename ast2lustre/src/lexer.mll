@@ -12,7 +12,7 @@ rule token = parse
 	| "NullComment"	{ NULLCOMMENT }
 	| "#type_block"	{ TYPE_BLOCK }
 	| "type"		{ TYPE }
-	| "filed"		{ FILED }
+	| "field"		{ FIELD }
 	| "#construct_enum" { CONSTRUCT_ENUM }
 	| "array"		{ ARRAY }
 	| "typename"	{ TYPENAME }
@@ -54,7 +54,6 @@ rule token = parse
 	| "params"		{ PARAMS }
 	| "returns"		{ RETURNS }
 	| "localvars"	{ LOCALVARS }
-	| "#anonymous_id" { ANONYMOUS_ID }
 	| "NOCALL"		{ NOCALL }
 	| "NOGUID"		{ NOGUID }
 	| "IMPORTED"	{ IMPORTED }
@@ -99,7 +98,7 @@ rule token = parse
 	| "#highorder_map"	{ HIGHORDER_MAP }
 	| "#highorder_fold"	{ HIGHORDER_FOLD }
 	| "#highorder_mapfold"	{ HIGHORDER_MAPFOLD }
-	| "#highorder_mapapi"	{ HIGHORDER_MAPAPI }
+	| "#highorder_mapapi"	{ HIGHORDER_MAPI }
 	| "#highorder_foldi"	{ HIGHORDER_FOLDI }
 	| "#mapwi_default"	{ MAPWI_DEFAULT }
 	| "#mapw_default"	{ MAPW_DEFAULT }
