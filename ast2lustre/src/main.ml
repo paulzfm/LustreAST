@@ -133,7 +133,7 @@ let rec exprToLustre = function
     | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "%s ^ %s" (exprToLustre expr) integer
     | ArrIdxExpr (_, _, expr, idx) -> Printf.sprintf "%s[%s]" (exprToLustre expr) idx
     | ArrSliceExpr _ -> ""
-    | ApplyExpr (_, _, blk, exprs) -> Printf.sprintf "(%s)(%s)" (applyBlkToLustre blk) (String.concat ", " (List.map exprToLustre exprs))
+    | ApplyExpr (_, _, blk, exprs) -> Printf.sprintf "%s(%s)" (applyBlkToLustre blk) (String.concat ", " (List.map exprToLustre exprs))
     | DynamicProjExpr (_, _, expr1, exprs, expr2) -> Printf.sprintf "%s.%s default %s" (exprToLustre expr1) (String.concat "" (List.map (Printf.sprintf "[%s]") (List.map exprToLustre exprs))) (exprToLustre expr2)
     | ListExpr (exprs) -> String.concat ", " (List.map exprToLustre exprs)
 and applyBlkToLustre = function
