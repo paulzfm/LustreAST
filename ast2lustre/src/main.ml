@@ -31,11 +31,11 @@ let rec kindToLustre = function
 let rec valueToLustre = function
     | VIdent ident -> ident
     | VBool ident -> ident
-    | VShort ident -> ident
-    | VUShort ident -> ident
+    | VShort ident -> Printf.sprintf "%ss" ident
+    | VUShort ident -> Printf.sprintf "%sus" ident
     | VInt ident -> ident
-    | VUInt ident -> ident
-    | VFloat ident -> ident
+    | VUInt ident -> Printf.sprintf "%su" ident
+    | VFloat ident -> Printf.sprintf "%sf" ident
     | VReal ident -> ident
     | VChar ident -> ident
     | VConstructor vs -> ""
@@ -110,11 +110,11 @@ let atomExprToLustre = function
     | EIdent ident -> ident
     | EBool ident -> ident
     | EChar ident -> ident
-    | EShort ident -> ident
-    | EUShort ident -> ident
+    | EShort ident -> Printf.sprintf "%ss" ident
+    | EUShort ident -> Printf.sprintf "%sus" ident
     | EInt ident -> ident
-    | EUInt ident -> ident
-    | EFloat ident -> ident
+    | EUInt ident -> Printf.sprintf "%su" ident
+    | EFloat ident -> Printf.sprintf "%sf" ident
     | EReal ident -> ident
 
 let rec exprToLustre = function
