@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-MLL_PATH = '/Users/megvii/Desktop/LustreAST/ast2lustre/src/lexer.mll'
-INPUT_PATH = '/Users/megvii/Desktop/LustreAST/ast2lustre/src/binary_add.ast'
+MLL_PATH = './lexer.mll'
+INPUT_PATH = './test/binary_add.ast'
 
 
 class Refiner(object):
