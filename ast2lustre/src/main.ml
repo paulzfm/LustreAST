@@ -24,7 +24,7 @@ let rec kindToLustre = function
     | Real -> "real"
     | Char -> "char"
     | Enum idents -> Printf.sprintf "enum { %s }" (String.concat ", " idents)
-    | Construct cons -> String.concat ", " (List.map (fun (i, t) -> Printf.sprintf "%s: %s" i (kindToLustre t)) cons)
+    | Construct cons -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, t) -> Printf.sprintf "%s: %s" i (kindToLustre t)) cons))
     | Array (kind, size) -> Printf.sprintf "%s ^ %s" (kindToLustre kind) size
     | TypeName ident -> ident
 
@@ -139,7 +139,7 @@ let rec exprToLustre = function
 and applyBlkToLustre = function
     | MakeStmt (ident, _) -> Printf.sprintf "make %s" ident
     | FlattenStmt (ident, _) -> Printf.sprintf "flatten %s" ident
-    | HighOrderStmt (op, stmt, integer) -> Printf.sprintf "%s %s<<%s>>" (highOrderOpToLustre op) (prefixStmtToLustre stmt) integer
+    | HighOrderStmt (op, stmt, integer) -> Printf.sprintf "(%s %s<<%s>>)" (highOrderOpToLustre op) (prefixStmtToLustre stmt) integer
     | PrefixStmt stmt -> prefixStmtToLustre stmt
     | MapwDefaultStmt (stmt, integer, expr, exprs) -> Printf.sprintf "mapw %s<<%s>> if %s default (%s)" (prefixStmtToLustre stmt) integer (exprToLustre expr) (exprToLustre exprs)
     | MapwiDefaultStmt (stmt, integer, expr, exprs) -> Printf.sprintf "mapwi %s<<%s>> if %s default (%s)" (prefixStmtToLustre stmt) integer (exprToLustre expr) (exprToLustre exprs)
@@ -159,6 +159,9 @@ let declStmtToLustre = function
 let assignStmtToLustre depth stmt = match stmt with
     AssignStmt (lhs, expr, _, _, _, _) -> indent depth (Printf.sprintf "%s = %s;" (lhsToLustre lhs) (exprToLustre expr))
 
+let localVarStmtToLustre depth stmt = match stmt with
+    DeclStmt (ident, kind, comment) -> indent depth (Printf.sprintf "%s: %s;" ident (kindToLustre kind))
+
 let paramBlkToLustre = function
     ParamBlk (decls) -> String.concat "; " (List.map declStmtToLustre decls)
 
@@ -166,17 +169,28 @@ let returnBlkToLustre = function
     ReturnBlk (decls) -> String.concat "; " (List.map declStmtToLustre decls)
 
 let bodyBlkToLustre depth blk = match blk with
-    BodyBlk (decls, eqs) -> String.concat "" [
+    | BodyBlk ([], eqs) -> String.concat "" [
         indent depth "let";
         String.concat "" (List.map (assignStmtToLustre (depth + 1)) eqs);
         indent depth "tel";
-    ]
+      ]
+    | BodyBlk (decls, eqs) -> String.concat "" [
+        indent depth "var";
+        String.concat "" (List.map (localVarStmtToLustre (depth + 1)) decls);
+        indent depth "let";
+        String.concat "" (List.map (assignStmtToLustre (depth + 1)) eqs);
+        indent depth "tel";
+      ]
 
 let typeStmtToLustre depth stmt = match stmt with
     TypeStmt (ident, kind, comment) -> indent depth (Printf.sprintf "%s = %s;" ident (kindToLustre kind))
 
 let constStmtToLustre depth stmt = match stmt with
     ConstStmt (ident, kind, value, comment) -> indent depth (Printf.sprintf "%s: %s = %s;" ident (kindToLustre kind) (valueToLustre value))
+
+let nodeKindToLustre = function
+    | Function -> "function"
+    | Node -> "node"
 
 let stmtBlkToLustre depth blk = match blk with
     | TypeBlk blk -> String.concat "" [
@@ -190,7 +204,7 @@ let stmtBlkToLustre depth blk = match blk with
         "\n"
       ]
     | NodeBlk (kind, _, ident, comment, paramBlk, returnBlk, bodyBlk) -> String.concat "" [
-        indent depth (Printf.sprintf "function %s(%s)" ident (paramBlkToLustre paramBlk));
+        indent depth (Printf.sprintf "%s %s(%s)" (nodeKindToLustre kind) ident (paramBlkToLustre paramBlk));
         indent depth (Printf.sprintf "returns(%s)" (returnBlkToLustre returnBlk));
         bodyBlkToLustre (depth + 1) bodyBlk;
       ]
