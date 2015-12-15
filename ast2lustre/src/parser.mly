@@ -87,7 +87,7 @@ stmtBlkYs:
 stmtBlkY:
 		typeBlkY	{$1}
 	|	constBlkY	{$1}
-	|	nodeBlkY	{$1} 
+	|	nodeBlkY	{$1}
 ;
 
 nodeBlkY:
@@ -165,7 +165,7 @@ arrDimExprY:
 
 arrIdxExprY:
 	ARRAY_INDEX LPAREN kindY COMMA clockY COMMA exprY COMMA intValueY RPAREN
-		{ArrDimExpr($3,$5,$7,$9)}
+		{ArrIdxExpr($3,$5,$7,$9)}
 ;
 
 arrSliceExprY:
