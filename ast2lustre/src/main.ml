@@ -198,15 +198,15 @@ let stmtBlkToLustre depth blk = match blk with
         String.concat "" (List.map (typeStmtToLustre (depth + 1)) blk);
         "\n"
       ]
-    | ConstBlk stmt -> String.concat "" [
+    | ConstBlk blk -> String.concat "" [
         indent depth "const";
-        constStmtToLustre (depth + 1) stmt;
+        String.concat "" (List.map (constStmtToLustre (depth + 1)) blk);
         "\n"
       ]
     | NodeBlk (kind, _, ident, comment, paramBlk, returnBlk, bodyBlk) -> String.concat "" [
         indent depth (Printf.sprintf "%s %s(%s)" (nodeKindToLustre kind) ident (paramBlkToLustre paramBlk));
         indent depth (Printf.sprintf "returns(%s)" (returnBlkToLustre returnBlk));
-        bodyBlkToLustre (depth + 1) bodyBlk;
+        bodyBlkToLustre depth bodyBlk;
       ]
 
 let programBlkToLustre depth blks = match blks with

@@ -124,7 +124,7 @@ type constStmt = ConstStmt of ident * kind * value * comment
 
 type stmtBlk =
     | TypeBlk of typeStmt list
-    | ConstBlk of constStmt
+    | ConstBlk of constStmt list
     | NodeBlk of nodeKind * guid * ident * comment * paramBlk * returnBlk * bodyBlk
 
 type mainBlk = MainBlk of ident
