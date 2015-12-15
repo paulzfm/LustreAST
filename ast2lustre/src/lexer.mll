@@ -26,6 +26,7 @@ rule token = parse
 	| "real"		{ REAL }
 	| "float" 		{ FLOAT }
 
+	| "const_block"		{ CONST_BLOCK }
 	| "const"		{ CONST }
 	| "true"		{ TRUE }
 	| "false"		{ FALSE }
@@ -59,7 +60,7 @@ rule token = parse
 	| "IMPORTED"	{ IMPORTED }
 	| "NOIMPORT"	{ NOIMPORT }
 
-	| "#binop_substract"	{ BINOP_SUBSTRACT }
+	| "#binop_subtract"	{ BINOP_SUBTRACT }
 	| "#binop_multiply"	{ BINOP_MULTIPLY }
 	| "#binop_divide"	{ BINOP_DIVIDE }
 	| "#binop_div"	{ BINOP_DIV }
@@ -128,7 +129,7 @@ rule token = parse
 	| "$>=$"	{ SSSGREEQSSS }
 	| "$<$"    	{ SSSLESSSS }
 	| "$<=$"	{ SSSLESEQSSS }
-	| "dynamic_project"	{ DYNAMIC_PROJECT }
+	| "#dynamic_project"	{ DYNAMIC_PROJECT }
 	| "typename"	{ TYPENAME }
 	| "#array_dim"	{ ARRAY_DIM }
 	| "#array_index"	{ ARRAY_INDEX }
