@@ -122,11 +122,11 @@ rule token = parse
 	| "$and$"	{ SSSANDSSS }
 	| "$or$"	{ SSSORSSS }
 	| "$xor$"	{ SSSXORSSS }
-	| "$=$"	{ SSSEQSSS }
-	| "$⟨⟩$"	{ SSSMIDSSS }
-	| "$>$"	{ SSSGRESSS }
+	| "$=$"	    { SSSEQSSS }
+	| "$<>$"	{ SSSMIDSSS }
+	| "$>$"	    { SSSGRESSS }
 	| "$>=$"	{ SSSGREEQSSS }
-	| "$<$"	{ SSSLESSSS }
+	| "$<$"    	{ SSSLESSSS }
 	| "$<=$"	{ SSSLESEQSSS }
 	| "dynamic_project"	{ DYNAMIC_PROJECT }
 	| "typename"	{ TYPENAME }
