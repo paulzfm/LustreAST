@@ -41,14 +41,11 @@ let rec valueToLustre = function
     | VConstructor vs -> ""
     | VArray vals -> Printf.sprintf "[%s]" (String.concat ", " (List.map valueToLustre vals))
 
-let unOpToLustre = function
-    | SHORT -> "short"
-    | INT -> "int"
-    | FLOAT -> "float"
-    | REAL -> "real"
+let unOpToLustre op kind = match op with
     | NOT -> "not"
     | POS -> "+"
     | NEG -> "-"
+    | _ -> kindToLustre kind
 
 let binOpToLustre = function
     | ADD -> "+"
@@ -119,8 +116,8 @@ let atomExprToLustre = function
 
 let rec exprToLustre = function
     | AtomExpr expr -> atomExprToLustre expr
-    | BinOpExpr (op, kind, clock, exprL, exprR) -> Printf.sprintf "%s %s %s" (exprToLustre exprL) (binOpToLustre op) (exprToLustre exprR)
-    | UnOpExpr (op, kind, clock, expr) -> Printf.sprintf "%s %s" (unOpToLustre op) (exprToLustre expr)
+    | BinOpExpr (op, kind, clock, exprL, exprR) -> Printf.sprintf "(%s %s %s)" (exprToLustre exprL) (binOpToLustre op) (exprToLustre exprR)
+    | UnOpExpr (op, kind, clock, expr) -> Printf.sprintf "(%s %s)" (unOpToLustre op kind) (exprToLustre expr)
     | IfExpr (_, _, exprC, exprT, exprF) -> Printf.sprintf "if %s then %s else %s" (exprToLustre exprC) (exprToLustre exprT) (exprToLustre exprF)
     | SwitchExpr (_, _, expr, cases) -> Printf.sprintf "case %s of" (exprToLustre expr)
     | TempoPreExpr (_, _, expr) -> Printf.sprintf "pre %s" (exprToLustre expr)
@@ -130,7 +127,7 @@ let rec exprToLustre = function
     | ConstructExpr (ident, _, _) -> ident
     | ConstructArrExpr (_, _, exprs) -> Printf.sprintf "[%s]" (String.concat ", " (List.map exprToLustre exprs))
     | MixedConstructorExpr (_, _, expr1, labels, expr2) -> Printf.sprintf "%s with %s = %s" (exprToLustre expr1) (String.concat "" (List.map labelIdxToLustre labels)) (exprToLustre expr2)
-    | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "%s ^ %s" (exprToLustre expr) integer
+    | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "(%s ^ %s)" (exprToLustre expr) integer
     | ArrIdxExpr (_, _, expr, idx) -> Printf.sprintf "%s[%s]" (exprToLustre expr) idx
     | ArrSliceExpr _ -> ""
     | ApplyExpr (_, _, blk, exprs) -> Printf.sprintf "%s(%s)" (applyBlkToLustre blk) (String.concat ", " (List.map exprToLustre exprs))
@@ -207,6 +204,7 @@ let stmtBlkToLustre depth blk = match blk with
         indent depth (Printf.sprintf "%s %s(%s)" (nodeKindToLustre kind) ident (paramBlkToLustre paramBlk));
         indent depth (Printf.sprintf "returns(%s)%s" (returnBlkToLustre returnBlk) (commentToLustre comment));
         bodyBlkToLustre depth bodyBlk;
+        "\n"
       ]
 
 let programBlkToLustre depth blks = match blks with
