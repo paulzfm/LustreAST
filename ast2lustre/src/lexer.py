@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 class Refiner(object):
 
     def __init__(self, mll_path):
@@ -36,9 +37,11 @@ class Refiner(object):
         source = open(input_file).read()
 
         for each in self.keyword_index:
-            if each in self.ignore:
-                continue
-            source = source.replace(each, '#'+each)
+            pattern = r'[^\w_]' + each + r'[^\w_]'
+            c = re.findall(pattern, source)
+            source = re.sub(pattern, '#'+each, source)
+            from IPython import embed;embed()
+            #source = source.replace(each, '#'+each)
         print source
         return source
 

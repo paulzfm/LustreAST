@@ -130,9 +130,9 @@ rule token = parse
 	| "$<=$"	{ SSSLESEQSSS }
 	| "dynamic_project"	{ DYNAMIC_PROJECT }
 	| "typename"	{ TYPENAME }
-	| "array_dim"	{ ARRAY_DIM }
-	| "array_index"	{ ARRAY_INDEX }
-	| "array_slice"	{ ARRAY_SLICE }
+	| "#array_dim"	{ ARRAY_DIM }
+	| "#array_index"	{ ARRAY_INDEX }
+	| "#array_slice"	{ ARRAY_SLICE }
 
 
 	| '('		{ LPAREN }
