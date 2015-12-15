@@ -26,10 +26,8 @@ type kind =
     | Array of kind * integer
     | TypeName of ident
 
-type construct = (ident * kind) list
-
 type value =
-    | VIdent of ident
+    | VIdent of ident * kind
     | VBool of ident
     | VShort of ident
     | VUShort of ident
@@ -74,7 +72,7 @@ type expr =
     | TempoArrowExpr of kind * clock * expr * expr
     | TempoFbyExpr of kind * clock * expr list * expr * expr list
     | FieldAccessExpr of kind * clock * expr * ident
-    | ConstructExpr of ident * construct * clock
+    | ConstructExpr of kind * clock * (ident * expr) list
     | ConstructArrExpr of kind * clock * expr list
     | MixedConstructorExpr of kind * clock * expr * labelIdx list * expr
     | ArrDimExpr of kind * clock * expr * integer
