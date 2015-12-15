@@ -154,13 +154,13 @@ let lhsToLustre = function
     | ANONYMOUS_ID -> "_"
 
 let declStmtToLustre = function
-    DeclStmt (ident, kind, comment) -> Printf.sprintf "%s: %s" ident (kindToLustre kind)
+    DeclStmt (idents, kind, comment) -> Printf.sprintf "%s: %s" (String.concat ", " idents) (kindToLustre kind)
 
 let assignStmtToLustre depth stmt = match stmt with
     AssignStmt (lhs, expr, _, _, _, _) -> indent depth (Printf.sprintf "%s = %s;" (lhsToLustre lhs) (exprToLustre expr))
 
 let localVarStmtToLustre depth stmt = match stmt with
-    DeclStmt (ident, kind, comment) -> indent depth (Printf.sprintf "%s: %s;" ident (kindToLustre kind))
+    DeclStmt (idents, kind, comment) -> indent depth (Printf.sprintf "%s: %s;" (String.concat ", " idents) (kindToLustre kind))
 
 let paramBlkToLustre = function
     ParamBlk (decls) -> String.concat "; " (List.map declStmtToLustre decls)
