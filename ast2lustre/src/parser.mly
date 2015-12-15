@@ -333,6 +333,7 @@ listExprY:
 exprsY:
 		exprY COMMA exprsY	{$1::$3}
 	|	exprY				{[$1]}
+	|						{[]}
 ;
 
 tempoPreExprY:
