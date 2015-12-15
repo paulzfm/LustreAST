@@ -7,7 +7,7 @@ open Tree
 let indent depth str = Printf.sprintf "%s%s\n" (String.make (depth * 4) ' ') str
 
 let commentToLustre = function
-    | Comment ident -> ident
+    | Comment ident -> Printf.sprintf "/* %s */" ident
     | NULL_COMMENT -> ""
 
 let clockToLustre = function
@@ -154,13 +154,13 @@ let lhsToLustre = function
     | ANONYMOUS_ID -> "_"
 
 let declStmtToLustre = function
-    DeclStmt (idents, kind, comment) -> Printf.sprintf "%s: %s" (String.concat ", " idents) (kindToLustre kind)
+    DeclStmt (idents, kind, comment) -> Printf.sprintf "%s: %s%s" (String.concat ", " idents) (kindToLustre kind) (commentToLustre comment)
 
 let assignStmtToLustre depth stmt = match stmt with
     AssignStmt (lhs, expr, _, _, _, _) -> indent depth (Printf.sprintf "%s = %s;" (lhsToLustre lhs) (exprToLustre expr))
 
 let localVarStmtToLustre depth stmt = match stmt with
-    DeclStmt (idents, kind, comment) -> indent depth (Printf.sprintf "%s: %s;" (String.concat ", " idents) (kindToLustre kind))
+    DeclStmt (idents, kind, comment) -> indent depth (Printf.sprintf "%s: %s;%s" (String.concat ", " idents) (kindToLustre kind) (commentToLustre comment))
 
 let paramBlkToLustre = function
     ParamBlk (decls) -> String.concat "; " (List.map declStmtToLustre decls)
@@ -183,10 +183,10 @@ let bodyBlkToLustre depth blk = match blk with
       ]
 
 let typeStmtToLustre depth stmt = match stmt with
-    TypeStmt (ident, kind, comment) -> indent depth (Printf.sprintf "%s = %s;" ident (kindToLustre kind))
+    TypeStmt (ident, kind, comment) -> indent depth (Printf.sprintf "%s = %s;%s" ident (kindToLustre kind) (commentToLustre comment))
 
 let constStmtToLustre depth stmt = match stmt with
-    ConstStmt (ident, kind, value, comment) -> indent depth (Printf.sprintf "%s: %s = %s;" ident (kindToLustre kind) (valueToLustre value))
+    ConstStmt (ident, kind, value, comment) -> indent depth (Printf.sprintf "%s: %s = %s;%s" ident (kindToLustre kind) (valueToLustre value) (commentToLustre comment))
 
 let nodeKindToLustre = function
     | Function -> "function"
@@ -205,7 +205,7 @@ let stmtBlkToLustre depth blk = match blk with
       ]
     | NodeBlk (kind, _, ident, comment, paramBlk, returnBlk, bodyBlk) -> String.concat "" [
         indent depth (Printf.sprintf "%s %s(%s)" (nodeKindToLustre kind) ident (paramBlkToLustre paramBlk));
-        indent depth (Printf.sprintf "returns(%s)" (returnBlkToLustre returnBlk));
+        indent depth (Printf.sprintf "returns(%s)%s" (returnBlkToLustre returnBlk) (commentToLustre comment));
         bodyBlkToLustre depth bodyBlk;
       ]
 
