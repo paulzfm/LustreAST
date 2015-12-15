@@ -95,6 +95,8 @@ rule token = parse
 	| "flatten"	{ FLATTEN }
 	| "#high_order"	{ HIGH_ORDER }
 	| "prefix"	{ PREFIX }
+	| "#param_types"	{ PARAM_TYPES }
+	| "#ret_types"		{ RET_TYPES }
 	| "#highorder_map"	{ HIGHORDER_MAP }
 	| "#highorder_fold"	{ HIGHORDER_FOLD }
 	| "#highorder_mapfold"	{ HIGHORDER_MAPFOLD }
@@ -142,7 +144,6 @@ rule token = parse
 	| ['0'-'9']+ as lxm	{ CONST_INT lxm }
 	| "true" 			{ TRUE }
 	| "false"			{ FALSE }
-	| ['0'-'9''a'-'z']* as lxm	{ GUID lxm }
 	(*************definition of float***************)
 	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
 	| '\''['a'-'z''A'-'Z']'\'' as lxm	{ CONST_CHAR (String.sub lxm 1 1) }
