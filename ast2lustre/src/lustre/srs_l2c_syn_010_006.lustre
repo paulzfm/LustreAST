@@ -1,0 +1,19 @@
+const 
+   Constant1 : Type1 = [['a', 'b'], ['c', 'd'], ['e', 'f']];
+
+type 
+   Type1 = char ^2 ^3;
+
+   function fun1()
+   returns (
+      Output1 : char ^2 ^3; 
+      Output2 : Type1)
+   var
+      _L1 : char ^2 ^3;
+      _L2 : Type1;
+   let
+      _L1 = [['a', 'b'], ['c', 'd'], ['e', 'f']];
+      _L2 = Constant1;
+      Output2 = _L1;
+      Output1 = _L2;
+   tel

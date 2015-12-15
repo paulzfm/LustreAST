@@ -1,0 +1,15 @@
+function fold_test1(
+   Input1 : bool; 
+   Input2 : bool ^10)
+returns (
+   Output1 : bool)
+var
+   _L1 : bool;
+   _L2 : bool;
+   _L3 : bool ^10;
+let
+   _L1 = ( fold $and$<<10>>)(_L2, _L3);
+   _L2 = Input1;
+   _L3 = Input2;
+   Output1 = _L1;
+tel

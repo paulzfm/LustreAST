@@ -1,0 +1,18 @@
+node fold_test5(
+   Input1 : struct1 ^10)
+returns (
+   Output1 : int; 
+   Output2 : bool)
+var
+   _L3 : int;
+   _L2 : bool;
+   _L4 : struct1 ^10;
+let
+   _L3, _L2 = ( fold (flatten struct1)<<10>>)(_L4);
+   _L4 = Input1;
+   Output1 = _L3;
+   Output2 = _L2;
+tel
+
+type
+struct1 = {L1 : int, L2 : bool};

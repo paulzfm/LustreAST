@@ -1,0 +1,22 @@
+function fun1(x1: int^5; x2: int^5)
+returns(y1:int^5; y2: int^5; y3: int^5; y4: int^5; y5: int^5; y6: real^5; y7:bool^5; y8: bool^5; y13: int^5; y14: int^5; y15: real^5; y16: float^5; y17: int^5; y18: short^5; y19: bool^5; y20: bool^5; y21: bool^5; y22: bool^5)
+let
+y1 = (mapi $+$<<5>>) (x1);
+y2 = (mapi $-$<<5>>) (x1);
+y3 = (mapi $*$<<5>>) (x1);
+y4 = (mapi $div$<<5>>) (x1);
+y5 = (mapi $mod$<<5>>) (x1);
+y6 = (mapi $/$<<5>>) (x1);
+y7 = (mapi $=$<<5>>) (x2);
+y8 = (mapi $<>$<<5>>) (x2);
+y13 = (mapi +$<<5>>) ();
+y14 = (mapi -$<<5>>) ();
+y15 = (mapi real$<<5>>) ();
+y16 = (mapi float$<<5>>) ();
+y17 = (mapi int$<<5>>) ();
+y18 = (mapi short$<<5>>) ();
+y19 = (mapi $>$<<5>>) (x1);
+y20 = (mapi $<$<<5>>) (x1);
+y21 = (mapi $>=$<<5>>) (x1);
+y22 = (mapi $<=$<<5>>) (x1);
+tel

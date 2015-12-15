@@ -1,0 +1,12 @@
+node mapi_test2(
+   Input1 : int ^10)
+returns (
+   Output1 : int ^10)
+var
+   _L2 : int ^10;
+   _L3 : bool ^1;
+let
+   _L3 = ( mapi $and$<<1>>)(_L2);
+   _L2 = Input1;
+   Output1 = _L3;
+tel

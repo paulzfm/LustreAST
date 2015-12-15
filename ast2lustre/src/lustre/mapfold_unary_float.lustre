@@ -1,0 +1,4 @@
+function fun1(x1: float) returns(y1: float)
+let
+y1 = (mapfold float$<<5>>) (x1);
+tel

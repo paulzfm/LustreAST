@@ -1,0 +1,11 @@
+type myInt = int ;
+
+function fun1 (var1 : myInt) returns (output1,output2 : myInt)
+var 
+ temp1 : int;
+let
+  output1 = var1 + temp1;
+  temp1 = 20+var1;
+  output2 = 20; 
+  _ = var1 + 23423;
+tel

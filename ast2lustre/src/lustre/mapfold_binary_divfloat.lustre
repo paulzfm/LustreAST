@@ -1,0 +1,4 @@
+function fun1(x1:real; x2: real^5) returns(y1: real)
+let
+y1 = (mapfold $/$<<5>>)(x1,x2);
+tel

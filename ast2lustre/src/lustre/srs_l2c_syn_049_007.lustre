@@ -1,0 +1,39 @@
+node fold_test2(
+   Input1 : int; 
+   Input2 : int10)
+returns (
+   Output1 : int; 
+   Output2 : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L4 : int;
+   _L5 : int10;
+let
+   _L1, _L2 = ( fold sum_dup<<10>>)(_L4, _L5);
+   _L4 = Input1;
+   _L5 = Input2;
+   Output1 = _L1;
+   Output2 = _L2;
+tel
+
+function sum_dup(
+   a : int; 
+   b : int)
+returns (
+   s1 : int; 
+   s2 : int)
+var
+   _L2 : int;
+   _L3 : int;
+   _L4 : int;
+let
+   _L2 = _L3 + _L4;
+   _L3 = a;
+   _L4 = b;
+   s1 = _L2;
+   s2 = _L2;
+tel
+
+type 
+int10 = int ^10;

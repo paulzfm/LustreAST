@@ -1,0 +1,7 @@
+type myArray1 = int ^ 2 ;
+type myArray2 = int ^ 1 + 2 ;
+
+function fun1 (var1 : myArray1; var2 : myArray2 ) returns (output1 : int)
+let
+  output1 = var1[0] + var1[1] + var2[0] + var2[1] + var2[2]; 
+tel

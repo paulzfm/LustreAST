@@ -1,0 +1,6 @@
+type myInt = int ;
+
+node Node1 (var1 : myInt) returns (output1 : myInt )
+let
+  output1 = 10 -> var1 ;
+tel

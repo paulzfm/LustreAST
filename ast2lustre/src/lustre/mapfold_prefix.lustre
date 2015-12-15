@@ -1,0 +1,22 @@
+function fun1(x1: int; x2: int^5; x3: real; x4: real^5; x5: bool; x6: bool^5; x7: float; x8: short)
+returns(y1:int; y2: int; y3: int; y4: int; y5: int; y6: real; y7:bool; y8: bool; y9: bool; y10: bool; y11: bool; y12: bool; y13: int; y14: int; y15: real; y16: float; y17: int; y18: short)
+let
+y1 = (mapfold $+$<<5>>) (x1,x2);
+y2 = (mapfold $-$<<5>>) (x1,x2);
+y3 = (mapfold $*$<<5>>) (x1,x2);
+y4 = (mapfold $div$<<5>>) (x1,x2);
+y5 = (mapfold $mod$<<5>>) (x1,x2);
+y6 = (mapfold $/$<<5>>) (x3,x4);
+y7 = (mapfold $=$<<5>>) (x5,x6);
+y8 = (mapfold $<>$<<5>>) (x5,x6);
+y9 = (mapfold $and$<<5>>) (x5,x6);
+y10 = (mapfold $or$<<5>>) (x5,x6);
+y11 = (mapfold $xor$<<5>>) (x5,x6);
+y12 = (mapfold not$<<5>>) (x5);
+y13 = (mapfold +$<<5>>) (x1);
+y14 = (mapfold -$<<5>>) (x1);
+y15 = (mapfold real$<<5>>) (x3);
+y16 = (mapfold float$<<5>>) (x7);
+y17 = (mapfold int$<<5>>) (x1);
+y18 = (mapfold short$<<5>>) (x8);
+tel

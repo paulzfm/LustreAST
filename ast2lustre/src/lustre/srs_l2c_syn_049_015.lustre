@@ -1,0 +1,18 @@
+node mapfold_test4(
+   Input1 : struct1)
+returns (
+   Output1 : int; 
+   Output2 : bool)
+var
+   _L1 : int;
+   _L2 : struct1;
+   _L4 : bool ^10;
+let
+   _L1, _L4 = ( mapfold (flatten struct1)<<10>>)(_L2);
+   _L2 = Input1;
+   Output1 = _L1;
+   Output2 = _L4;
+tel
+
+type
+struct1 = {L1 : int, L2 : bool};

@@ -1,0 +1,34 @@
+node mapfold_test2()
+returns (
+   t : int ^10)
+var
+   aux : int;
+   _L1 : int;
+   _L2 : int;
+   _L3 : int ^10;
+   _L4 : int ^10;
+let
+   _L1, _L4 = ( mapfold sum_dup<<10>>)(_L2, _L3);
+   _L2 = 0;
+   _L3 = 2 ^ 10;
+   aux = _L1;
+   t = _L4;
+tel
+
+function sum_dup(
+   a : int; 
+   b : int)
+returns (
+   s1 : int; 
+   s2 : int)
+var
+   _L2 : int;
+   _L3 : int;
+   _L4 : int;
+let
+   _L2 = _L3 + _L4;
+   _L3 = a;
+   _L4 = b;
+   s1 = _L2;
+   s2 = _L2;
+tel

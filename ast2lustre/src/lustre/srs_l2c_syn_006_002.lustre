@@ -1,0 +1,17 @@
+type 
+myInt = int ;
+myBool = bool;
+myReal = real;
+
+function fun1 (var1 : myInt ; var2 : myBool; var3 :myReal)
+ 	returns (output1 : myAnother; output2 : myBool; output3 : myReal; output4 : myChar)
+let
+  output1 = var1 + 1000000; 
+  output2 = var2 and true;
+  output3 = var3 - 12.231231234123412134123412341343;
+  output4 = 'b';
+tel
+
+type
+myChar = char;
+myAnother = myInt;

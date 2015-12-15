@@ -1,0 +1,25 @@
+type 
+   arr = s1 ^2;
+   s1 = {label1 : int};
+
+   function fun1(
+      Input1 : arr; 
+      Input2 : arr)
+   returns (
+      Output1 : int)
+   var
+      _L1 : int;
+      _L2 : arr;
+      _L3 : arr;
+      _L4 : bool;
+      _L5 : int;
+      _L6 : int;
+   let
+      _L1 = if _L4 then (_L5) else (_L6);
+      _L2 = Input1;
+      _L3 = Input2;
+      _L4 = _L2 = _L3;
+      _L5 = 1;
+      _L6 = 0;
+      Output1 = _L1;
+   tel

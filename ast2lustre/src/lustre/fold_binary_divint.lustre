@@ -1,0 +1,4 @@
+function fun1(x1: int; x2: int^5) returns(y: int)
+let
+y = (fold $div$<<5>>)(x1, x2);
+tel

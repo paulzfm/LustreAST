@@ -1,0 +1,4 @@
+function fun1(x1:bool^5; x2: bool^5) returns(y1: bool^5)
+let
+y1 = (map $xor$<<5>>)(x1,x2);
+tel

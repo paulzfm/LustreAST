@@ -1,0 +1,49 @@
+node mapfold_test3(
+   Input1 : int; 
+   Input2 : int ^10; 
+   Input3 : int ^10)
+returns (
+   Output1 : int; 
+   Output2 : int ^10; 
+   Output3 : int ^10)
+var
+   _L1 : int;
+   _L3 : int ^10;
+   _L2 : int ^10;
+   _L4 : int;
+   _L5 : int ^10;
+   _L6 : int ^10;
+let
+   _L1, _L2, _L3 = ( mapfold sum_tri<<10>>)(_L4, _L5, _L6);
+   _L4 = Input1;
+   _L5 = Input2;
+   _L6 = Input3;
+   Output1 = _L1;
+   Output2 = _L2;
+   Output3 = _L3;
+tel
+
+function sum_tri(
+   a : int; 
+   b : int; 
+   c : int)
+returns (
+   x : int; 
+   y : int; 
+   z : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L4 : int;
+   _L6 : int;
+let
+   _L1 = a;
+   _L2 = b;
+   _L3 = c;
+   x = _L4;
+   y = _L6;
+   z = _L6;
+   _L4 = _L1 + _L2;
+   _L6 = _L4 + _L3;
+tel

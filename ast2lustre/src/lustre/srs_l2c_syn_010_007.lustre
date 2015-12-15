@@ -1,0 +1,16 @@
+const 
+   s_s : s2 = {label1 : {label1 : 0}};
+
+type 
+   s1 = {label1 : int};
+   s2 = {label1 : s1};
+
+   function fun1()
+   returns (
+      Output1 : s2)
+   var
+      _L1 : s2;
+   let
+      _L1 = s_s;
+      Output1 = _L1;
+   tel

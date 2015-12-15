@@ -1,0 +1,114 @@
+function map_test2(
+   Input1 : int ^10; 
+   Input2 : int ^10; 
+   Input3 : bool ^2; 
+   Input4 : bool ^2; 
+   Input5 : bool ^2; 
+   Input6 : int ^10; 
+   Input7 : int ^10)
+returns (
+   Output1 : int ^10; 
+   Output2 : int ^10; 
+   Output3 : int ^10; 
+   Output4 : int ^10; 
+   Output5 : bool ^2; 
+   Output6 : bool ^10)
+var
+   _L1 : int ^10;
+   _L2 : bool ^2;
+   _L3 : bool ^10;
+   _L6 : int ^10;
+   _L5 : int ^10;
+   _L4 : int ^10;
+   _L9 : int ^10;
+   _L10 : int ^10;
+   _L11 : bool ^2;
+   _L12 : bool ^2;
+   _L13 : bool ^2;
+   _L14 : int ^10;
+   _L15 : int ^10;
+let
+   _L1, _L4, _L5, _L6 = ( map sum_four<<10>>)(_L9, _L10);
+   _L2 = ( map mul_sum<<2>>)(_L11, _L12, _L13);
+   _L3 = ( map intEqual<<10>>)(_L14, _L15);
+   _L9 = Input1;
+   _L10 = Input2;
+   Output1 = _L1;
+   Output2 = _L4;
+   Output3 = _L5;
+   Output4 = _L6;
+   _L11 = Input3;
+   _L12 = Input4;
+   _L13 = Input5;
+   Output5 = _L2;
+   _L14 = Input6;
+   _L15 = Input7;
+   Output6 = _L3;
+tel
+
+function sum_four(
+   Input1 : int; 
+   Input2 : int)
+returns (
+   Output1 : int; 
+   Output2 : int; 
+   Output3 : int; 
+   Output4 : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L4 : int;
+   _L5 : int;
+let
+   _L1 = _L2 + _L3 + _L4 + _L5;
+   _L2 = Input1;
+   _L3 = Input2;
+   Output1 = _L1;
+   Output2 = _L1;
+   Output3 = _L1;
+   Output4 = _L1;
+   _L4 = 12;
+   _L5 = 96;
+tel
+
+function mul_sum(
+   Input1 : bool; 
+   Input2 : bool; 
+   Input3 : bool)
+returns (
+   Output1 : bool)
+var
+   _L1 : bool;
+   _L2 : bool;
+   _L3 : bool;
+   _L4 : bool;
+let
+   _L1 = Input1;
+   _L2 = Input2;
+   _L3 = Input3;
+   Output1 = _L4;
+   _L4 = _L1 and _L2 and _L3;
+tel
+
+function intEqual(
+   Input1 : int; 
+   Input2 : int)
+returns (
+   Output1 : bool)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : bool;
+   _L4 : bool;
+   _L5 : bool;
+   _L6 : bool;
+let
+   _L1 = Input1;
+   _L2 = Input2;
+   Output1 = _L4;
+   _L3 = _L1 = _L2;
+   _L4 = if _L3 then (_L5) else (_L6);
+   _L5 = true;
+   _L6 = false;
+tel

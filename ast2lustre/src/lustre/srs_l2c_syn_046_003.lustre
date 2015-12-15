@@ -1,0 +1,27 @@
+type
+myStruct = {Field1: bool, Field2:int};
+
+node node1 (input1 ,input2 , input3 ,input4, input5 : int ; input6: myStruct; input7 : myStruct;
+            input8 , input9 , input10 , input11 , input12 : real) 
+returns (output1 : int; output2 : real)
+let
+  output1 = if (input7.Field1 and input6.Field1) then 
+                  fby( input1 + 3 + input7.Field2; 5; 239 + input2 + input3 +input4 + input5 + input6.Field2) 
+            else
+                  20; 
+  output2 = input8 + input9 + input10 - input11 * input12;
+tel
+
+node node2 (input2 , input1, input3, input4, input5: int) returns (output2 : int)
+var 
+  localvar1 : myStruct;
+let
+  output2, _ = fby( node1(input2, input1, input3, input4, input5, localvar1, localvar1,
+                12.23, 123.431, 123.0 , 923.23, 112.3 ); 2; 8,0.9);
+  localvar1 = {Field1:true, Field2:12};
+tel
+
+node node3(input1 : int) returns (output1 : int)
+let 
+  output1 = input1;
+tel

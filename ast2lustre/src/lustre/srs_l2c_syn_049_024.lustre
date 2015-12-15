@@ -1,0 +1,16 @@
+node foldi_test4(
+   Input1 : bool)
+returns (
+   Output1 : struct1)
+var
+   _L1 : struct1;
+   _L2 : bool;
+let
+   _L1 = ( foldi (make struct1)<<5>>)(_L2);
+   _L2 = Input1;
+   Output1 = _L1;
+tel
+
+
+type 
+struct1 = {L1 : int, L2 : bool};

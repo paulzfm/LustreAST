@@ -1,0 +1,18 @@
+type 
+   s = {label1 : bool, label3 : int, label2 : char};
+
+   function fun1(
+      Input1 : s; 
+      Input2 : bool)
+   returns (
+      Output1 : s)
+   var
+      _L1 : s;
+      _L2 : s;
+      _L4 : bool;
+   let
+      _L1 = (_L2 with .label1 = _L4);
+      _L2 = Input1;
+      _L4 = Input2;
+      Output1 = _L1;
+   tel

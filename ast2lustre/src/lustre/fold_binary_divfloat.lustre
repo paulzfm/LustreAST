@@ -1,0 +1,4 @@
+function fun1(x1: real; x2: real^5) returns(y: real)
+let
+y = (fold $/$<<5>>)(x1, x2);
+tel

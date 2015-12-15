@@ -1,0 +1,13 @@
+node mapfold_test1()
+returns (
+   Output2 : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int ^10;
+let
+   _L1 = ( mapfold $+$<<10>>)(_L2, _L3);
+   _L2 = 23;
+   _L3 = 1 ^ 10;
+   Output2 = _L1;
+tel

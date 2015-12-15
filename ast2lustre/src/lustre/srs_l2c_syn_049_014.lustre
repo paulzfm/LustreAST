@@ -1,0 +1,11 @@
+function mapfold_test7()
+returns (
+   Output1 : bool)
+var
+   _L1 : bool;
+   _L2 : bool;
+let
+   _L1 = ( mapfold not$<<1>>)(_L2);
+   _L2 = false;
+   Output1 = _L1;
+tel

@@ -1,0 +1,4 @@
+function fun1(x1: int^5; x2: int^5; x3: real^5; x4: int) returns(y1: int^5)
+let
+y1 = (map $+$<<5>>)(x1, x2);
+tel

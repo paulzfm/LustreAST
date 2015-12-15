@@ -1,0 +1,11 @@
+type myInt = int ;
+
+function Node1 (var1 : myInt) returns (output1: bool; output2 : bool ; output3 : bool ; output4 , output5, output6: bool)
+let
+  output1 = var1 = 12;
+  output2 = var1 <> 23;
+  output3 = 123 < var1;
+  output4 = var1 > 233;
+  output5 = var1 <= 12;
+  output6 = var1 >= 2341230;
+tel

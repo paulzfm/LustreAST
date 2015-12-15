@@ -1,0 +1,39 @@
+
+function foldwifoldwi(
+   a : int)
+returns (
+   Output14 : int; 
+   Output13 : int)
+var
+   _L3 : bool;
+   _L1 : int;
+   _L2 : int;
+   _L4 : int;
+let
+   _L1, _L2 = ( foldwi test3<<5>> if _L3)(_L4);
+   Output13 = _L1;
+   _L3 = true;
+   Output14 = _L2;
+   _L4 = a;
+tel
+
+
+function test3(
+   Input1 : int; 
+   Input2 : int)
+returns (
+   Output1 : bool; 
+   Output2 : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L8 : bool;
+let
+   _L1 = Input1;
+   _L2 = Input2;
+   Output1 = _L8;
+   _L3 = _L1 - _L2;
+   Output2 = _L3;
+   _L8 = true;
+tel
