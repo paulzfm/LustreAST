@@ -38,12 +38,19 @@ class Refiner(object):
 
         for each in self.keyword_index:
             pattern = r'[^\w_]' + each + r'[^\w_]'
-            c = re.findall(pattern, source)
-            source = re.sub(pattern, '#'+each, source)
-            from IPython import embed;embed()
+            matches=re.finditer(pattern,source)
+            k = 1
+            for each in matches:
+                index = each.start() + k
+                k += 1
+                source = self.insert_dash(source, index)
             #source = source.replace(each, '#'+each)
         print source
         return source
+
+    @staticmethod
+    def insert_dash(string, index):
+        return string[:index] + '#' + string[index:]
 
 
 if __name__ == '__main__':
