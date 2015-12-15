@@ -100,7 +100,7 @@ rule token = parse
 	| "#highorder_map"	{ HIGHORDER_MAP }
 	| "#highorder_fold"	{ HIGHORDER_FOLD }
 	| "#highorder_mapfold"	{ HIGHORDER_MAPFOLD }
-	| "#highorder_mapapi"	{ HIGHORDER_MAPI }
+	| "#highorder_mapi"	{ HIGHORDER_MAPI }
 	| "#highorder_foldi"	{ HIGHORDER_FOLDI }
 	| "#mapwi_default"	{ MAPWI_DEFAULT }
 	| "#mapw_default"	{ MAPW_DEFAULT }
