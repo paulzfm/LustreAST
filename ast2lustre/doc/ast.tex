@@ -64,7 +64,9 @@
 \section{Const Block}
 \begin{grammar} \small
 
-<constBlk> ::= const(<ident>, <type>, <value>, <comment>)
+<constBlk> ::= const_block(<constStmt> [, <constStmt>]*)
+
+<constStmt> ::= const(<ident>, <type>, <value>, <comment>)
 
 <value> ::= ID(<ident>) | BOOL(<bool>) | CHAR(<integer>) | SHORT(<integer>) | USHORT(<integer>) |
             INT(<integer>) | UINT(<integer>) | FLOAT(<float>) | REAL(<float>) |
@@ -93,7 +95,7 @@
 
 <returnBlk> ::= returns(<varDeclsStmt> [, <varDeclsStmt>]*)
 
-<varDeclsStmt> ::= var_decls(vars(<ident>), <type>, <comment>)
+<varDeclsStmt> ::= var_decls(vars(<ident> [, <ident>]*), <type>, <comment>)
 
 <bodyBlk> ::= [<localVarsBlk>, ] <assignStmt>
 
@@ -123,7 +125,7 @@
 
 <binopExpr> ::= <binop>(<type>, <clock>, <expr>, <expr>)
 
-<binop> ::= binop_add | binop_substract | binop_multiply |
+<binop> ::= binop_add | binop_subtract | binop_multiply |
             binop_divide | binop_div | binop_mod |
             binop_and | binop_or | binop_xor |
             binop_gt | binop_lt | binop_ge | binop_le |
@@ -164,7 +166,7 @@
 
 <arrSliceExpr> ::= array_slice(<type>, <clock>, <expr>, <expr>, <expr>)
 
-<listExpr> ::= list_expr(<expr> [, <expr>]*)
+<listExpr> ::= list_expr(<expr> [, <expr>]*) | list_expr()
 
 <dynamicProjExpr> ::= dynamic_project(<type>, <clock>, <expr>, <listExpr>, <expr>)
 
