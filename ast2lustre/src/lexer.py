@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-
 class Refiner(object):
 
     def __init__(self, mll_path):

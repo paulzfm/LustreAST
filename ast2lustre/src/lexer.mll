@@ -75,7 +75,7 @@ rule token = parse
 	| "#binop_neq"	{ BINOP_NEQ }
 	| "#unop_shortcast"	{ UNOP_SHORTCAST }
 	| "#unop_intcast"	{ UNOP_INTCAST }
-	| "#unop_floatcast"	{ UNOP_FLOATCAST }
+	| "#unop_floatcast"	{ UNOP_FLOATCAST }USHORT
 	| "#unop_realcast"	{ UNOP_REALCAST }
 	| "#unop_not"	{ UNOP_NOT }
 	| "#unop_pos"	{ UNOP_POS }
@@ -104,6 +104,33 @@ rule token = parse
 	| "#mapw_default"	{ MAPW_DEFAULT }
 	| "#foldw_if"	{ FOLDW_IF }
 	| "foldwi"	{ FOLDWI }
+	| "short$"	{ SHORTSSS }
+	| "int$"	{ INTSSS }
+	| "float$"	{ FLOATSSS }
+	| "real$"	{ REALSSS }
+	| "not$"	{ NOTSSS }
+	| "+$"	{ ADDSSS }
+	| "-$"	{ MINUSSSS }
+	| "$+$"	{ SSSADDSSS }
+	| "$-$"	{ SSSMINUSSSS }
+	| "$*$"	{ SSSMULSSS }
+	| "$/$"	{ SSSDIVDIVSSS }
+	| "$div$"	{ SSSDIVSSS }
+	| "$mod$"	{ SSSMODSSS }
+	| "$and$"	{ SSSANDSSS }
+	| "$or$"	{ SSSORSSS }
+	| "$xor$"	{ SSSXORSSS }
+	| "$=$"	{ SSSEQSSS }
+	| "$⟨⟩$"	{ SSSMIDSSS }
+	| "$>$"	{ SSSGRESSS }
+	| "$>=$"	{ SSSGREEQSSS }
+	| "$<$"	{ SSSLESSSS }
+	| "$<=$"	{ SSSLESEQSSS }
+	| "dynamic_project"	{ DYNAMIC_PROJECT }
+	| "typename"	{ TYPENAME }
+	| "array_dim"	{ ARRAY_DIM }
+	| "array_index"	{ ARRAY_INDEX }
+	| "array_slice"	{ ARRAY_SLICE }
 
 
 	| '('		{ LPAREN }
@@ -115,6 +142,7 @@ rule token = parse
 	| ['0'-'9']+ as lxm	{ CONST_INT lxm }
 	| "true" 			{ TRUE }
 	| "false"			{ FALSE }
+	| ['0'-'9''a'-'z']* as lxm	{ GUID }
 	(*************definition of float***************)
 	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
 	| '\''['a'-'z''A'-'Z']'\'' as lxm	{ CONST_CHAR (String.sub lxm 1 1) }
