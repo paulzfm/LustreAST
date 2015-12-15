@@ -1,0 +1,20 @@
+TopLevel(
+	main(fun2),
+	program
+	(
+		node
+		(
+			function,
+			,
+			fun2,
+			NullComment,
+			params( ),
+			returns(var_decls(vars(output2),int,(NullComment))),
+			body
+			(
+				=(lvalue(ID(output2,int,())),INT(1203),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

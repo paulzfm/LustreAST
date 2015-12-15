@@ -1,0 +1,49 @@
+TopLevel(
+	main(mapw1),
+	program
+	(
+		node
+		(
+			function,
+			,
+			mapw1,
+			NullComment,
+			params(var_decls(vars(cond),bool,(NullComment)),var_decls(vars(Input2),array(bool,INT(3 )),(NullComment)),var_decls(vars(Input3),array(int,INT(3 )),(NullComment)),var_decls(vars(Input4),array(int,INT(3 )),(NullComment))),
+			returns(var_decls(vars(Output1),int,(NullComment)),var_decls(vars(Output2),array(int,INT(3 )),(NullComment)),var_decls(vars(Output3),array(int,INT(3 )),(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L11),array(int,INT(3 )),(NullComment)),var_decls(vars(_L10),array(int,INT(3 )),(NullComment)),var_decls(vars(_L12),int,(NullComment)),var_decls(vars(_L13),bool,(NullComment)),var_decls(vars(_L14),array(bool,INT(3 )),(NullComment)),var_decls(vars(_L15),array(int,INT(3 )),(NullComment)),var_decls(vars(_L16),array(int,INT(3 )),(NullComment))),
+				=(lvalue(ID(_L12,int,()),ID(_L10,array(int,INT(3 )),()),ID(_L11,array(int,INT(3 )),())),apply_expr((int,array(int,INT(3 )),array(int,INT(3 ))),((),(),()),mapw_default(prefix(sum_bool,param_types(bool,int,int),ret_types(bool,int,int)),INT(3 ),ID(_L13,bool,()),list_expr(INT(7),INT(6)),),list_expr(ID(_L14,array(bool,INT(3 )),()),ID(_L15,array(int,INT(3 )),()),ID(_L16,array(int,INT(3 )),()))),sum_bool,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L13,bool,())),ID(cond,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L14,array(bool,INT(3 )),())),ID(Input2,array(bool,INT(3 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L15,array(int,INT(3 )),())),ID(Input3,array(int,INT(3 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L16,array(int,INT(3 )),())),ID(Input4,array(int,INT(3 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,int,())),ID(_L12,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output2,array(int,INT(3 )),())),ID(_L10,array(int,INT(3 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output3,array(int,INT(3 )),())),ID(_L11,array(int,INT(3 )),()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		node
+		(
+			function,
+			,
+			sum_bool,
+			NullComment,
+			params(var_decls(vars(Input1),bool,(NullComment)),var_decls(vars(Input2),int,(NullComment)),var_decls(vars(Input3),int,(NullComment))),
+			returns(var_decls(vars(Output1),bool,(NullComment)),var_decls(vars(Output2),int,(NullComment)),var_decls(vars(Output3),int,(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),int,(NullComment)),var_decls(vars(_L2),bool,(NullComment)),var_decls(vars(_L3),int,(NullComment)),var_decls(vars(_L4),int,(NullComment))),
+				=(lvalue(ID(_L1,int,())),binop_add(int,(),ID(_L3,int,()),ID(_L4,int,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,bool,())),ID(Input1,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L3,int,())),ID(Input2,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L4,int,())),ID(Input3,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,bool,())),ID(_L2,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output2,int,())),ID(_L1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output3,int,())),ID(_L1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

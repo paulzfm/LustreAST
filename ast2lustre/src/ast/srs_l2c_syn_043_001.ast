@@ -1,0 +1,25 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		node
+		(
+			function,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(Input1),array(int,INT(10 )),(NullComment)),var_decls(vars(Input2),int,(NullComment))),
+			returns(var_decls(vars(Output1),array(int,INT(10 )),(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),array(int,INT(10 )),(NullComment)),var_decls(vars(_L2),array(int,INT(10 )),(NullComment)),var_decls(vars(_L3),int,(NullComment)),var_decls(vars(_L5),int,(NullComment))),
+				=(lvalue(ID(_L1,array(int,INT(10 )),())),ID(Input1,array(int,INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,array(int,INT(10 )),())),mixed_constructor(array(int,INT(10 )),(),ID(_L1,array(int,INT(10 )),()),(ID(_L5,int,())),ID(_L3,int,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L3,int,())),INT(100),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,array(int,INT(10 )),())),ID(_L2,array(int,INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L5,int,())),ID(Input2,int,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

@@ -1,0 +1,23 @@
+TopLevel(
+	main(mapfold_test7),
+	program
+	(
+		node
+		(
+			function,
+			,
+			mapfold_test7,
+			NullComment,
+			params( ),
+			returns(var_decls(vars(Output1),bool,(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),bool,(NullComment)),var_decls(vars(_L2),bool,(NullComment))),
+				=(lvalue(ID(_L1,bool,())),apply_expr((bool),(()),high_order(highorder_mapfold,prefix(not$),INT(1 )),list_expr(ID(_L2,bool,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,bool,())),BOOL(false),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,bool,())),ID(_L1,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

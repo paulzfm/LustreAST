@@ -1,0 +1,43 @@
+TopLevel(
+	main(Operator1),
+	program
+	(
+		type_block
+		(
+			type(int_signal,construct(field(Value,int),field(Status,bool),field(pad1,bool)),NullComment)
+		),
+		type_block
+		(
+			type(bool_signal,construct(field(Value,bool),field(Status,bool)),NullComment)
+		),
+		type_block
+		(
+			type(device_signal,construct(field(msgCod1,int),field(msgCod2,int)),NullComment)
+		),
+		type_block
+		(
+			type(real_signal,construct(field(Value,real),field(Status,bool),field(pad1,bool),field(pad2,bool),field(pad3,bool)),NullComment)
+		),
+		node
+		(
+			function,
+			ea38f05e-a264-4fbe-936b-a5454164699c,
+			Operator1,
+			NullComment,
+			params(var_decls(vars(Input1),int,(NullComment)),var_decls(vars(Input2),int,(NullComment)),var_decls(vars(Input3),float,(NullComment))),
+			returns(var_decls(vars(Output1),int,(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L2),int,(NullComment)),var_decls(vars(_L3),int,(NullComment)),var_decls(vars(_L4),int,(NullComment)),var_decls(vars(_L5),int,(NullComment)),var_decls(vars(_L6),float,(NullComment)),var_decls(vars(_L8),int,(NullComment))),
+				=(lvalue(ID(_L2,int,())),binop_multiply(int,(),ID(_L3,int,()),ID(_L8,int,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L3,int,())),binop_add(int,(),ID(_L4,int,()),ID(_L5,int,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L4,int,())),ID(Input1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L5,int,())),ID(Input2,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L6,float,())),ID(Input3,float,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L8,int,())),unop_intcast(int,(),ID(_L6,float,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,int,())),ID(_L2,int,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)
