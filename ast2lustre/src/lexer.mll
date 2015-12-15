@@ -39,6 +39,7 @@ rule token = parse
 	| "UINT"		{ UINT }
 	| "REAL" 		{ REAL }
 	| "construct"	{ CONSTRUCT }
+	| "#label_expr"	{ LABEL_EXPR }
 	| "#label_const"	{ LABEL_CONST }
 	| "#construct_array"	{ CONSTRUCT_ARRAY }
 	| "FLOAT" 		{ FLOAT }

@@ -68,7 +68,7 @@
 
 <constStmt> ::= const(<ident>, <type>, <value>, <comment>)
 
-<value> ::= ID(<ident>) | BOOL(<bool>) | CHAR(<integer>) | SHORT(<integer>) | USHORT(<integer>) |
+<value> ::= ID(<ident>, <type>) | BOOL(<bool>) | CHAR(<integer>) | SHORT(<integer>) | USHORT(<integer>) |
             INT(<integer>) | UINT(<integer>) | FLOAT(<float>) | REAL(<float>) |
             <constructValue> | <constructArrValue>
 
@@ -148,7 +148,9 @@
 
 <tempoFbyExpr> ::= tempo_fby(<type>, <clock>, <listExpr>, <expr>, <listExpr>)
 
-<constructExpr> ::= ID(<ident>, <construct>, <clock>)
+<constructExpr> ::= construct(<type>, <clock>, [<labelExpr> ,]+)
+
+<labelExpr> ::= label_expr(<ident>, <expr>)
 
 <constructArrExpr> ::= construct_array(<type>, <clock>, <listExpr>)
 
