@@ -29,7 +29,7 @@ let rec kindToLustre = function
     | TypeName ident -> ident
 
 let rec valueToLustre = function
-    | VIdent ident -> ident
+    | VIdent (ident, _) -> ident
     | VBool ident -> ident
     | VShort ident -> Printf.sprintf "%ss" ident
     | VUShort ident -> Printf.sprintf "%sus" ident
@@ -38,7 +38,7 @@ let rec valueToLustre = function
     | VFloat ident -> Printf.sprintf "%sf" ident
     | VReal ident -> ident
     | VChar ident -> ident
-    | VConstructor vs -> ""
+    | VConstructor cons -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, v) -> Printf.sprintf "%s: %s" i (valueToLustre v)) cons))
     | VArray vals -> Printf.sprintf "[%s]" (String.concat ", " (List.map valueToLustre vals))
 
 let unOpToLustre op kind = match op with
@@ -124,7 +124,7 @@ let rec exprToLustre = function
     | TempoArrowExpr (_, _, exprL, exprR) -> Printf.sprintf "%s -> %s" (exprToLustre exprL) (exprToLustre exprR)
     | TempoFbyExpr (_, _, exprsL, expr, exprsR) -> Printf.sprintf "fby(%s; %s; %s)" (exprToLustre (List.hd exprsL)) (exprToLustre expr) (exprToLustre (List.hd exprsR))
     | FieldAccessExpr (_, _, expr, ident) -> Printf.sprintf "%s.%s" (exprToLustre expr) ident
-    | ConstructExpr (ident, _, _) -> ident
+    | ConstructExpr (_, _, cons) -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, e) -> Printf.sprintf "%s: %s" i (exprToLustre e)) cons))
     | ConstructArrExpr (_, _, exprs) -> Printf.sprintf "[%s]" (String.concat ", " (List.map exprToLustre exprs))
     | MixedConstructorExpr (_, _, expr1, labels, expr2) -> Printf.sprintf "%s with %s = %s" (exprToLustre expr1) (String.concat "" (List.map labelIdxToLustre labels)) (exprToLustre expr2)
     | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "(%s ^ %s)" (exprToLustre expr) integer
