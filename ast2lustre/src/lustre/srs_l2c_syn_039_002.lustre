@@ -1,0 +1,9 @@
+function fun1 (var1 : char) returns (output1 : int)
+let
+  output1 =
+	(case var1 of
+	| 'a' : 97
+	| 'b' : 98
+	| 'c' : 99
+	| _ : 100);
+tel

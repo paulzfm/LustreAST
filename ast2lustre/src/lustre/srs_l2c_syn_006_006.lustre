@@ -1,0 +1,26 @@
+type 
+   cond = enum {red, blue, yellow};
+   behave = enum {stop, go, trans};
+
+   function car(
+      light : cond)
+   returns (
+      choice : behave)
+   var
+      _L1 : cond;
+      _L2 : behave;
+      _L3 : behave;
+      _L4 : behave;
+      _L5 : behave;
+   let
+      _L1 = light;
+      choice = _L2;
+      _L2 = ( case _L1 of 
+       | red :   _L3
+       | yellow :   _L4
+       | _ :   _L5);
+      _L3 = stop;
+      _L4 = go;
+      _L5 = trans;
+   tel
+

@@ -1,0 +1,11 @@
+type myInt = int ;
+
+function fun1 (var1 : myInt) returns (output1,output2 : myInt; output3 : bool ; output4 : real; output5 : char )
+let
+  output1 = var1;
+  output2 = 20; 
+  _ = var1 + 23423;
+  output3 = true;
+  output4  = 23.0432;
+  output5 = 'c';
+tel

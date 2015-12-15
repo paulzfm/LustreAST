@@ -1,0 +1,7 @@
+function fun1(var1, var2: bool) returns (y1, y2, y3, y4: bool)
+let
+y1 = $and$ (var1,var2);
+y2 = $or$ (var1,var2);
+y3 = $xor$ (var1,var2);
+y4 = not$ (var1);
+tel

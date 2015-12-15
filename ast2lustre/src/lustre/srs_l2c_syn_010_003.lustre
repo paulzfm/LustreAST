@@ -1,0 +1,10 @@
+const 
+myConst1 : int = myConst2 * 123 - (  8 + 23);
+myConst2 : int = 23;
+
+function fun1 (var1 : int )
+ 	returns (output1 : int)
+let
+  output1 = var1 + myConst1 + myConst2 ; 
+tel
+

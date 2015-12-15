@@ -1,0 +1,4 @@
+function fun1(x1,x2: int) returns(y1: int)
+let
+y1 = $+$(x1, x2);
+tel

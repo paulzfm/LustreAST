@@ -1,0 +1,4 @@
+function fun1(x: short) returns(y: short)
+let
+y = (fold short$<<5>>) (x);
+tel

@@ -1,0 +1,36 @@
+node fold_test4(
+   Input1 : bool ^10; 
+   Input2 : bool ^10)
+returns (
+   Output1 : bool)
+var
+   _L1 : bool;
+   _L2 : bool;
+   _L3 : bool ^10;
+   _L4 : bool ^10;
+let
+   _L1 = ( fold mul_sum<<10>>)(_L2, _L3, _L4);
+   _L2 = true;
+   _L3 = Input1;
+   Output1 = _L1;
+   _L4 = Input2;
+tel
+
+function mul_sum(
+   Input1 : bool; 
+   Input2 : bool; 
+   Input3 : bool)
+returns (
+   Output1 : bool)
+var
+   _L1 : bool;
+   _L2 : bool;
+   _L3 : bool;
+   _L4 : bool;
+let
+   _L1 = Input1;
+   _L2 = Input2;
+   _L3 = Input3;
+   Output1 = _L4;
+   _L4 = _L1 and _L2 and _L3;
+tel

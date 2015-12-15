@@ -1,0 +1,54 @@
+function mapfold_test6(
+   Input1 : int10)
+returns (
+   Output1 : int; 
+   Output2 : int10; 
+   Output3 : int10; 
+   Output4 : real ^10)
+var
+   _L1 : int;
+   _L4 : real ^10;
+   _L3 : int ^10;
+   _L2 : int ^10;
+   _L5 : int;
+   _L6 : int10;
+let
+   _L1, _L2, _L3, _L4 = ( mapfold sum_four<<10>>)(_L5, _L6);
+   _L5 = 23;
+   _L6 = Input1;
+   Output1 = _L1;
+   Output2 = _L2;
+   Output3 = _L3;
+   Output4 = _L4;
+tel
+
+type 
+int10 = int ^10;
+
+function sum_four(
+   Input1 : int; 
+   Input2 : int)
+returns (
+   Output1 : int; 
+   Output2 : int; 
+   Output3 : int; 
+   Output4 : real)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L4 : int;
+   _L5 : int;
+   _L6 : real;
+let
+   _L1 = _L2 + _L3 + _L4 + _L5;
+   _L2 = Input1;
+   _L3 = Input2;
+   Output1 = _L1;
+   Output2 = _L1;
+   Output3 = _L1;
+   Output4 = _L6;
+   _L4 = 12;
+   _L5 = 96;
+   _L6 = 0.0;
+tel

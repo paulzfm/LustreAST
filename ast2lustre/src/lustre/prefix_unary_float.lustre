@@ -1,0 +1,5 @@
+function fun1(x1: int) returns(y1,y2: float)
+let
+y1 = float$(x1);
+y2 = float$(2.5);
+tel

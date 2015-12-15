@@ -1,0 +1,17 @@
+node fold_test3(
+   Input1 : bool)
+returns (
+   Output1 : struct1)
+var
+   _L1 : struct1;
+   _L2 : int;
+   _L3 : bool;
+let
+   _L1 = ( fold (make struct1)<<1>>)(_L2, _L3);
+   _L2 = 10;
+   _L3 = Input1;
+   Output1 = _L1;
+tel
+
+type
+struct1 = {L1 : int, L2 : bool};

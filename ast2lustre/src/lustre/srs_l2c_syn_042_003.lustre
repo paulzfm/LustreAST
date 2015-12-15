@@ -1,0 +1,31 @@
+function fun1(
+   Input1 : int ^3; 
+   Input2 : int)
+returns (
+   Output1 : int; 
+   Output2 : int; 
+   Output3 : int ^2)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L4 : int ^3;
+   _L5 : int;
+   _L6 : int ^3;
+   _L7 : int ^2 ^6;
+   _L8 : int;
+   _L10 : int ^2;
+let
+   _L1 = _L2 + _L3;
+   _L2 = (_L4.[_L5] default 0);
+   _L3 = (_L6.[_L5] default 100);
+   _L4 = Input1;
+   _L5 = Input2;
+   _L6 = [11, 12, 13];
+   Output1 = _L1;
+   _L7 = 4 ^ 2 ^ 6;
+   _L8 = (_L7.[9][1] default 200);
+   Output2 = _L8;
+   _L10 = (_L7.[5] default 13 ^ 2);
+   Output3 = _L10;
+tel

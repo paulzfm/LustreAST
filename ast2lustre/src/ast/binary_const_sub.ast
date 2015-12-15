@@ -1,0 +1,35 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		const_block
+		(
+			const(c1,int,INT(-1),NullComment),
+			const(c2,uint,UINT(3),NullComment),
+			const(c3,short,SHORT(-1),NullComment),
+			const(c4,ushort,USHORT(12),NullComment),
+			const(c5,real,REAL(0.89999999999999991),NullComment),
+			const(c6,float,REAL(1.0999999046325684),NullComment)
+		),
+		node
+		(
+			node,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(var1),int,(NullComment))),
+			returns(var_decls(vars(y1),int,(NullComment)),var_decls(vars(y2),uint,(NullComment)),var_decls(vars(y3),short,(NullComment)),var_decls(vars(y4),ushort,(NullComment)),var_decls(vars(y5),real,(NullComment)),var_decls(vars(y6),float,(NullComment))),
+			body
+			(
+				=(lvalue(ID(y1,int,())),binop_subtract(int,(),ID(var1,int,()),ID(c1,int,())),NOCALL,NOGUID,NOIMPORT,0)
+,
+				=(lvalue(ID(y2,uint,())),binop_subtract(uint,(),ID(c2,uint,()),UINT(2)),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y3,short,())),binop_subtract(short,(),ID(c3,short,()),SHORT(4)),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y4,ushort,())),binop_subtract(ushort,(),ID(c4,ushort,()),USHORT(5)),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y5,real,())),binop_subtract(real,(),ID(c5,real,()),REAL(6.5)),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y6,float,())),binop_subtract(float,(),ID(c6,float,()),FLOAT(7.5)),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

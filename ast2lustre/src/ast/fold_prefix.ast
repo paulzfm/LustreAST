@@ -1,0 +1,38 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		node
+		(
+			node,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(x1),int,(NullComment)),var_decls(vars(x2),array(int,INT(5 )),(NullComment)),var_decls(vars(x3),real,(NullComment)),var_decls(vars(x4),array(real,INT(5 )),(NullComment)),var_decls(vars(x5),bool,(NullComment)),var_decls(vars(x6),array(bool,INT(5 )),(NullComment)),var_decls(vars(x7),float,(NullComment)),var_decls(vars(x8),short,(NullComment))),
+			returns(var_decls(vars(y1),int,(NullComment)),var_decls(vars(y2),int,(NullComment)),var_decls(vars(y3),int,(NullComment)),var_decls(vars(y4),int,(NullComment)),var_decls(vars(y5),int,(NullComment)),var_decls(vars(y6),real,(NullComment)),var_decls(vars(y7),bool,(NullComment)),var_decls(vars(y8),bool,(NullComment)),var_decls(vars(y9),bool,(NullComment)),var_decls(vars(y10),bool,(NullComment)),var_decls(vars(y11),bool,(NullComment)),var_decls(vars(y12),bool,(NullComment)),var_decls(vars(y13),int,(NullComment)),var_decls(vars(y14),int,(NullComment)),var_decls(vars(y15),real,(NullComment)),var_decls(vars(y16),float,(NullComment)),var_decls(vars(y17),int,(NullComment)),var_decls(vars(y18),short,(NullComment))),
+			body
+			(
+				=(lvalue(ID(y1,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix($+$),INT(5 )),list_expr(ID(x1,int,()),ID(x2,array(int,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,
+				=(lvalue(ID(y2,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix($-$),INT(5 )),list_expr(ID(x1,int,()),ID(x2,array(int,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y3,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix($*$),INT(5 )),list_expr(ID(x1,int,()),ID(x2,array(int,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y4,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix($div$),INT(5 )),list_expr(ID(x1,int,()),ID(x2,array(int,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y5,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix($mod$),INT(5 )),list_expr(ID(x1,int,()),ID(x2,array(int,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y6,real,())),apply_expr((real),(()),high_order(highorder_fold,prefix($/$),INT(5 )),list_expr(ID(x3,real,()),ID(x4,array(real,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y7,bool,())),apply_expr((bool),(()),high_order(highorder_fold,prefix($=$),INT(5 )),list_expr(ID(x5,bool,()),ID(x6,array(bool,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y8,bool,())),apply_expr((bool),(()),high_order(highorder_fold,prefix($<>$),INT(5 )),list_expr(ID(x5,bool,()),ID(x6,array(bool,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y9,bool,())),apply_expr((bool),(()),high_order(highorder_fold,prefix($and$),INT(5 )),list_expr(ID(x5,bool,()),ID(x6,array(bool,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y10,bool,())),apply_expr((bool),(()),high_order(highorder_fold,prefix($or$),INT(5 )),list_expr(ID(x5,bool,()),ID(x6,array(bool,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y11,bool,())),apply_expr((bool),(()),high_order(highorder_fold,prefix($xor$),INT(5 )),list_expr(ID(x5,bool,()),ID(x6,array(bool,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y12,bool,())),apply_expr((bool),(()),high_order(highorder_fold,prefix(not$),INT(5 )),list_expr(ID(x5,bool,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y13,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix(+$),INT(5 )),list_expr(ID(x1,int,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y14,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix(-$),INT(5 )),list_expr(ID(x1,int,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y15,real,())),apply_expr((real),(()),high_order(highorder_fold,prefix(real$),INT(5 )),list_expr(ID(x3,real,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y16,float,())),apply_expr((float),(()),high_order(highorder_fold,prefix(float$),INT(5 )),list_expr(ID(x7,float,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y17,int,())),apply_expr((int),(()),high_order(highorder_fold,prefix(int$),INT(5 )),list_expr(ID(x1,int,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y18,short,())),apply_expr((short),(()),high_order(highorder_fold,prefix(short$),INT(5 )),list_expr(ID(x8,short,()))),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

@@ -1,0 +1,7 @@
+function fun1 (var1 :int; var2: real; var3: float; var4: short) returns (y1: int; y2: real; y3: float; y4: short)
+let
+  y1 = - var1;
+  y2 = - var2;
+  y3 = - var3;
+  y4 = - var4;
+tel

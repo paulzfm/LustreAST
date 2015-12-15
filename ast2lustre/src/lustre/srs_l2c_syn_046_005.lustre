@@ -1,0 +1,14 @@
+node fun2 () returns ()
+var 
+output2 : int;
+let
+  output2 = Node1(false);
+tel
+
+node Node1(input1 : bool) returns (output1 : int)
+let
+  output1 = if ( input1 ) then 
+               fby(1;23;1200)
+            else
+               1300;
+tel

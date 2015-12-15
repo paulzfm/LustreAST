@@ -1,0 +1,52 @@
+TopLevel(
+	main(DimArray),
+	program
+	(
+		type_block
+		(
+			type(int_signal,construct(field(Value,int),field(Status,bool),field(pad1,bool)),NullComment)
+		),
+		type_block
+		(
+			type(bool_signal,construct(field(Value,bool),field(Status,bool)),NullComment)
+		),
+		type_block
+		(
+			type(device_signal,construct(field(msgCod1,int),field(msgCod2,int)),NullComment)
+		),
+		type_block
+		(
+			type(real_signal,construct(field(Value,real),field(Status,bool),field(pad1,bool),field(pad2,bool),field(pad3,bool)),NullComment)
+		),
+		type_block
+		(
+			type(TypeArray1,array(bool,INT(10 )),NullComment)
+		),
+		type_block
+		(
+			type(TypeArray2,array(typename(TypeArray1),INT(10 )),NullComment)
+		),
+		type_block
+		(
+			type(TypeArray3,array(array(bool,INT(10 )),INT(10 )),NullComment)
+		),
+		node
+		(
+			node,
+			c00db79d-342a-4fa1-997f-16b03c6b6bbd,
+			DimArray,
+			NullComment,
+			params(var_decls(vars(Input1),typename(TypeArray3),(NullComment)),var_decls(vars(Input2),typename(TypeArray1),(NullComment))),
+			returns(var_decls(vars(Output1),typename(TypeArray1),(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),typename(TypeArray3),(NullComment)),var_decls(vars(_L2),typename(TypeArray1),(NullComment)),var_decls(vars(_L4),typename(TypeArray1),(NullComment))),
+				=(lvalue(ID(_L1,array(array(bool,INT(10 )),INT(10 )),())),ID(Input1,array(array(bool,INT(10 )),INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,array(bool,INT(10 )),())),ID(_L2,array(bool,INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,array(bool,INT(10 )),())),dynamic_project(array(bool,INT(10 )),(),ID(_L1,array(array(bool,INT(10 )),INT(10 )),()),(INT(1)),ID(_L4,array(bool,INT(10 )),())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L4,array(bool,INT(10 )),())),ID(Input2,array(bool,INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

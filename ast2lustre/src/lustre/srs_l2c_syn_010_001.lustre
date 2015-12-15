@@ -1,0 +1,13 @@
+type myStruct2 = { Field1 : bool , Field2 : myStruct };
+type myStruct = { Field1 : bool , Field2 : int } ;
+const
+myConst1 : myStruct2 = {Field1 : true, Field2 : {Field1 : false, Field2 : 232} };
+myConst2 : { Field1 : bool , Field2 : int }  = { Field1: true , Field2:20 } ;
+
+function fun1 (var1 : myStruct; var2 : myStruct; var3 : myStruct2) 
+        returns (output1 : myStruct; output2 : myStruct; output3 : myStruct2)
+let
+  output1 = var1; 
+  output2 = { Field1 : var2.Field1 and myConst1.Field1, Field2 : var2.Field2};
+  output3 = { Field1 : var3.Field1, Field2 : var3.Field2};
+tel

@@ -1,0 +1,13 @@
+function fun1()
+returns (
+   Output1 : {label : int ^1}; 
+   Output2 : {label : int} ^1)
+var
+   _L1 : {label : int ^1};
+   _L2 : {label : int} ^1;
+let
+   _L1 = {label : [1]};
+   Output1 = _L1;
+   _L2 = [{label : 1}];
+   Output2 = _L2;
+tel

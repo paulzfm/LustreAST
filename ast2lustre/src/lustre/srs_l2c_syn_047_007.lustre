@@ -1,0 +1,50 @@
+function mapw1(
+   cond : bool; 
+   Input2 : bool ^3; 
+   Input3 : int ^3; 
+   Input4 : int ^3)
+returns (
+   Output1 : int; 
+   Output2 : int ^3; 
+   Output3 : int ^3)
+var
+   _L11 : int ^3;
+   _L10 : int ^3;
+   _L12 : int;
+   _L13 : bool;
+   _L14 : bool ^3;
+   _L15 : int ^3;
+   _L16 : int ^3;
+let
+   _L12, _L10, _L11 = ( mapw sum_bool<<3>> if _L13 default (7, 6))(_L14, _L15, _L16);
+   _L13 = cond;
+   _L14 = Input2;
+   _L15 = Input3;
+   _L16 = Input4;
+   Output1 = _L12;
+   Output2 = _L10;
+   Output3 = _L11;
+tel
+
+function sum_bool(
+   Input1 : bool; 
+   Input2 : int; 
+   Input3 : int)
+returns (
+   Output1 : bool; 
+   Output2 : int; 
+   Output3 : int)
+var
+   _L1 : int;
+   _L2 : bool;
+   _L3 : int;
+   _L4 : int;
+let
+   _L1 = _L3 + _L4;
+   _L2 = Input1;
+   _L3 = Input2;
+   _L4 = Input3;
+   Output1 = _L2;
+   Output2 = _L1;
+   Output3 = _L1;
+tel

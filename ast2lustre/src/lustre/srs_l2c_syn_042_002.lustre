@@ -1,0 +1,8 @@
+const size1 : int = 10;
+const size2 : int = 20;
+
+function fun1 (var1 : int) returns (output1 : int ^ size1; output2 : int ^ size1 ^ size2)
+let
+  output1 = var1 ^ size1  ; 
+  output2 = var1 ^ size1 ^ size2; 
+tel

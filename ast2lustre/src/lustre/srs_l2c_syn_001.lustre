@@ -1,0 +1,7 @@
+const myVar : myInt = 10;
+function fun1 (var1 : myInt) returns (output1 : myInt)
+let
+  output1 = var1; 
+tel
+
+type myInt = int ;

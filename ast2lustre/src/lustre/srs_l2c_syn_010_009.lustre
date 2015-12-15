@@ -1,0 +1,16 @@
+const 
+   sa : str_arr = {label1 : [0]};
+
+type 
+   str_arr = {label1 : arr};
+   arr = int ^1;
+
+   function fun1()
+   returns (
+      Output1 : str_arr)
+   var
+      _L1 : str_arr;
+   let
+      _L1 = sa;
+      Output1 = _L1;
+   tel

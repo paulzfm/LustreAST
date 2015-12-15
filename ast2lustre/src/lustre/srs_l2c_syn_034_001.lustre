@@ -1,0 +1,24 @@
+type 
+   s1 = {label1 : int, label2 : bool};
+
+   function fun1(
+      Input1 : s1; 
+      Input2 : s1)
+   returns (
+      Output1 : int)
+   var
+      _L1 : bool;
+      _L2 : int;
+      _L3 : s1;
+      _L4 : s1;
+      _L5 : int;
+      _L6 : int;
+   let
+      _L1 = _L3 = _L4;
+      _L2 = if _L1 then (_L5) else (_L6);
+      _L3 = Input1;
+      _L4 = Input2;
+      _L5 = 1;
+      _L6 = 0;
+      Output1 = _L2;
+   tel

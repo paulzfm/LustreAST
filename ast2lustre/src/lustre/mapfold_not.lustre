@@ -1,0 +1,4 @@
+function fun1(x1: bool) returns(y1: bool)
+let
+y1 = (mapfold not$<<5>>)(x1);
+tel

@@ -1,0 +1,42 @@
+TopLevel(
+	main(map_test3),
+	program
+	(
+		node
+		(
+			function,
+			,
+			map_test3,
+			NullComment,
+			params(var_decls(vars(Input1),array(bool,INT(10 )),(NullComment)),var_decls(vars(Input2),array(bool,INT(10 )),(NullComment))),
+			returns(var_decls(vars(Output1),array(array(bool,INT(2 )),INT(10 )),(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),array(array(bool,INT(2 )),INT(10 )),(NullComment)),var_decls(vars(_L2),array(bool,INT(10 )),(NullComment)),var_decls(vars(_L3),array(bool,INT(10 )),(NullComment))),
+				=(lvalue(ID(_L1,array(array(bool,INT(2 )),INT(10 )),())),apply_expr((array(array(bool,INT(2 )),INT(10 ))),(()),high_order(highorder_map,prefix(make_array,param_types(bool,bool),ret_types(array(bool,INT(2 )))),INT(10 )),list_expr(ID(_L2,array(bool,INT(10 )),()),ID(_L3,array(bool,INT(10 )),()))),make_array,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,array(bool,INT(10 )),())),ID(Input1,array(bool,INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L3,array(bool,INT(10 )),())),ID(Input2,array(bool,INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,array(array(bool,INT(2 )),INT(10 )),())),ID(_L1,array(array(bool,INT(2 )),INT(10 )),()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		node
+		(
+			function,
+			,
+			make_array,
+			NullComment,
+			params(var_decls(vars(Input1),bool,(NullComment)),var_decls(vars(Input2),bool,(NullComment))),
+			returns(var_decls(vars(Output1),array(bool,INT(2 )),(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),bool,(NullComment)),var_decls(vars(_L2),bool,(NullComment)),var_decls(vars(_L11),array(bool,INT(2 )),(NullComment))),
+				=(lvalue(ID(_L1,bool,())),ID(Input1,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,bool,())),ID(Input2,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L11,array(bool,INT(2 )),())),construct_array(array(bool,INT(2 )),(),list_expr(ID(_L1,bool,()),ID(_L2,bool,()))),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,array(bool,INT(2 )),())),ID(_L11,array(bool,INT(2 )),()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

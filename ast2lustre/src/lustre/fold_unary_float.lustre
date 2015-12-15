@@ -1,0 +1,4 @@
+function fun1(x: float) returns(y: float)
+let
+y = (fold float$<<5>>) (x);
+tel

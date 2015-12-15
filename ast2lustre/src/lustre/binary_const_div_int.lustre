@@ -1,0 +1,14 @@
+const
+c1: int = 5 div 3;
+c2: uint = 6u div 4u;
+c3: short = 5s div 2s;
+c4: ushort = 7us div 3us;
+
+function fun1(var1: int)
+returns(y1: int; y2: uint; y3: short; y4: ushort)
+let
+y1 = c1 div var1;
+y2 = c2 div 2u;
+y3 = c3 div 4s;
+y4 = c4 div 5us;
+tel

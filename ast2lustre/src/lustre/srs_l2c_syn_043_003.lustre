@@ -1,0 +1,13 @@
+  function fun1()
+   returns (
+      Output1 : {label1 : {label1 : int ^2}})
+   var
+      _L1 : {label1 : {label1 : int ^2}};
+      _L2 : {label1 : {label1 : int ^2}};
+      _L3 : int;
+   let
+      _L1 = {label1 : {label1 : [2, 3]}};
+      _L2 = (_L1 with .label1.label1[0] = _L3);
+      _L3 = 0;
+      Output1 = _L2;
+   tel

@@ -1,0 +1,6 @@
+function fun1 (var1 : int) returns (output1 : int)
+var struct1 : {field1 : int, field2 : real, field3 : bool};
+let
+  struct1 = {field1 : var1, field2 : 2.0, field3 : true};
+  output1 = struct1.field1;
+tel

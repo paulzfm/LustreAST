@@ -1,0 +1,25 @@
+TopLevel(
+	main(root),
+	program
+	(
+		type_block
+		(
+			type(struct1,construct(field(label1,int),field(label2,bool)),NullComment),
+			type(struct_type,construct(field(label1,int),field(label2,array(bool,INT(3 ))),field(label3,typename(struct1))),NullComment)
+		),
+		node
+		(
+			node,
+			,
+			root,
+			NullComment,
+			params(var_decls(vars(Input1),int,(NullComment)),var_decls(vars(Input2),array(bool,INT(3 )),(NullComment)),var_decls(vars(Input3),typename(struct1),(NullComment))),
+			returns(var_decls(vars(Output1),typename(struct_type),(NullComment))),
+			body
+			(
+				=(lvalue(ID(Output1,construct(field(label1,int),field(label2,array(bool,INT(3 ))),field(label3,construct(field(label1,int),field(label2,bool)))),())),apply_expr((construct(field(label1,int),field(label2,array(bool,INT(3 ))),field(label3,construct(field(label1,int),field(label2,bool))))),(()),make(struct_type,construct(field(label1,int),field(label2,array(bool,INT(3 ))),field(label3,construct(field(label1,int),field(label2,bool))))),list_expr(ID(Input1,int,()),ID(Input2,array(bool,INT(3 )),()),ID(Input3,construct(field(label1,int),field(label2,bool)),()))),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

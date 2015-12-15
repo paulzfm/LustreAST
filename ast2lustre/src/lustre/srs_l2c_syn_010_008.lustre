@@ -1,0 +1,9 @@
+function fun1()
+returns (
+   Output1 : {label : {label : int}})
+var
+   _L1 : {label : {label : int}};
+let
+   _L1 = {label : {label : 0}};
+   Output1 = _L1;
+tel

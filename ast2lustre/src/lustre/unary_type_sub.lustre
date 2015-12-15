@@ -1,0 +1,8 @@
+type
+type1 = int^-(-5);
+type2 = real^-(-6s);
+function fun1 (var1: type1; var2: type2) returns (y1: int; y2: real)
+let
+  y1 = var1[2];
+  y2 = - var2[3];
+tel

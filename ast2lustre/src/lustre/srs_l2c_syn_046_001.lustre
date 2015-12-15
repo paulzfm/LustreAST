@@ -1,0 +1,9 @@
+function fun1 (var1 : int) returns (output1 : int)
+let
+  output1 = var1; 
+tel
+
+function fun2 (var2 : int) returns (output2 : int)
+let
+  output2 = fun1(var2);
+tel

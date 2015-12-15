@@ -1,0 +1,4 @@
+function fun1(x1: short) returns(y1: short)
+let
+y1 = (mapfold short$<<5>>) (x1);
+tel

@@ -1,0 +1,20 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		node
+		(
+			node,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(x1),real,(NullComment)),var_decls(vars(x2),array(real,INT(5 )),(NullComment))),
+			returns(var_decls(vars(y),real,(NullComment))),
+			body
+			(
+				=(lvalue(ID(y,real,())),apply_expr((real),(()),high_order(highorder_fold,prefix($/$),INT(5 )),list_expr(ID(x1,real,()),ID(x2,array(real,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

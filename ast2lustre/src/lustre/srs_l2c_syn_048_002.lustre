@@ -1,0 +1,11 @@
+type myInt = int ;
+
+function Node1 (var1 : myInt) returns (output1, output2, output3, output4, output5: myInt ; output6 : real)
+let
+  output1 = $+$ (var1, 23);
+  output2 = $-$ (var1, 112);
+  output3 = $*$ (var1, 1203);
+  output6 = $/$ (23.03, 132.9);
+  output5 = $mod$ (var1, 2123);
+  output4 = $div$ (var1, 23);
+tel

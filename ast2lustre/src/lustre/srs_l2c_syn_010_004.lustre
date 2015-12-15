@@ -1,0 +1,28 @@
+const 
+   light_blue : lights = blue;
+
+type 
+   lights = enum {red, yellow, blue};
+
+   node enum_const(
+      control : bool)
+   returns (
+      Output1 : lights)
+   var
+      _L1 : lights;
+      _L2 : bool;
+      _L3 : lights;
+      _L4 : lights;
+   let
+      _L1 = if _L2 then (_L3) else (_L4);
+      _L2 = control;
+      _L3 = light_blue;
+      _L4 = red;
+      Output1 = _L1;
+   tel
+
+node root ()
+     returns ( Output1 : lights )
+     let
+     Output1 = enum_const(true);
+     tel

@@ -1,0 +1,30 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		const_block
+		(
+			const(size1,int,INT(10),NullComment)
+		),
+		const_block
+		(
+			const(size2,int,INT(20),NullComment)
+		),
+		node
+		(
+			function,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(var1),int,(NullComment))),
+			returns(var_decls(vars(output1),array(int,INT(10 )),(NullComment)),var_decls(vars(output2),array(array(int,INT(10 )),INT(20 )),(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,array(int,INT(10 )),())),array_dim((array(int,INT(10 ))),(()),ID(var1,int,()),INT(10)),NOCALL,NOGUID,NOIMPORT,0)
+,
+				=(lvalue(ID(output2,array(array(int,INT(10 )),INT(20 )),())),array_dim((array(array(int,INT(10 )),INT(20 ))),(()),array_dim((array(int,INT(10 ))),(()),ID(var1,int,()),INT(10)),INT(20)),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)
