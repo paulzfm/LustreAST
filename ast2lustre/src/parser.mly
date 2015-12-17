@@ -53,10 +53,11 @@
 %token ADDSSS MINUSSSS SSSADDSSS SSSMINUSSSS SSSMULSSS SSSDIVDIVSSS SSSDIVSSS SSSMODSSS SSSANDSSS SSSORSSS SSSXORSSS
 %token SSSEQSSS SSSMIDSSS SSSGRESSS SSSGREEQSSS SSSLESSSS SSSLESEQSSS
 %token SHORTSSS INTSSS FLOATSSS REALSSS NOTSSS
+%token ANONYMOUS_ID
 
 /* value */
 %token TRUE FALSE
-%token <string> IDENT COMMENT CONST_INT CONST_FLO CONST_CHAR
+%token <string> IDENT COMMENT CONST_INT CONST_FLO
 %token NULLCOMMENT
 
 
@@ -119,12 +120,14 @@ bodyBlkY:
 
 localVarYs:
 		LOCALVARS LPAREN declStmtYs RPAREN COMMA	{$3}
-	|													{[]}
+	|	LOCALVARS LPAREN RPAREN COMMA				{[]}
+	|												{[]}
 ;
 
 assignStmtYs:
 		assignStmtY COMMA assignStmtYs	{$1::$3}
 	|	assignStmtY						{[$1]}
+	|									{[]}
 ;
 
 assignStmtY:
@@ -134,7 +137,7 @@ assignStmtY:
 
 lhsY:
 		ID LPAREN IDENT COMMA kindY COMMA clockY RPAREN	{ID($3, $5, $7)}
-/* ? I don't understand annoymous_id */
+	|	ANONYMOUS_ID									{ANONYMOUS_ID}
 ;
 
 exprY:
@@ -369,7 +372,7 @@ caseStmtY:
 valueY:
 		ID LPAREN IDENT COMMA kindY RPAREN	{VIdent($3, $5)}
 	|	BOOL LPAREN boolY RPAREN			{VBool($3)}
-	|	CHAR LPAREN CONST_CHAR RPAREN		{VChar($3)}
+	|	CHAR LPAREN CONST_INT RPAREN		{VChar($3)}
 	|	SHORT LPAREN CONST_INT RPAREN		{VShort($3)}
 	|	USHORT LPAREN CONST_INT RPAREN		{VUShort($3)}
 	|	INT LPAREN CONST_INT RPAREN			{VInt($3)}
@@ -458,7 +461,7 @@ atomExprY:
 	|	USHORT LPAREN CONST_INT RPAREN					{EUShort($3)}
 	|	REAL LPAREN CONST_FLO RPAREN					{EReal($3)}
 	|	FLOAT LPAREN CONST_FLO RPAREN					{EFloat($3)}
-	|	CHAR LPAREN CONST_CHAR RPAREN					{EChar($3)}
+	|	CHAR LPAREN CONST_INT RPAREN					{EChar($3)}
 	|	BOOL LPAREN boolY RPAREN					{EBool($3)}
 ;
 
@@ -495,6 +498,7 @@ clockY:
 declStmtYs:
 		declStmtY COMMA declStmtYs	{$1::$3}
 	|	declStmtY					{[$1]}
+	|								{[]}
 ;
 
 declStmtY:

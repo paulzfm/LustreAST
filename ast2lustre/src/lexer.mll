@@ -135,6 +135,7 @@ rule token = parse
 	| "#array_dim"	{ ARRAY_DIM }
 	| "#array_index"	{ ARRAY_INDEX }
 	| "#array_slice"	{ ARRAY_SLICE }
+	| "#anonymous_id"	{ ANONYMOUS_ID }
 
 
 	| '('		{ LPAREN }
@@ -148,7 +149,6 @@ rule token = parse
 	| "false"			{ FALSE }
 	(*************definition of float***************)
 	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
-	| '\''['a'-'z''A'-'Z']'\'' as lxm	{ CONST_CHAR (String.sub lxm 1 1) }
 	| ['a'-'z''A'-'Z''_']['a'-'z''A'-'Z''0'-'9''_']* as lxm	{ IDENT (lxm) }
 
   	| eof            { EOF }
