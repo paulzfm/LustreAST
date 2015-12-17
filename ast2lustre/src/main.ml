@@ -30,7 +30,7 @@ let rec kindToLustre = function
 
 let rec valueToLustre = function
     | VIdent (ident, _) -> ident
-    | VBool ident -> ident
+    | VBool ident -> if ident = "TRUE" then "true" else "false"
     | VShort ident -> Printf.sprintf "%ss" ident
     | VUShort ident -> Printf.sprintf "%sus" ident
     | VInt ident -> ident
@@ -105,7 +105,7 @@ let prefixStmtToLustre = function
 let atomExprToLustre = function
     | EID (ident, kind, clock) -> ident
     | EIdent ident -> ident
-    | EBool ident -> ident
+    | EBool ident -> if ident = "TRUE" then "true" else "false"
     | EChar ident -> ident
     | EShort ident -> Printf.sprintf "%ss" ident
     | EUShort ident -> Printf.sprintf "%sus" ident
@@ -126,7 +126,7 @@ let rec exprToLustre = function
     | FieldAccessExpr (_, _, expr, ident) -> Printf.sprintf "%s.%s" (exprToLustre expr) ident
     | ConstructExpr (_, _, cons) -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, e) -> Printf.sprintf "%s: %s" i (exprToLustre e)) cons))
     | ConstructArrExpr (_, _, exprs) -> Printf.sprintf "[%s]" (String.concat ", " (List.map exprToLustre exprs))
-    | MixedConstructorExpr (_, _, expr1, labels, expr2) -> Printf.sprintf "%s with %s = %s" (exprToLustre expr1) (String.concat "" (List.map labelIdxToLustre labels)) (exprToLustre expr2)
+    | MixedConstructorExpr (_, _, expr1, labels, expr2) -> Printf.sprintf "(%s with %s = %s)" (exprToLustre expr1) (String.concat "" (List.map labelIdxToLustre labels)) (exprToLustre expr2)
     | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "(%s ^ %s)" (exprToLustre expr) integer
     | ArrIdxExpr (_, _, expr, idx) -> Printf.sprintf "%s[%s]" (exprToLustre expr) idx
     | ArrSliceExpr _ -> ""
