@@ -91,17 +91,19 @@
 
 <guid> ::= [0-9a-z-]*
 
-<paramBlk> ::= params(<varDeclsStmt> [, <varDeclsStmt>]*)
+<paramBlk> ::= params([<varDeclsStmt> [, <varDeclsStmt>]*])
 
-<returnBlk> ::= returns(<varDeclsStmt> [, <varDeclsStmt>]*)
+<returnBlk> ::= returns([<varDeclsStmt> [, <varDeclsStmt>]*])
 
 <varDeclsStmt> ::= var_decls(vars(<ident> [, <ident>]*), <type>, <comment>)
 
-<bodyBlk> ::= [<localVarsBlk>, ] <assignStmt>
+<bodyBlk> ::= body([<localVarsBlk>, ] <assignBlk>)
 
 <localVarsBlk> ::= localvars(<varDeclsStmt> [,<varDeclsStmt>]*)
 
-<assignStmt> ::= =(lvalue(<lhs>), <expr>, <guidop>, <guidVal>, <imported>, <importCode>)
+<assignBlk> ::= [<assignStmt> [,<assignStmt>]*]
+
+<assignStmt> ::= =(lvalue(<lhs> [, <lhs>]*), <expr>, <guidop>, <guidVal>, <imported>, <importCode>)
 
 <lhs> ::= anonymous_id | ID(<ident>, <type>, <clock>)
 
@@ -140,7 +142,7 @@
 
 <switchExpr> ::= switch_expr(<type>, <clock>, <expr>, <caseStmt> [,<caseStmt>]*)
 
-<caseStmt> ::= case(<value>, <expr>)
+<caseStmt> ::= case(<value>, <expr>) | case(pattern_any, <expr>)
 
 <tempoPreExpr> ::= tempo_pre(<type>, <clock>, <expr>)
 
