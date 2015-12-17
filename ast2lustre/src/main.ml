@@ -62,7 +62,7 @@ let binOpToLustre = function
     | GE -> ">="
     | LE -> "<="
     | EQ -> "="
-    | NE -> "!="
+    | NE -> "<>"
 
 let prefixUnOpToLustre = function
     | PSHORT -> "short$"
