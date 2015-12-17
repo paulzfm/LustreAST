@@ -119,12 +119,14 @@ bodyBlkY:
 
 localVarYs:
 		LOCALVARS LPAREN declStmtYs RPAREN COMMA	{$3}
-	|													{[]}
+	|	LOCALVARS LPAREN RPAREN COMMA				{[]}
+	|												{[]}
 ;
 
 assignStmtYs:
 		assignStmtY COMMA assignStmtYs	{$1::$3}
 	|	assignStmtY						{[$1]}
+	|									{[]}
 ;
 
 assignStmtY:
@@ -495,6 +497,7 @@ clockY:
 declStmtYs:
 		declStmtY COMMA declStmtYs	{$1::$3}
 	|	declStmtY					{[$1]}
+	|								{[]}
 ;
 
 declStmtY:
