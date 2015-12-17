@@ -119,7 +119,7 @@ let rec exprToLustre = function
     | BinOpExpr (op, kind, clock, exprL, exprR) -> Printf.sprintf "(%s %s %s)" (exprToLustre exprL) (binOpToLustre op) (exprToLustre exprR)
     | UnOpExpr (op, kind, clock, expr) -> Printf.sprintf "(%s %s)" (unOpToLustre op kind) (exprToLustre expr)
     | IfExpr (_, _, exprC, exprT, exprF) -> Printf.sprintf "if %s then %s else %s" (exprToLustre exprC) (exprToLustre exprT) (exprToLustre exprF)
-    | SwitchExpr (_, _, expr, cases) -> Printf.sprintf "case %s of" (exprToLustre expr)
+    | SwitchExpr (_, _, expr, cases) -> Printf.sprintf "(case %s of\n\t%s)" (exprToLustre expr) (String.concat "\n\t" (List.map (fun (v, e) -> Printf.sprintf "| %s : %s" (valueToLustre v) (exprToLustre e)) cases))
     | TempoPreExpr (_, _, expr) -> Printf.sprintf "pre %s" (exprToLustre expr)
     | TempoArrowExpr (_, _, exprL, exprR) -> Printf.sprintf "%s -> %s" (exprToLustre exprL) (exprToLustre exprR)
     | TempoFbyExpr (_, _, exprsL, expr, exprsR) -> Printf.sprintf "fby(%s; %s; %s)" (exprToLustre (List.hd exprsL)) (exprToLustre expr) (exprToLustre (List.hd exprsR))
