@@ -37,7 +37,7 @@ class Refiner(object):
         source = open(input_file).read()
 
         for each in self.keyword_index:
-            pattern = r'[^\w_]' + each + r'[^\w_]'
+            pattern = r'''(?=([^\w_]''' + each + r'''[^\w_]))'''
             matches=re.finditer(pattern,source)
             k = 1
             for each in matches:
