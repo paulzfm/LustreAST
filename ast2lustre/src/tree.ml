@@ -26,10 +26,8 @@ type kind =
     | Array of kind * integer
     | TypeName of ident
 
-type construct = (ident * kind) list
-
 type value =
-    | VIdent of ident
+    | VIdent of ident * kind
     | VBool of ident
     | VShort of ident
     | VUShort of ident
@@ -40,6 +38,7 @@ type value =
     | VChar of ident
     | VConstructor of (ident * value) list
     | VArray of value list
+    | VPatternAny
 
 type unOp = SHORT | INT | FLOAT | REAL | NOT | POS | NEG
 type binOp = ADD | SUB | MUL | DIVF | DIV | MOD | AND | OR | XOR | GT | LT | GE | LE | EQ | NE
@@ -74,7 +73,7 @@ type expr =
     | TempoArrowExpr of kind * clock * expr * expr
     | TempoFbyExpr of kind * clock * expr list * expr * expr list
     | FieldAccessExpr of kind * clock * expr * ident
-    | ConstructExpr of ident * construct * clock
+    | ConstructExpr of kind * clock * (ident * expr) list
     | ConstructArrExpr of kind * clock * expr list
     | MixedConstructorExpr of kind * clock * expr * labelIdx list * expr
     | ArrDimExpr of kind * clock * expr * integer
@@ -112,7 +111,7 @@ type guidVal =
 type imported = NOIMPORT | IMPORTED
 type importCode = ImportCode of ident
 
-type declStmt = DeclStmt of ident * kind * comment
+type declStmt = DeclStmt of ident list * kind * comment
 type assignStmt = AssignStmt of lhs * expr * guidOp * guidVal * imported * importCode
 
 type paramBlk = ParamBlk of declStmt list
@@ -124,7 +123,7 @@ type constStmt = ConstStmt of ident * kind * value * comment
 
 type stmtBlk =
     | TypeBlk of typeStmt list
-    | ConstBlk of constStmt
+    | ConstBlk of constStmt list
     | NodeBlk of nodeKind * guid * ident * comment * paramBlk * returnBlk * bodyBlk
 
 type mainBlk = MainBlk of ident

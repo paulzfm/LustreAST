@@ -26,6 +26,7 @@ rule token = parse
 	| "real"		{ REAL }
 	| "float" 		{ FLOAT }
 
+	| "const_block"		{ CONST_BLOCK }
 	| "const"		{ CONST }
 	| "true"		{ TRUE }
 	| "false"		{ FALSE }
@@ -38,6 +39,7 @@ rule token = parse
 	| "UINT"		{ UINT }
 	| "REAL" 		{ REAL }
 	| "construct"	{ CONSTRUCT }
+	| "#label_expr"	{ LABEL_EXPR }
 	| "#label_const"	{ LABEL_CONST }
 	| "#construct_array"	{ CONSTRUCT_ARRAY }
 	| "FLOAT" 		{ FLOAT }
@@ -59,7 +61,7 @@ rule token = parse
 	| "IMPORTED"	{ IMPORTED }
 	| "NOIMPORT"	{ NOIMPORT }
 
-	| "#binop_substract"	{ BINOP_SUBSTRACT }
+	| "#binop_subtract"	{ BINOP_SUBTRACT }
 	| "#binop_multiply"	{ BINOP_MULTIPLY }
 	| "#binop_divide"	{ BINOP_DIVIDE }
 	| "#binop_div"	{ BINOP_DIV }
@@ -128,11 +130,13 @@ rule token = parse
 	| "$>=$"	{ SSSGREEQSSS }
 	| "$<$"    	{ SSSLESSSS }
 	| "$<=$"	{ SSSLESEQSSS }
-	| "dynamic_project"	{ DYNAMIC_PROJECT }
+	| "#dynamic_project"	{ DYNAMIC_PROJECT }
 	| "typename"	{ TYPENAME }
 	| "#array_dim"	{ ARRAY_DIM }
 	| "#array_index"	{ ARRAY_INDEX }
 	| "#array_slice"	{ ARRAY_SLICE }
+	| "#anonymous_id"	{ ANONYMOUS_ID }
+	| "#pattern_any"	{ PATTERN_ANY }
 
 
 	| '('		{ LPAREN }
@@ -146,7 +150,6 @@ rule token = parse
 	| "false"			{ FALSE }
 	(*************definition of float***************)
 	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
-	| '\''['a'-'z''A'-'Z']'\'' as lxm	{ CONST_CHAR (String.sub lxm 1 1) }
 	| ['a'-'z''A'-'Z''_']['a'-'z''A'-'Z''0'-'9''_']* as lxm	{ IDENT (lxm) }
 
   	| eof            { EOF }

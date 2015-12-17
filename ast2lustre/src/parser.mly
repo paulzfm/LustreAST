@@ -28,7 +28,7 @@
 
 %token VAR_DECLS VARS
 
-%token BINOP_ADD BINOP_SUBSTRACT  BINOP_MULTIPLY  BINOP_DIVIDE  BINOP_DIV  BINOP_MOD  BINOP_AND  BINOP_OR  BINOP_XOR  BINOP_GT  BINOP_LT  BINOP_GE  BINOP_LE  BINOP_EQ  BINOP_NEQ
+%token BINOP_ADD BINOP_SUBTRACT  BINOP_MULTIPLY  BINOP_DIVIDE  BINOP_DIV  BINOP_MOD  BINOP_AND  BINOP_OR  BINOP_XOR  BINOP_GT  BINOP_LT  BINOP_GE  BINOP_LE  BINOP_EQ  BINOP_NEQ
 
 %token UNOP_SHORTCAST UNOP_INTCAST UNOP_FLOATCAST UNOP_REALCAST UNOP_NOT UNOP_POS UNOP_NEG
 
@@ -36,7 +36,7 @@
 
 %token NOCALL NOGUID
 
-%token TYPENAME ARRAY CONSTRUCT_ENUM FIELD CONSTRUCT
+%token TYPENAME ARRAY CONSTRUCT_ENUM FIELD CONSTRUCT LABEL_EXPR
 
 %token IF_EXPR SWITCH_EXPR CASE LABEL_CONST CONSTRUCT_ARRAY LIST_EXPR TEMPO_FBY TEMPO_ARROW TEMPO_PRE FIELD_ACCESS
 %token STRUCT_ITERM MIXED_CONSTRUCTOR CONSTRUCT_ARRAY
@@ -48,15 +48,16 @@
 
 %token HIGHORDER_MAP HIGHORDER_FOLD HIGHORDER_MAPFOLD HIGHORDER_MAPI HIGHORDER_FOLDI
 
-%token CONST TYPE TYPE_BLOCK
+%token CONST CONST_BLOCK TYPE TYPE_BLOCK
 
 %token ADDSSS MINUSSSS SSSADDSSS SSSMINUSSSS SSSMULSSS SSSDIVDIVSSS SSSDIVSSS SSSMODSSS SSSANDSSS SSSORSSS SSSXORSSS
 %token SSSEQSSS SSSMIDSSS SSSGRESSS SSSGREEQSSS SSSLESSSS SSSLESEQSSS
 %token SHORTSSS INTSSS FLOATSSS REALSSS NOTSSS
+%token ANONYMOUS_ID PATTERN_ANY
 
 /* value */
 %token TRUE FALSE
-%token <string> IDENT COMMENT CONST_INT CONST_FLO CONST_CHAR
+%token <string> IDENT COMMENT CONST_INT CONST_FLO
 %token NULLCOMMENT
 
 
@@ -119,12 +120,14 @@ bodyBlkY:
 
 localVarYs:
 		LOCALVARS LPAREN declStmtYs RPAREN COMMA	{$3}
-	|													{[]}
+	|	LOCALVARS LPAREN RPAREN COMMA				{[]}
+	|												{[]}
 ;
 
 assignStmtYs:
 		assignStmtY COMMA assignStmtYs	{$1::$3}
 	|	assignStmtY						{[$1]}
+	|									{[]}
 ;
 
 assignStmtY:
@@ -134,7 +137,7 @@ assignStmtY:
 
 lhsY:
 		ID LPAREN IDENT COMMA kindY COMMA clockY RPAREN	{ID($3, $5, $7)}
-/* ? I don't understand annoymous_id */
+	|	ANONYMOUS_ID									{ANONYMOUS_ID}
 ;
 
 exprY:
@@ -281,8 +284,18 @@ makeStmtY:
 ;
 
 constructExprY:
-	ID LPAREN IDENT COMMA constructY COMMA clockY RPAREN
+	CONSTRUCT LPAREN kindY COMMA clockY COMMA labelExprsY RPAREN
 		{ConstructExpr($3,$5,$7)}
+;
+
+labelExprsY:
+		labelExprY COMMA labelExprsY	{$1::$3}
+	|	labelExprY COMMA				{[$1]}
+;
+
+labelExprY:
+	LABEL_EXPR LPAREN IDENT COMMA exprY RPAREN
+		{($3,$5)}
 ;
 
 constructArrExprY:
@@ -333,6 +346,7 @@ listExprY:
 exprsY:
 		exprY COMMA exprsY	{$1::$3}
 	|	exprY				{[$1]}
+	|						{[]}
 ;
 
 tempoPreExprY:
@@ -356,17 +370,18 @@ caseStmtY:
 ;
 
 valueY:
-		ID LPAREN IDENT RPAREN			{VIdent($3)}
-	|	BOOL LPAREN boolY RPAREN		{VBool($3)}
-	|	CHAR LPAREN CONST_CHAR RPAREN	{VChar($3)}
-	|	SHORT LPAREN CONST_INT RPAREN	{VShort($3)}
-	|	USHORT LPAREN CONST_INT RPAREN	{VUShort($3)}
-	|	INT LPAREN CONST_INT RPAREN		{VInt($3)}
-	|	UINT LPAREN CONST_INT RPAREN	{VUInt($3)}
-	|	FLOAT LPAREN CONST_FLO RPAREN	{VFloat($3)}
-	|	REAL LPAREN CONST_FLO RPAREN	{VReal($3)}
-	|	constructValueY					{$1}
-	|	constructArrValueY				{$1}
+		ID LPAREN IDENT COMMA kindY RPAREN	{VIdent($3, $5)}
+	|	BOOL LPAREN boolY RPAREN			{VBool($3)}
+	|	CHAR LPAREN CONST_INT RPAREN		{VChar($3)}
+	|	SHORT LPAREN CONST_INT RPAREN		{VShort($3)}
+	|	USHORT LPAREN CONST_INT RPAREN		{VUShort($3)}
+	|	INT LPAREN CONST_INT RPAREN			{VInt($3)}
+	|	UINT LPAREN CONST_INT RPAREN		{VUInt($3)}
+	|	FLOAT LPAREN CONST_FLO RPAREN		{VFloat($3)}
+	|	REAL LPAREN CONST_FLO RPAREN		{VReal($3)}
+	|	constructValueY						{$1}
+	|	constructArrValueY					{$1}
+	|	PATTERN_ANY							{VPatternAny}
 ;
 
 constructValueY:
@@ -422,7 +437,7 @@ binOpExprY:
 
 binOpY:
 		BINOP_ADD		{ADD}
-	|	BINOP_SUBSTRACT	{SUB}
+	|	BINOP_SUBTRACT	{SUB}
 	|	BINOP_MULTIPLY	{MUL}
 	|	BINOP_DIVIDE	{DIVF}
 	|	BINOP_DIV		{DIV}
@@ -447,7 +462,7 @@ atomExprY:
 	|	USHORT LPAREN CONST_INT RPAREN					{EUShort($3)}
 	|	REAL LPAREN CONST_FLO RPAREN					{EReal($3)}
 	|	FLOAT LPAREN CONST_FLO RPAREN					{EFloat($3)}
-	|	CHAR LPAREN CONST_CHAR RPAREN					{EChar($3)}
+	|	CHAR LPAREN CONST_INT RPAREN					{EChar($3)}
 	|	BOOL LPAREN boolY RPAREN					{EBool($3)}
 ;
 
@@ -484,10 +499,11 @@ clockY:
 declStmtYs:
 		declStmtY COMMA declStmtYs	{$1::$3}
 	|	declStmtY					{[$1]}
+	|								{[]}
 ;
 
 declStmtY:
-	VAR_DECLS LPAREN VARS LPAREN IDENT RPAREN COMMA kindY COMMA commentY RPAREN
+	VAR_DECLS LPAREN VARS LPAREN identsY RPAREN COMMA kindY COMMA commentY RPAREN
 		{DeclStmt($5, $8, $10)}
 ;
 
@@ -523,13 +539,13 @@ constructFieldY:
 ;
 
 constructEnumY:
-	CONSTRUCT_ENUM LPAREN constructIdentsY RPAREN
+	CONSTRUCT_ENUM LPAREN identsY RPAREN
 		{Enum($3)}
 ;
 
-constructIdentsY:
-		IDENT COMMA constructIdentsY	{$1::$3}
-	|	IDENT							{[$1]}
+identsY:
+		IDENT COMMA identsY	{$1::$3}
+	|	IDENT				{[$1]}
 ;
 
 arrayY:
@@ -554,9 +570,18 @@ commentY:
 ;
 
 constBlkY:
+	CONST_BLOCK LPAREN constStmtsY RPAREN
+		{ConstBlk($3)}
+;
+
+constStmtsY:
+		constStmtY COMMA constStmtsY	{$1::$3}
+	|	constStmtY						{[$1]}
+;
+
+constStmtY:
 	CONST LPAREN IDENT COMMA kindY COMMA valueY COMMA commentY RPAREN
-		{ConstBlk(ConstStmt($3,$5,$7,$9))}
-/* ? for zhu: ConstBlk  should be constStmt, no list */
+		{ConstStmt($3,$5,$7,$9)}
 ;
 
 typeBlkY:

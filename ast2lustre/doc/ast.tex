@@ -64,9 +64,11 @@
 \section{Const Block}
 \begin{grammar} \small
 
-<constBlk> ::= const(<ident>, <type>, <value>, <comment>)
+<constBlk> ::= const_block(<constStmt> [, <constStmt>]*)
 
-<value> ::= ID(<ident>) | BOOL(<bool>) | CHAR(<integer>) | SHORT(<integer>) | USHORT(<integer>) |
+<constStmt> ::= const(<ident>, <type>, <value>, <comment>)
+
+<value> ::= ID(<ident>, <type>) | BOOL(<bool>) | CHAR(<integer>) | SHORT(<integer>) | USHORT(<integer>) |
             INT(<integer>) | UINT(<integer>) | FLOAT(<float>) | REAL(<float>) |
             <constructValue> | <constructArrValue>
 
@@ -89,17 +91,19 @@
 
 <guid> ::= [0-9a-z-]*
 
-<paramBlk> ::= params(<varDeclsStmt> [, <varDeclsStmt>]*)
+<paramBlk> ::= params([<varDeclsStmt> [, <varDeclsStmt>]*])
 
-<returnBlk> ::= returns(<varDeclsStmt> [, <varDeclsStmt>]*)
+<returnBlk> ::= returns([<varDeclsStmt> [, <varDeclsStmt>]*])
 
-<varDeclsStmt> ::= var_decls(vars(<ident>), <type>, <comment>)
+<varDeclsStmt> ::= var_decls(vars(<ident> [, <ident>]*), <type>, <comment>)
 
-<bodyBlk> ::= [<localVarsBlk>, ] <assignStmt>
+<bodyBlk> ::= body([<localVarsBlk>, ] <assignBlk>)
 
 <localVarsBlk> ::= localvars(<varDeclsStmt> [,<varDeclsStmt>]*)
 
-<assignStmt> ::= =(lvalue(<lhs>), <expr>, <guidop>, <guidVal>, <imported>, <importCode>)
+<assignBlk> ::= [<assignStmt> [,<assignStmt>]*]
+
+<assignStmt> ::= =(lvalue(<lhs> [, <lhs>]*), <expr>, <guidop>, <guidVal>, <imported>, <importCode>)
 
 <lhs> ::= anonymous_id | ID(<ident>, <type>, <clock>)
 
@@ -123,7 +127,7 @@
 
 <binopExpr> ::= <binop>(<type>, <clock>, <expr>, <expr>)
 
-<binop> ::= binop_add | binop_substract | binop_multiply |
+<binop> ::= binop_add | binop_subtract | binop_multiply |
             binop_divide | binop_div | binop_mod |
             binop_and | binop_or | binop_xor |
             binop_gt | binop_lt | binop_ge | binop_le |
@@ -138,7 +142,7 @@
 
 <switchExpr> ::= switch_expr(<type>, <clock>, <expr>, <caseStmt> [,<caseStmt>]*)
 
-<caseStmt> ::= case(<value>, <expr>)
+<caseStmt> ::= case(<value>, <expr>) | case(pattern_any, <expr>)
 
 <tempoPreExpr> ::= tempo_pre(<type>, <clock>, <expr>)
 
@@ -146,7 +150,9 @@
 
 <tempoFbyExpr> ::= tempo_fby(<type>, <clock>, <listExpr>, <expr>, <listExpr>)
 
-<constructExpr> ::= ID(<ident>, <construct>, <clock>)
+<constructExpr> ::= construct(<type>, <clock>, [<labelExpr> ,]+)
+
+<labelExpr> ::= label_expr(<ident>, <expr>)
 
 <constructArrExpr> ::= construct_array(<type>, <clock>, <listExpr>)
 
@@ -164,7 +170,7 @@
 
 <arrSliceExpr> ::= array_slice(<type>, <clock>, <expr>, <expr>, <expr>)
 
-<listExpr> ::= list_expr(<expr> [, <expr>]*)
+<listExpr> ::= list_expr(<expr> [, <expr>]*) | list_expr()
 
 <dynamicProjExpr> ::= dynamic_project(<type>, <clock>, <expr>, <listExpr>, <expr>)
 
