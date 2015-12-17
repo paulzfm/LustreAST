@@ -30,7 +30,7 @@ let rec kindToLustre = function
 
 let rec valueToLustre = function
     | VIdent (ident, _) -> ident
-    | VBool ident -> ident
+    | VBool ident -> if ident = "TRUE" then "true" else "false"
     | VShort ident -> Printf.sprintf "%ss" ident
     | VUShort ident -> Printf.sprintf "%sus" ident
     | VInt ident -> ident
@@ -62,7 +62,7 @@ let binOpToLustre = function
     | GE -> ">="
     | LE -> "<="
     | EQ -> "="
-    | NE -> "!="
+    | NE -> "<>"
 
 let prefixUnOpToLustre = function
     | PSHORT -> "short$"
@@ -105,7 +105,7 @@ let prefixStmtToLustre = function
 let atomExprToLustre = function
     | EID (ident, kind, clock) -> ident
     | EIdent ident -> ident
-    | EBool ident -> ident
+    | EBool ident -> if ident = "TRUE" then "true" else "false"
     | EChar ident -> ident
     | EShort ident -> Printf.sprintf "%ss" ident
     | EUShort ident -> Printf.sprintf "%sus" ident
@@ -119,14 +119,14 @@ let rec exprToLustre = function
     | BinOpExpr (op, kind, clock, exprL, exprR) -> Printf.sprintf "(%s %s %s)" (exprToLustre exprL) (binOpToLustre op) (exprToLustre exprR)
     | UnOpExpr (op, kind, clock, expr) -> Printf.sprintf "(%s %s)" (unOpToLustre op kind) (exprToLustre expr)
     | IfExpr (_, _, exprC, exprT, exprF) -> Printf.sprintf "if %s then %s else %s" (exprToLustre exprC) (exprToLustre exprT) (exprToLustre exprF)
-    | SwitchExpr (_, _, expr, cases) -> Printf.sprintf "case %s of" (exprToLustre expr)
+    | SwitchExpr (_, _, expr, cases) -> Printf.sprintf "(case %s of\n\t%s)" (exprToLustre expr) (String.concat "\n\t" (List.map (fun (v, e) -> Printf.sprintf "| %s : %s" (valueToLustre v) (exprToLustre e)) cases))
     | TempoPreExpr (_, _, expr) -> Printf.sprintf "pre %s" (exprToLustre expr)
     | TempoArrowExpr (_, _, exprL, exprR) -> Printf.sprintf "%s -> %s" (exprToLustre exprL) (exprToLustre exprR)
     | TempoFbyExpr (_, _, exprsL, expr, exprsR) -> Printf.sprintf "fby(%s; %s; %s)" (exprToLustre (List.hd exprsL)) (exprToLustre expr) (exprToLustre (List.hd exprsR))
     | FieldAccessExpr (_, _, expr, ident) -> Printf.sprintf "%s.%s" (exprToLustre expr) ident
     | ConstructExpr (_, _, cons) -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, e) -> Printf.sprintf "%s: %s" i (exprToLustre e)) cons))
     | ConstructArrExpr (_, _, exprs) -> Printf.sprintf "[%s]" (String.concat ", " (List.map exprToLustre exprs))
-    | MixedConstructorExpr (_, _, expr1, labels, expr2) -> Printf.sprintf "%s with %s = %s" (exprToLustre expr1) (String.concat "" (List.map labelIdxToLustre labels)) (exprToLustre expr2)
+    | MixedConstructorExpr (_, _, expr1, labels, expr2) -> Printf.sprintf "(%s with %s = %s)" (exprToLustre expr1) (String.concat "" (List.map labelIdxToLustre labels)) (exprToLustre expr2)
     | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "(%s ^ %s)" (exprToLustre expr) integer
     | ArrIdxExpr (_, _, expr, idx) -> Printf.sprintf "%s[%s]" (exprToLustre expr) idx
     | ArrSliceExpr _ -> ""
