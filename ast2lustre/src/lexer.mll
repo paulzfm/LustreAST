@@ -136,6 +136,7 @@ rule token = parse
 	| "#array_index"	{ ARRAY_INDEX }
 	| "#array_slice"	{ ARRAY_SLICE }
 	| "#anonymous_id"	{ ANONYMOUS_ID }
+	| "#pattern_any"	{ PATTERN_ANY }
 
 
 	| '('		{ LPAREN }
