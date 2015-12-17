@@ -40,6 +40,7 @@ let rec valueToLustre = function
     | VChar ident -> ident
     | VConstructor cons -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, v) -> Printf.sprintf "%s: %s" i (valueToLustre v)) cons))
     | VArray vals -> Printf.sprintf "[%s]" (String.concat ", " (List.map valueToLustre vals))
+    | VPatternAny -> "_"
 
 let unOpToLustre op kind = match op with
     | NOT -> "not"
