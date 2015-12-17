@@ -38,6 +38,7 @@ type value =
     | VChar of ident
     | VConstructor of (ident * value) list
     | VArray of value list
+    | VPatternAny
 
 type unOp = SHORT | INT | FLOAT | REAL | NOT | POS | NEG
 type binOp = ADD | SUB | MUL | DIVF | DIV | MOD | AND | OR | XOR | GT | LT | GE | LE | EQ | NE
