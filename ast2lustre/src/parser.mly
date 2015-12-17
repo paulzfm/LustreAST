@@ -56,7 +56,7 @@
 
 /* value */
 %token TRUE FALSE
-%token <string> IDENT COMMENT CONST_INT CONST_FLO CONST_CHAR
+%token <string> IDENT COMMENT CONST_INT CONST_FLO
 %token NULLCOMMENT
 
 
