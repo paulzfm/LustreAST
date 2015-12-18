@@ -150,7 +150,7 @@ rule token = parse
 	| "false"			{ FALSE }
 	(*************definition of float***************)
 	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
-	| ['a'-'z''A'-'Z''_''-']['a'-'z''A'-'Z''0'-'9''_''-']* as lxm	{ IDENT (lxm) }
+	| ['0'-'9''a'-'z''A'-'Z''_''-']['a'-'z''A'-'Z''0'-'9''_''-']* as lxm	{ IDENT (lxm) }
 
   	| eof            { EOF }
     | _              { print_string "unexpected token"; token lexbuf}
