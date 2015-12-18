@@ -89,7 +89,7 @@ rule token = parse
 	| "#tempo_arrow"	{ TEMPO_ARROW }
 	| "#tempo_fby"	{ TEMPO_FBY }
 	| "#mixed_constructor"	{ MIXED_CONSTRUCTOR }
-	| "#struct_iterm"	{ STRUCT_ITERM }
+	| "#struct_item"	{ STRUCT_ITEM }
 	| "#field_access"	{ FIELD_ACCESS }
 	| "#list_expr"	{ LIST_EXPR }
 	| "#apply_expr"	{ APPLY_EXPR }
