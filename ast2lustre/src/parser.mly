@@ -131,8 +131,13 @@ assignStmtYs:
 ;
 
 assignStmtY:
-	EQUAL LPAREN LVALUE LPAREN lhsY RPAREN COMMA exprY COMMA guidOpY COMMA guidValY COMMA importedY COMMA importCodeY RPAREN
+	EQUAL LPAREN LVALUE LPAREN lhsLY RPAREN COMMA exprY COMMA guidOpY COMMA guidValY COMMA importedY COMMA importCodeY RPAREN
 		{AssignStmt($5, $8, $10, $12, $14, $16)}
+;
+
+lhsLY:
+		lhsY COMMA lhsLY	{$1}
+	|	lhsY				{$1}
 ;
 
 lhsY:
@@ -491,10 +496,14 @@ importCodeY:
 ;
 
 clockY:
-		LPAREN clockY RPAREN	{$2}
+		LPAREN clockLY RPAREN	{$2}
 	|	LPAREN RPAREN		{NOCLOCK}
 ;
 
+clockLY:
+		clockY COMMA clockLY	{$1}
+	|	clockY					{$1}
+;
 
 declStmtYs:
 		declStmtY COMMA declStmtYs	{$1::$3}
@@ -508,19 +517,24 @@ declStmtY:
 ;
 
 kindY:
-		INT					{Int}
-	|	UINT				{UInt}
-	|	SHORT				{Short}
-	|	USHORT				{UShort}
-	|	REAL				{Real}
-	|	FLOAT				{Float}
-	|	BOOL				{Bool}
-	|	CHAR				{Char}
-	|	LPAREN kindY RPAREN	{$2}
-	|	constructY			{Construct($1)}
-	|	constructEnumY		{$1}
-	|	arrayY				{$1}
-	|	typenameY			{$1}
+		INT						{Int}
+	|	UINT					{UInt}
+	|	SHORT					{Short}
+	|	USHORT					{UShort}
+	|	REAL					{Real}
+	|	FLOAT					{Float}
+	|	BOOL					{Bool}
+	|	CHAR					{Char}
+	|	LPAREN kindLY RPAREN	{$2}
+	|	constructY				{Construct($1)}
+	|	constructEnumY			{$1}
+	|	arrayY					{$1}
+	|	typenameY				{$1}
+;
+
+kindLY:
+		kindY COMMA kindLY	{$1}
+	|	kindY				{$1}
 ;
 
 constructY:
