@@ -182,9 +182,13 @@ arrSliceExprY:
 ;
 
 dynamicProjExprY:
-	DYNAMIC_PROJECT LPAREN kindY COMMA clockY COMMA exprY COMMA listExprY COMMA exprY RPAREN
-		{DynamicProjExpr($3,$5,$7,$9,$11)}
+	DYNAMIC_PROJECT LPAREN kindY COMMA clockY COMMA exprY COMMA LPAREN exprLY RPAREN COMMA exprY RPAREN
+		{DynamicProjExpr($3,$5,$7,$10,$13)}
 ;
+
+exprLY:
+		exprY COMMA exprLY	{$1::$3}
+	|	exprY				{[$1]}
 
 applyExprY:
 	APPLY_EXPR LPAREN kindY COMMA clockY COMMA applyBlkY COMMA listExprY RPAREN

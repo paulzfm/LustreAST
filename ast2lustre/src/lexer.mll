@@ -145,11 +145,11 @@ rule token = parse
     | '='		{ EQUAL  }
 
 
-	| ['0'-'9']+ as lxm	{ CONST_INT lxm }
+	| ['-']?['0'-'9']+ as lxm	{ CONST_INT lxm }
 	| "true" 			{ TRUE }
 	| "false"			{ FALSE }
 	(*************definition of float***************)
-	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
+	| ['-']?['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_FLO lxm }
 	| ['0'-'9''a'-'z''A'-'Z''_''-']['a'-'z''A'-'Z''0'-'9''_''-']* as lxm	{ IDENT (lxm) }
 
   	| eof            { EOF }
