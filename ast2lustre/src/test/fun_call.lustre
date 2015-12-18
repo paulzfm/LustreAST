@@ -1,9 +1,0 @@
-function fun1(x1: int; x2:int) returns(y: int)
-let
-y = x1 * x2;
-tel
-
-function fun2(x1: int; x2: int) returns(y: int)
-let
-y = fun1(x1,x2);
-tel
