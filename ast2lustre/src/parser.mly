@@ -206,12 +206,12 @@ applyBlkY:
 ;
 
 mapwDefaultStmtY:
-	MAPW_DEFAULT LPAREN prefixStmtY COMMA intValueY COMMA exprY COMMA exprY RPAREN
+	MAPW_DEFAULT LPAREN prefixStmtY COMMA intValueY COMMA exprY COMMA exprY COMMA RPAREN
 		{MapwDefaultStmt($3,$5,$7,$9)}
 ;
 
 mapwiDefaultStmtY:
-	MAPWI_DEFAULT LPAREN prefixStmtY COMMA intValueY COMMA exprY COMMA exprY RPAREN
+	MAPWI_DEFAULT LPAREN prefixStmtY COMMA intValueY COMMA exprY COMMA exprY COMMA RPAREN
 		{MapwiDefaultStmt($3,$5,$7,$9)}
 ;
 
