@@ -281,6 +281,7 @@ prefixBinOpY:
 kindsY:
 		kindY COMMA kindsY	{$1::$3}
 	|	kindY				{[$1]}
+	|						{[]}
 ;
 
 makeStmtY:
