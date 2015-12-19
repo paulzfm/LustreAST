@@ -13,7 +13,9 @@
 
 <comment> ::= NullComment | (<comment>)
 
-<clock> ::= () | (ident [,ident]*) | (<clock> [,<clock>]*)
+<clock> ::= () | ident | (<clock>)
+
+<clocks> ::= (<clock> [,<clock>]*) | ()
 
 <integer> ::= [-+]?(0|[1-9][0-9]*)
 
@@ -45,6 +47,8 @@
 <typeStmt> ::= type(<ident>, <type>, <comment>)
 
 <type> ::= bool | short | ushort | int | uint | float | real | char | <contruct> | <constructEnum> | <array> | <typename> | (<type>)
+
+<types> ::= (<type>, [,<type>]*) | ()
 
 <construct> ::= construct(<field> [, <field>]*)
 
@@ -144,11 +148,11 @@
 
 <caseStmt> ::= case(<value>, <expr>) | case(pattern_any, <expr>)
 
-<tempoPreExpr> ::= tempo_pre((<type> [,<type>]*), <clock>, <expr>)
+<tempoPreExpr> ::= tempo_pre(<types>, <clocks>, <expr>)
 
-<tempoArrowExpr> ::= tempo_arrow((<type> [,<type>]*), <clock>, <expr>, <expr>)
+<tempoArrowExpr> ::= tempo_arrow(<types>, <clocks>, <expr>, <expr>)
 
-<tempoFbyExpr> ::= tempo_fby((<type> [,<type>]*), <clock>, <listExpr>, <expr>, <listExpr>)
+<tempoFbyExpr> ::= tempo_fby(<types>, <clocks>, <listExpr>, <expr>, <listExpr>)
 
 <constructExpr> ::= construct(<type>, <clock>, [<labelExpr> ,]+)
 
@@ -174,7 +178,7 @@
 
 <dynamicProjExpr> ::= dynamic_project(<type>, <clock>, <expr>, (<expr> [,<expr>]*), <expr>)
 
-<applyExpr> ::= apply_expr((<type> [,<type>]*), <clock>, <applyBlk>, <listExpr>)
+<applyExpr> ::= apply_expr(<types>, <clocks>, <applyBlk>, <listExpr>)
 
 <applyBlk> ::= <makeStmt> | <flattenStmt> | <highOrderStmt> | <prefixStmt> |
                <mapwDefaultStmt> | <mapwiDefaultStmt> |
@@ -186,7 +190,7 @@
 
 <highOrderStmt> ::= high_order(<highOrderOp>, <prefixStmt>, <intValue>)
 
-<prefixStmt> ::= prefix(<ident>, param_types(<type>[, <type>]*), ret_types(<type> [, <type>]*)) |
+<prefixStmt> ::= prefix(<ident>, param_types <types>, ret_types <types>) |
                  prefix(<prefixBinOp>) | prefix(<prefixUnOp>)
 
 
