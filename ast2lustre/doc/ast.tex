@@ -13,7 +13,7 @@
 
 <comment> ::= NullComment | (<comment>)
 
-<clock> ::= () | (ident [,ident]*) | (<clock>)
+<clock> ::= () | (ident [,ident]*) | (<clock> [,<clock>]*)
 
 <integer> ::= [-+]?(0|[1-9][0-9]*)
 
@@ -44,7 +44,7 @@
 
 <typeStmt> ::= type(<ident>, <type>, <comment>)
 
-<type> ::= bool | short | ushort | int | uint | float | real | char | <contruct> | <constructEnum> | <array> | <typename> | (<type>)
+<type> ::= bool | short | ushort | int | uint | float | real | char | <contruct> | <constructEnum> | <array> | <typename> | ([<type> [,<type>]*])
 
 <construct> ::= construct(<field> [, <field>]*)
 
@@ -160,7 +160,7 @@
 
 <labelIdxList> ::= (<labelIdx>[, lableIdx]*)
 
-<labelIdx> ::= struct_iterm(<ident>) | <expr>
+<labelIdx> ::= struct_item(<ident>) | <expr>
 
 <fieldAccessExpr> ::= field_access(<type>, <clock>, <expr>, <ident>)
 
@@ -172,7 +172,7 @@
 
 <listExpr> ::= list_expr(<expr> [, <expr>]*) | list_expr()
 
-<dynamicProjExpr> ::= dynamic_project(<type>, <clock>, <expr>, <listExpr>, <expr>)
+<dynamicProjExpr> ::= dynamic_project(<type>, <clock>, <expr>, (<expr> [,<expr>]*), <expr>)
 
 <applyExpr> ::= apply_expr(<type>, <clock>, <applyBlk>, <listExpr>)
 
@@ -199,9 +199,9 @@
                   \(\$\)div\(\$\) | \(\$\)mod\(\$\) | \(\$\)and\(\$\) | \(\$\)or\(\$\) | \(\$\)xor\(\$\) |
                   \(\$\)=\(\$\) | \(\$\)<>\(\$\) | \(\$\)\(>\)\(\$\) | \(\$\)\(>\)=\(\$\) | \(\$\)\textless\(\$\) | \(\$\)\textless=\(\$\)
 
-<mapwDefaultStmt> ::= mapw_default(<prefix>, <intValue>, <expr>, <expr>)
+<mapwDefaultStmt> ::= mapw_default(<prefix>, <intValue>, <expr>, <expr>, )
 
-<mapwiDefaultStmt> ::= mapwi_default(<prefix>, <intValue>, <expr>, <expr>)
+<mapwiDefaultStmt> ::= mapwi_default(<prefix>, <intValue>, <expr>, <expr>, )
 
 <foldwIfStmt> ::= foldw_if(<prefix>, <intValue>, <expr>)
 
