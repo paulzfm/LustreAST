@@ -187,8 +187,8 @@ dynamicProjExprY:
 ;
 
 applyExprY:
-	APPLY_EXPR LPAREN kindY COMMA clockY COMMA applyBlkY COMMA listExprY RPAREN
-		{ApplyExpr($3,$5,$7,$9)}
+	APPLY_EXPR LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA applyBlkY COMMA listExprY RPAREN
+		{ApplyExpr($4,$7,$9,$11)}
 ;
 
 applyBlkY:
@@ -326,7 +326,7 @@ labelIdxesY:
 
 labelIdxY:
 		STRUCT_ITEM LPAREN IDENT RPAREN	{Ident $3}
-	|	exprY								{Expr $1}
+	|	exprY							{Expr $1}
 ;
 
 fieldAccessExprY:
@@ -335,13 +335,13 @@ fieldAccessExprY:
 ;
 
 tempoArrowExprY:
-	TEMPO_ARROW LPAREN kindY COMMA clockY COMMA exprY COMMA exprY RPAREN
-		{TempoArrowExpr($3,$5,$7,$9)}
+	TEMPO_ARROW LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA exprY COMMA exprY RPAREN
+		{TempoArrowExpr($4,$7,$9,$11)}
 ;
 
 tempoFbyExprY:
-	TEMPO_FBY LPAREN kindY COMMA clockY COMMA listExprY COMMA exprY COMMA listExprY RPAREN
-		{TempoFbyExpr($3,$5,$7,$9,$11)}
+	TEMPO_FBY LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA listExprY COMMA exprY COMMA listExprY RPAREN
+		{TempoFbyExpr($4,$7,$9,$11,$13)}
 ;
 
 listExprY:
@@ -356,8 +356,8 @@ exprsY:
 ;
 
 tempoPreExprY:
-	TEMPO_PRE LPAREN kindY COMMA clockY COMMA exprY RPAREN
-		{TempoPreExpr($3,$5,$7)}
+	TEMPO_PRE LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA exprY RPAREN
+		{TempoPreExpr($4,$7,$9)}
 ;
 
 switchExprY:
@@ -526,16 +526,11 @@ kindY:
 	|	FLOAT					{Float}
 	|	BOOL					{Bool}
 	|	CHAR					{Char}
-	|	LPAREN kindLY RPAREN	{$2}
+	|	LPAREN kindY RPAREN	{$2}
 	|	constructY				{Construct($1)}
 	|	constructEnumY			{$1}
 	|	arrayY					{$1}
 	|	typenameY				{$1}
-;
-
-kindLY:
-		kindY COMMA kindLY	{$1}
-	|	kindY				{$1}
 ;
 
 constructY:

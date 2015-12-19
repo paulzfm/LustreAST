@@ -69,9 +69,9 @@ type expr =
     | UnOpExpr of unOp * kind * clock * expr
     | IfExpr of kind * clock * expr * expr * expr
     | SwitchExpr of kind * clock * expr * (value * expr) list
-    | TempoPreExpr of kind * clock * expr
-    | TempoArrowExpr of kind * clock * expr * expr
-    | TempoFbyExpr of kind * clock * expr list * expr * expr list
+    | TempoPreExpr of kind list * clock * expr
+    | TempoArrowExpr of kind list * clock * expr * expr
+    | TempoFbyExpr of kind list * clock * expr list * expr * expr list
     | FieldAccessExpr of kind * clock * expr * ident
     | ConstructExpr of kind * clock * (ident * expr) list
     | ConstructArrExpr of kind * clock * expr list
@@ -79,7 +79,7 @@ type expr =
     | ArrDimExpr of kind * clock * expr * integer
     | ArrIdxExpr of kind * clock * expr * integer
     | ArrSliceExpr of kind * clock * expr * expr * expr
-    | ApplyExpr of kind * clock * applyBlk * expr list
+    | ApplyExpr of kind list * clock * applyBlk * expr list
     | DynamicProjExpr of kind * clock * expr * expr list * expr
     | ListExpr of expr list
 
