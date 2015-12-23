@@ -155,7 +155,7 @@ let declStmtToLustre = function
     DeclStmt (idents, kind, comment) -> Printf.sprintf "%s: %s%s" (String.concat ", " idents) (kindToLustre kind) (commentToLustre comment)
 
 let assignStmtToLustre depth stmt = match stmt with
-    AssignStmt (lhs, expr, _, _, _, _) -> indent depth (Printf.sprintf "%s = %s;" (lhsToLustre lhs) (exprToLustre expr))
+    AssignStmt (lhss, expr, _, _, _, _) -> indent depth (Printf.sprintf "%s = %s;" (String.concat ", " (List.map lhsToLustre lhss)) (exprToLustre expr))
 
 let localVarStmtToLustre depth stmt = match stmt with
     DeclStmt (idents, kind, comment) -> indent depth (Printf.sprintf "%s: %s;%s" (String.concat ", " idents) (kindToLustre kind) (commentToLustre comment))
