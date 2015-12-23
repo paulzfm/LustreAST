@@ -37,7 +37,7 @@ let rec valueToLustre = function
     | VUInt ident -> Printf.sprintf "%su" ident
     | VFloat ident -> Printf.sprintf "%sf" ident
     | VReal ident -> ident
-    | VChar ident -> ident
+    | VChar ident -> Printf.sprintf "'%c'" (Char.chr (int_of_string ident))
     | VConstructor cons -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, v) -> Printf.sprintf "%s: %s" i (valueToLustre v)) cons))
     | VArray vals -> Printf.sprintf "[%s]" (String.concat ", " (List.map valueToLustre vals))
     | VPatternAny -> "_"
@@ -107,7 +107,7 @@ let atomExprToLustre = function
     | EID (ident, kind, clock) -> ident
     | EIdent ident -> ident
     | EBool ident -> if ident = "TRUE" then "true" else "false"
-    | EChar ident -> ident
+    | EChar ident -> Printf.sprintf "'%c'" (Char.chr (int_of_string ident))
     | EShort ident -> Printf.sprintf "%ss" ident
     | EUShort ident -> Printf.sprintf "%sus" ident
     | EInt ident -> ident
