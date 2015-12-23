@@ -136,8 +136,8 @@ assignStmtY:
 ;
 
 lhsLY:
-		lhsY COMMA lhsLY	{$1}
-	|	lhsY				{$1}
+		lhsY COMMA lhsLY	{$1::$3}
+	|	lhsY				{[$1]}
 ;
 
 lhsY:
@@ -187,8 +187,8 @@ dynamicProjExprY:
 ;
 
 applyExprY:
-	APPLY_EXPR LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA applyBlkY COMMA listExprY RPAREN
-		{ApplyExpr($4,$7,$9,$11)}
+	APPLY_EXPR LPAREN kindsY COMMA clocksY COMMA applyBlkY COMMA listExprY RPAREN
+		{ApplyExpr($3,$5,$7,$9)}
 ;
 
 applyBlkY:
@@ -244,8 +244,8 @@ highOrderOpY:
 ;
 
 prefixStmtY:
-		PREFIX LPAREN IDENT COMMA PARAM_TYPES LPAREN kindsY RPAREN COMMA RET_TYPES LPAREN kindsY RPAREN RPAREN
-			{FuncStmt($3,$7,$12)}
+		PREFIX LPAREN IDENT COMMA PARAM_TYPES kindsY COMMA RET_TYPES kindsY RPAREN
+			{FuncStmt($3,$6,$9)}
 	|	PREFIX LPAREN prefixBinOpY RPAREN	{BinOpStmt($3)}
 	|	PREFIX LPAREN prefixUnOpY RPAREN	{UnOpStmt($3)}
 ;
@@ -279,7 +279,12 @@ prefixBinOpY:
 ;
 
 kindsY:
-		kindY COMMA kindsY	{$1::$3}
+	LPAREN kindLY RPAREN
+		{$2}
+;
+
+kindLY:
+		kindY COMMA kindLY	{$1::$3}
 	|	kindY				{[$1]}
 	|						{[]}
 ;
@@ -335,13 +340,13 @@ fieldAccessExprY:
 ;
 
 tempoArrowExprY:
-	TEMPO_ARROW LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA exprY COMMA exprY RPAREN
-		{TempoArrowExpr($4,$7,$9,$11)}
+	TEMPO_ARROW LPAREN kindsY COMMA clocksY COMMA exprY COMMA exprY RPAREN
+		{TempoArrowExpr($3,$5,$7,$9)}
 ;
 
 tempoFbyExprY:
-	TEMPO_FBY LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA listExprY COMMA exprY COMMA listExprY RPAREN
-		{TempoFbyExpr($4,$7,$9,$11,$13)}
+	TEMPO_FBY LPAREN kindsY COMMA clocksY COMMA listExprY COMMA exprY COMMA listExprY RPAREN
+		{TempoFbyExpr($3,$5,$7,$9,$11)}
 ;
 
 listExprY:
@@ -356,8 +361,8 @@ exprsY:
 ;
 
 tempoPreExprY:
-	TEMPO_PRE LPAREN LPAREN kindsY RPAREN COMMA clockY COMMA exprY RPAREN
-		{TempoPreExpr($4,$7,$9)}
+	TEMPO_PRE LPAREN kindsY COMMA clocksY COMMA exprY RPAREN
+		{TempoPreExpr($3,$5,$7)}
 ;
 
 switchExprY:
@@ -497,13 +502,20 @@ importCodeY:
 ;
 
 clockY:
-		LPAREN clockLY RPAREN	{$2}
-	|	LPAREN RPAREN		{NOCLOCK}
+		IDENT					{Clock($1)}
+	|	LPAREN RPAREN			{NOCLOCK}
+	|	LPAREN clockY RPAREN	{$2}
+;
+
+clocksY:
+	LPAREN clockLY RPAREN
+		{$2}
 ;
 
 clockLY:
-		clockY COMMA clockLY	{$1}
-	|	clockY					{$1}
+		clockY COMMA clockLY	{$1::$3}
+	|	clockY					{[$1]}
+	|							{[]}
 ;
 
 declStmtYs:
