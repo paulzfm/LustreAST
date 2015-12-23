@@ -112,7 +112,7 @@ type imported = NOIMPORT | IMPORTED
 type importCode = ImportCode of ident
 
 type declStmt = DeclStmt of ident list * kind * comment
-type assignStmt = AssignStmt of lhs * expr * guidOp * guidVal * imported * importCode
+type assignStmt = AssignStmt of lhs list * expr * guidOp * guidVal * imported * importCode
 
 type paramBlk = ParamBlk of declStmt list
 type returnBlk = ReturnBlk of declStmt list

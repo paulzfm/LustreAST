@@ -2,7 +2,7 @@ COM = ocamlc
 LEX = ocamllex
 YACC = ocamlyacc
 
-lc : lexer.cmo parser.cmo main.cmo
+ast : lexer.cmo parser.cmo main.cmo
 	$(COM) -o $@ lexer.cmo parser.cmo main.cmo
 
 lexer.cmo : lexer.ml parser.cmi
@@ -27,4 +27,4 @@ parser.ml parser.mli : parser.mly tree.cmo
 	$(YACC) $<
 
 .PHONY clean :
-	rm *.cmo *.cmi parser.mli parser.ml lexer.ml lc
+	rm *.cmo *.cmi parser.mli parser.ml lexer.ml ast
