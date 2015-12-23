@@ -167,6 +167,7 @@ let returnBlkToLustre = function
     ReturnBlk (decls) -> String.concat "; " (List.map declStmtToLustre decls)
 
 let bodyBlkToLustre depth blk = match blk with
+    | BodyBlk ([], []) -> ";"
     | BodyBlk ([], eqs) -> String.concat "" [
         indent depth "let";
         String.concat "" (List.map (assignStmtToLustre (depth + 1)) eqs);
