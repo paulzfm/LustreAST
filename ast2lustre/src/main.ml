@@ -189,7 +189,7 @@ let constStmtToLustre depth stmt = match stmt with
 
 let nodeKindToLustre = function
     | Function -> "function"
-    | Node -> "function"
+    | Node -> "node"
 
 let stmtBlkToLustre depth blk = match blk with
     | TypeBlk blk -> String.concat "" [
