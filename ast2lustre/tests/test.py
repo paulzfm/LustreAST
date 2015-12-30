@@ -11,6 +11,11 @@ astFolder = "../tests/ast"
 lustreFolder = "../tests/lustre"
 fileList = os.listdir(astFolder)
 
+foutHead = open("../tests/result.txt",'w')
+
+matchNum = 0
+mistakeNum = 0
+lackNum = 0
 for fileName in fileList:
 	fName = fileName[:len(fileName)-4]
 	astData = os.popen("python lexer.py -i "+astFolder+"/"+fName+".ast | ./ast").readlines()
@@ -31,11 +36,23 @@ for fileName in fileList:
 			fout.write(astData+'\n')
 			fout.write(lustreData+'\n')
 			fout.close()
+			foutHead.write(fName+"\t: mistake"+"\n")
+			foutHead.write(astData+'\n')
+			foutHead.write(lustreData+"\n\n")
+			mistakeNum = mistakeNum + 1
+
 		else:
 			print fName+"\t: match"
+			foutHead.write(fName+"\t: match\n\n")
+			matchNum = matchNum + 1
 	else:
 		print fName+"\t: lack lustre file"
+		foutHead.write(fName+"\t: lack lustre file\n\n")
 		fout = open("../tests/result/"+fName+".output",'w')
 		fout.write(astData+'\n')
 		fout.close()
-
+		lackNum = lackNum + 1
+foutHead.close()
+print "match: "+str(matchNum)
+print "mistke: "+str(mistakeNum)
+print "lack lustre file: "+str(lackNum)
