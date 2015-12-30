@@ -30,6 +30,12 @@ for fileName in fileList:
 		astData = astData.replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 		lustreData = lustreData.replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 
+		astData = astData.replace('(','').replace(')','')
+		lustreData = lustreData.replace('(','').replace(')','')
+
+		astData = astData.replace('node','').replace('function','')
+		lustreData = lustreData.replace('node','').replace('function','').replace('private','')
+
 		if (astData != lustreData):
 			print fName+"\t: mistake"
 			fout = open("../tests/result/"+fName+".result",'w')

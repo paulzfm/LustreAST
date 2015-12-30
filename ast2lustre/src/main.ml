@@ -123,7 +123,7 @@ let rec exprToLustre = function
     | SwitchExpr (_, _, expr, cases) -> Printf.sprintf "(case %s of\n\t%s)" (exprToLustre expr) (String.concat "\n\t" (List.map (fun (v, e) -> Printf.sprintf "| %s : %s" (valueToLustre v) (exprToLustre e)) cases))
     | TempoPreExpr (_, _, expr) -> Printf.sprintf "pre %s" (exprToLustre expr)
     | TempoArrowExpr (_, _, exprL, exprR) -> Printf.sprintf "%s -> %s" (exprToLustre exprL) (exprToLustre exprR)
-    | TempoFbyExpr (_, _, exprsL, expr, exprsR) -> Printf.sprintf "fby(%s; %s; %s)" (exprToLustre (List.hd exprsL)) (exprToLustre expr) (exprToLustre (List.hd exprsR))
+    | TempoFbyExpr (_, _, exprsL, expr, exprsR) -> Printf.sprintf "fby(%s; %s; %s)" (String.concat ", " (List.map exprToLustre exprsL)) (exprToLustre expr) (String.concat ", " (List.map exprToLustre exprsR))
     | FieldAccessExpr (_, _, expr, ident) -> Printf.sprintf "%s.%s" (exprToLustre expr) ident
     | ConstructExpr (_, _, cons) -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, e) -> Printf.sprintf "%s: %s" i (exprToLustre e)) cons))
     | ConstructArrExpr (_, _, exprs) -> Printf.sprintf "[%s]" (String.concat ", " (List.map exprToLustre exprs))
@@ -189,7 +189,7 @@ let constStmtToLustre depth stmt = match stmt with
 
 let nodeKindToLustre = function
     | Function -> "function"
-    | Node -> "node"
+    | Node -> "function"
 
 let stmtBlkToLustre depth blk = match blk with
     | TypeBlk blk -> String.concat "" [
