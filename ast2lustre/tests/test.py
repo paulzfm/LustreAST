@@ -33,11 +33,15 @@ for fileName in fileList:
 		if (astData != lustreData):
 			print fName+"\t: mistake"
 			fout = open("../tests/result/"+fName+".result",'w')
+			fout.write("ast:   \t")
 			fout.write(astData+'\n')
+			fout.write("lustre:\t")
 			fout.write(lustreData+'\n')
 			fout.close()
 			foutHead.write(fName+"\t: mistake"+"\n")
+			foutHead.write("ast:   \t")
 			foutHead.write(astData+'\n')
+			foutHead.write("lustre:\t")
 			foutHead.write(lustreData+"\n\n")
 			mistakeNum = mistakeNum + 1
 
@@ -54,5 +58,5 @@ for fileName in fileList:
 		lackNum = lackNum + 1
 foutHead.close()
 print "match: "+str(matchNum)
-print "mistke: "+str(mistakeNum)
+print "mistake: "+str(mistakeNum)
 print "lack lustre file: "+str(lackNum)
