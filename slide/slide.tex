@@ -1,0 +1,239 @@
+% setup
+\documentclass{beamer}
+\usetheme{Madrid}
+
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{url}
+
+% fonts
+\usepackage{xeCJK}
+\setCJKmainfont[BoldFont=SimHei]{SimHei}
+\setCJKfamilyfont{hei}{SimHei}
+\setCJKfamilyfont{kai}{KaiTi}
+\setCJKfamilyfont{fang}{FangSong}
+\newcommand{\hei}{\CJKfamily{hei}}
+\newcommand{\kai}{\CJKfamily{kai}}
+\newcommand{\fang}{\CJKfamily{fang}}
+
+\setmonofont{Menlo}
+
+% custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{darkgray}{rgb}{0.4, 0.4, 0.4}
+
+\renewcommand{\r}{\color{red}}
+\newcommand{\g}{\color{green}}
+
+\usepackage{listings}
+\lstset{basicstyle=\small\ttfamily}
+
+\begin{document}
+
+% credits
+\title{AST to Lustre}
+\subtitle{Period Report}
+\author[Lambda]{朱俸民 \and 孙皓 \and 徐梓哲}
+\institute[]{Lambda}
+\date{\today}
+
+% contents
+\AtBeginSection[]
+{
+    \begin{frame}{Contents}
+    	\tableofcontents[currentsection]
+	\end{frame}
+}
+
+\AtBeginSubsection[]
+{
+    \begin{frame}{Contents}
+        \tableofcontents[currentsubsection]
+    \end{frame}
+}
+
+% titlepage
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Today}
+    \tableofcontents
+\end{frame}
+
+\section{Correctness}
+
+\begin{frame}[fragile]{Answer: \texttt{binary\_const\_add}}
+    \begin{lstlisting}
+const
+c1: int = 2+3;
+c2: uint = 2u+3u;
+c3: short = 2s+3s;
+c4: ushort = 2us+3us;
+c5: real = 3.4+2.5;
+c6: float = 7.5f+6.4f;
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Output: \texttt{binary\_const\_add}}
+    \begin{lstlisting}
+const
+    c1: int = 5;
+    c2: uint = 5u;
+    c3: short = 5s;
+    c4: ushort = 5us;
+    c5: real = 5.9000000000000004;
+    c6: float = 13.899999618530273;
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Answer: \texttt{srs\_l2c\_syn\_009}}
+    \begin{lstlisting}
+const
+myConst2 : int = myConst1 + 3;
+myConst1 : int = 120;
+
+
+function fun1 (var1 : int) returns (output1 : int)
+let
+  output1 = var1 + myConst2;
+tel
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Answer: \texttt{srs\_l2c\_syn\_009}}
+    \begin{lstlisting}
+const
+myConst2: int = 123;
+myConst1: int = 120;
+
+function fun1(var1: int)
+returns(output1: int)
+let
+    output1 = var1 + myConst2;
+tel
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Answer: \texttt{srs\_l2c\_syn\_004}}
+    \begin{lstlisting}
+const
+   private light_blue : lights = blue;
+
+type
+   private lights = enum {red, yellow, blue};
+
+   function private enum_const(
+      control : bool)
+   returns (
+      Output1 : lights)
+   var
+      _L1 : lights;
+      _L2 : bool;
+      _L6 : lights;
+      _L7 : lights;
+   ...
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Output: \texttt{srs\_l2c\_syn\_004}}
+    \begin{lstlisting}
+const
+    light_blue: lights = blue;
+
+type
+    lights = enum { red, yellow, blue };
+
+function enum_const(control: bool)
+returns(Output1: lights)
+var
+    _L1: lights;
+    _L2: bool;
+    _L6: lights;
+    _L7: lights;
+...
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Answer: \texttt{srs\_l2c\_syn\_046\_005}}
+    \begin{lstlisting}
+node fun2 () returns ()
+var
+output2 : int;
+let
+  output2 = Node1(false);
+tel
+
+node Node1(input1 : bool) returns (output1 : int)
+let
+  output1 = if ( input1 ) then
+               fby(1;23;1200)
+            else
+               1300;
+tel
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Output: \texttt{srs\_l2c\_syn\_046\_005}}
+    \begin{lstlisting}
+node fun2()
+returns()
+var
+    output2: int;
+let
+    output2 = Node1(false);
+tel
+
+node Node1(input1: bool)
+returns(output1: int)
+let
+    output1 = if input1 then (fby(1; 23; 1200))
+              else (1300);
+tel
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Answer: \texttt{srs\_l2c\_syn\_049\_025}}
+    \begin{lstlisting}
+type struct1 = {L1 : int, L2 : bool};
+
+function foldflatten(
+   Input1 : struct1)
+returns (
+   Output1 : int;
+   Output2 : bool)
+var
+   _L2 : int;
+   _L1 : bool;
+   _L3 : struct1;
+let
+   _L2, _L1 = ( fold (flatten struct1)<<1>>)(_L3);
+   _L3 = Input1;
+   Output1 = _L2;
+   Output2 = _L1;
+tel
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Output: \texttt{srs\_l2c\_syn\_049\_025}}
+    \begin{lstlisting}
+function foldop(Input1: int)
+returns(Output1: int)
+var
+    _L1: int;
+    _L2: int;
+let
+    _L1 = (foldi $-$<<9>>)(_L2);
+    _L2 = Input1;
+    Output1 = _L1;
+tel
+    \end{lstlisting}
+\end{frame}
+
+\end{document}
