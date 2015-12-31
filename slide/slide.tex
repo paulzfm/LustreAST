@@ -69,6 +69,17 @@
 
 \section{Correctness}
 
+\begin{frame}{Mismatches}
+    \begin{itemize}
+        \item 23 constants
+        \item 1 private node
+        \item 3 parentheses in expressions
+        \item 1 wrong AST
+        \item 18 lustre missing
+        \item 205 pass (without node/function)
+    \end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]{Answer: \texttt{binary\_const\_add}}
     \begin{lstlisting}
 const
@@ -99,7 +110,6 @@ const
 myConst2 : int = myConst1 + 3;
 myConst1 : int = 120;
 
-
 function fun1 (var1 : int) returns (output1 : int)
 let
   output1 = var1 + myConst2;
@@ -107,7 +117,7 @@ tel
     \end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{Answer: \texttt{srs\_l2c\_syn\_009}}
+\begin{frame}[fragile]{Output: \texttt{srs\_l2c\_syn\_009}}
     \begin{lstlisting}
 const
 myConst2: int = 123;
