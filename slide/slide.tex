@@ -280,22 +280,23 @@ TopLevel(
             returns(var_decls(vars(Output1),int,
                 (NullComment)
             )),
+...
     \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{AST: \texttt{srs\_l2c\_syn\_049\_025} (Contd.)}
     \begin{lstlisting}
-            body(
-                localvars(
-                    var_decls(vars(_L1),int,(NullComment)),
-                    var_decls(vars(_L2),int,(NullComment))
-                ),
-				=(lvalue(ID(_L1,int,())),apply_expr((int),(()),high_order(highorder_foldi,prefix($-$),INT(9 )),list_expr(ID(_L2,int,()))),NOCALL,NOGUID,NOIMPORT,0)
-,				=(lvalue(ID(_L2,int,())),ID(Input1,int,()),NOCALL,NOGUID,NOIMPORT,0)
-,				=(lvalue(ID(Output1,int,())),ID(_L1,int,()),NOCALL,NOGUID,NOIMPORT,0)
-            )
-        )
-    )
+body(
+    localvars(
+        var_decls(vars(_L1),int,(NullComment)),
+        var_decls(vars(_L2),int,(NullComment))
+    ),
+	=(lvalue(
+        ID(_L1,int,())), apply_expr((int),(()), high_order(
+            highorder_foldi,prefix($-$),INT(9)
+        ), list_expr(ID(_L2,int,()))),NOCALL,NOGUID,NOIMPORT,0),
+    =(lvalue(ID(_L2,int,())),ID(Input1,int,()),NOCALL,NOGUID,NOIMPORT,0),
+    =(lvalue(ID(Output1,int,())),ID(_L1,int,()),NOCALL,NOGUID,NOIMPORT,0)
 )
     \end{lstlisting}
 \end{frame}
