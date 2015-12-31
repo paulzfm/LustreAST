@@ -117,32 +117,35 @@ let atomExprToLustre = function
 
 let rec exprToLustre = function
     | AtomExpr expr -> atomExprToLustre expr
-    | BinOpExpr (op, kind, clock, exprL, exprR) -> Printf.sprintf "(%s %s %s)" (exprToLustre exprL) (binOpToLustre op) (exprToLustre exprR)
-    | UnOpExpr (op, kind, clock, expr) -> Printf.sprintf "(%s %s)" (unOpToLustre op kind) (exprToLustre expr)
-    | IfExpr (_, _, exprC, exprT, exprF) -> Printf.sprintf "if %s then %s else %s" (exprToLustre exprC) (exprToLustre exprT) (exprToLustre exprF)
+    | BinOpExpr (op, kind, clock, exprL, exprR) -> Printf.sprintf "%s %s %s" (exprToLustre exprL) (binOpToLustre op) (exprToLustre exprR)
+    | UnOpExpr (op, kind, clock, expr) -> Printf.sprintf "%s %s" (unOpToLustre op kind) (exprToLustre expr)
+    | IfExpr (_, _, exprC, exprT, exprF) -> Printf.sprintf "if %s then (%s) else (%s)" (exprToLustre exprC) (exprToLustre exprT) (exprToLustre exprF)
     | SwitchExpr (_, _, expr, cases) -> Printf.sprintf "(case %s of\n\t%s)" (exprToLustre expr) (String.concat "\n\t" (List.map (fun (v, e) -> Printf.sprintf "| %s : %s" (valueToLustre v) (exprToLustre e)) cases))
     | TempoPreExpr (_, _, expr) -> Printf.sprintf "pre %s" (exprToLustre expr)
     | TempoArrowExpr (_, _, exprL, exprR) -> Printf.sprintf "%s -> %s" (exprToLustre exprL) (exprToLustre exprR)
-    | TempoFbyExpr (_, _, exprsL, expr, exprsR) -> Printf.sprintf "fby(%s; %s; %s)" (exprToLustre (List.hd exprsL)) (exprToLustre expr) (exprToLustre (List.hd exprsR))
+    | TempoFbyExpr (_, _, exprsL, expr, exprsR) -> Printf.sprintf "fby(%s; %s; %s)" (String.concat ", " (List.map exprToLustre exprsL)) (exprToLustre expr) (String.concat ", " (List.map exprToLustre exprsR))
     | FieldAccessExpr (_, _, expr, ident) -> Printf.sprintf "%s.%s" (exprToLustre expr) ident
     | ConstructExpr (_, _, cons) -> Printf.sprintf "{%s}" (String.concat ", " (List.map (fun (i, e) -> Printf.sprintf "%s: %s" i (exprToLustre e)) cons))
     | ConstructArrExpr (_, _, exprs) -> Printf.sprintf "[%s]" (String.concat ", " (List.map exprToLustre exprs))
     | MixedConstructorExpr (_, _, expr1, labels, expr2) -> Printf.sprintf "(%s with %s = %s)" (exprToLustre expr1) (String.concat "" (List.map labelIdxToLustre labels)) (exprToLustre expr2)
-    | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "(%s ^ %s)" (exprToLustre expr) integer
+    | ArrDimExpr (_, _, expr, integer) -> Printf.sprintf "%s ^ %s" (exprToLustre expr) integer
     | ArrIdxExpr (_, _, expr, idx) -> Printf.sprintf "%s[%s]" (exprToLustre expr) idx
     | ArrSliceExpr _ -> ""
     | ApplyExpr (_, _, blk, exprs) -> Printf.sprintf "%s(%s)" (applyBlkToLustre blk) (String.concat ", " (List.map exprToLustre exprs))
-    | DynamicProjExpr (_, _, expr1, exprs, expr2) -> Printf.sprintf "%s.%s default %s" (exprToLustre expr1) (String.concat "" (List.map (Printf.sprintf "[%s]") (List.map exprToLustre exprs))) (exprToLustre expr2)
-    | ListExpr (exprs) -> String.concat ", " (List.map exprToLustre exprs)
+    | DynamicProjExpr (_, _, expr1, exprs, expr2) -> Printf.sprintf "(%s.%s default %s)" (exprToLustre expr1) (String.concat "" (List.map (Printf.sprintf "[%s]") (List.map exprToLustre exprs))) (exprToLustre expr2)
+    | ListExpr (exprs) -> match exprs with
+        | [] -> ""
+        | [expr] -> exprToLustre expr
+        | _ -> Printf.sprintf "(%s)" (String.concat ", " (List.map exprToLustre exprs))
 and applyBlkToLustre = function
-    | MakeStmt (ident, _) -> Printf.sprintf "make %s" ident
-    | FlattenStmt (ident, _) -> Printf.sprintf "flatten %s" ident
+    | MakeStmt (ident, _) -> Printf.sprintf "(make %s)" ident
+    | FlattenStmt (ident, _) -> Printf.sprintf "(flatten %s)" ident
     | HighOrderStmt (op, stmt, integer) -> Printf.sprintf "(%s %s<<%s>>)" (highOrderOpToLustre op) (prefixStmtToLustre stmt) integer
     | PrefixStmt stmt -> prefixStmtToLustre stmt
-    | MapwDefaultStmt (stmt, integer, expr, exprs) -> Printf.sprintf "mapw %s<<%s>> if %s default (%s)" (prefixStmtToLustre stmt) integer (exprToLustre expr) (exprToLustre exprs)
-    | MapwiDefaultStmt (stmt, integer, expr, exprs) -> Printf.sprintf "mapwi %s<<%s>> if %s default (%s)" (prefixStmtToLustre stmt) integer (exprToLustre expr) (exprToLustre exprs)
-    | FoldwIfStmt (stmt, integer, expr) -> Printf.sprintf "foldw %s<<%s>> if %s" (prefixStmtToLustre stmt) integer (exprToLustre expr)
-    | FoldwiStmt (stmt, integer, expr) -> Printf.sprintf "foldwi %s<<%s>> if %s" (prefixStmtToLustre stmt) integer (exprToLustre expr)
+    | MapwDefaultStmt (stmt, integer, expr, exprs) -> Printf.sprintf "(mapw %s<<%s>> if %s default %s)" (prefixStmtToLustre stmt) integer (exprToLustre expr) (exprToLustre exprs)
+    | MapwiDefaultStmt (stmt, integer, expr, exprs) -> Printf.sprintf "(mapwi %s<<%s>> if %s default %s)" (prefixStmtToLustre stmt) integer (exprToLustre expr) (exprToLustre exprs)
+    | FoldwIfStmt (stmt, integer, expr) -> Printf.sprintf "(foldw %s<<%s>> if %s)" (prefixStmtToLustre stmt) integer (exprToLustre expr)
+    | FoldwiStmt (stmt, integer, expr) -> Printf.sprintf "(foldwi %s<<%s>> if %s)" (prefixStmtToLustre stmt) integer (exprToLustre expr)
 and labelIdxToLustre = function
     | Ident ident -> Printf.sprintf ".%s" ident
     | Expr expr -> Printf.sprintf "[%s]" (exprToLustre expr)
@@ -189,7 +192,7 @@ let constStmtToLustre depth stmt = match stmt with
 
 let nodeKindToLustre = function
     | Function -> "function"
-    | Node -> "function"
+    | Node -> "node"
 
 let stmtBlkToLustre depth blk = match blk with
     | TypeBlk blk -> String.concat "" [
