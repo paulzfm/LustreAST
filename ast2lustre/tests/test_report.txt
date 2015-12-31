@@ -27,7 +27,6 @@ private:
 srs_l2c_syn_004
 
 expr:
-srs_l2c_syn_010_004
 srs_l2c_syn_037_001
 srs_l2c_syn_046_003
 srs_l2c_syn_046_005
