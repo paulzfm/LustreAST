@@ -1,0 +1,4 @@
+function fun1(x1:int; x2: int^5) returns(y1: int)
+let
+y1 = (mapfold $-$<<5>>)(x1,x2);
+tel

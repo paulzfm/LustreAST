@@ -1,0 +1,6 @@
+function fun1(var5: real; var6: float)
+returns(y5: real; y6: float)
+let
+y5 = var5 / 6.5;
+y6 = var6 / 7.5f;
+tel

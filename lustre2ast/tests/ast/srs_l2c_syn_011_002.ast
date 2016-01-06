@@ -1,0 +1,20 @@
+TopLevel(
+	main(myNode1),
+	program
+	(
+		node
+		(
+			node,
+			,
+			myNode1,
+			NullComment,
+			params(var_decls(vars(var1),int,(NullComment))),
+			returns(var_decls(vars(output1),int,(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,int,())),binop_multiply(int,(),ID(var1,int,()),INT(203)),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

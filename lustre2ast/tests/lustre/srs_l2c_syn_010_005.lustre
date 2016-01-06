@@ -1,0 +1,18 @@
+const 
+   arr1 : arr_t = [[east, west], [south, north]];
+   arr1_alias : arr_t = arr1;
+
+type 
+   enum_t = enum {east, south, west, north};
+   arr_t = enum_t ^2 ^2;
+
+   function enum_array_alias()
+   returns (
+      Output1 : arr_t)
+   var
+      _L1 : arr_t;
+   let
+      _L1 = arr1_alias;
+      Output1 = _L1;
+   tel
+

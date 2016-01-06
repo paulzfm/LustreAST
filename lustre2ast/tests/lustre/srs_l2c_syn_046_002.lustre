@@ -1,0 +1,15 @@
+node node1 (input1 : int) returns (output1 : int; output2 : int)
+let
+  output1 = fby( input1 + 3; 5; 239); 
+  output2 = 20;
+tel
+
+node node2 (input2 : int) returns (output2 : int)
+let
+  output2 , _ = node1(input2) ;
+tel
+
+node node3(input1 : int) returns (output1 : int)
+let 
+  output1 = input1;
+tel

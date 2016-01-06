@@ -1,0 +1,22 @@
+function fun1(x1: int; x2: int^5; x3: real; x4: real^5; x5: bool; x6: bool^5; x7: float; x8: short)
+returns(y1:int; y2: int; y3: int; y4: int; y5: int; y6: real; y7:bool; y8: bool; y9: bool; y10: bool; y11: bool; y12: bool; y13: int; y14: int; y15: real; y16: float; y17: int; y18: short)
+let
+y1 = (fold $+$<<5>>) (x1,x2);
+y2 = (fold $-$<<5>>) (x1,x2);
+y3 = (fold $*$<<5>>) (x1,x2);
+y4 = (fold $div$<<5>>) (x1,x2);
+y5 = (fold $mod$<<5>>) (x1,x2);
+y6 = (fold $/$<<5>>) (x3,x4);
+y7 = (fold $=$<<5>>) (x5,x6);
+y8 = (fold $<>$<<5>>) (x5,x6);
+y9 = (fold $and$<<5>>) (x5,x6);
+y10 = (fold $or$<<5>>) (x5,x6);
+y11 = (fold $xor$<<5>>) (x5,x6);
+y12 = (fold not$<<5>>) (x5);
+y13 = (fold +$<<5>>) (x1);
+y14 = (fold -$<<5>>) (x1);
+y15 = (fold real$<<5>>) (x3);
+y16 = (fold float$<<5>>) (x7);
+y17 = (fold int$<<5>>) (x1);
+y18 = (fold short$<<5>>) (x8);
+tel

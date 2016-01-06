@@ -1,0 +1,35 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		type_block
+		(
+			type(myInt,int,NullComment),
+			type(myBool,bool,NullComment),
+			type(myReal,real,NullComment)
+		),
+		node
+		(
+			function,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(var1),typename(myInt),(NullComment)),var_decls(vars(var2),typename(myBool),(NullComment)),var_decls(vars(var3),typename(myReal),(NullComment))),
+			returns(var_decls(vars(output1),typename(myAnother),(NullComment)),var_decls(vars(output2),typename(myBool),(NullComment)),var_decls(vars(output3),typename(myReal),(NullComment)),var_decls(vars(output4),typename(myChar),(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,int,())),binop_add(int,(),ID(var1,int,()),INT(1000000)),NOCALL,NOGUID,NOIMPORT,0)
+,
+				=(lvalue(ID(output2,bool,())),binop_and(bool,(),ID(var2,bool,()),BOOL(true)),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(output3,real,())),binop_subtract(real,(),ID(var3,real,()),REAL(12.231231234123412134123412341343)),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(output4,char,())),CHAR(98),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		type_block
+		(
+			type(myChar,char,NullComment),
+			type(myAnother,typename(myInt),NullComment)
+		)
+	)
+)

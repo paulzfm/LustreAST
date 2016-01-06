@@ -1,0 +1,52 @@
+TopLevel(
+	main(Operator1),
+	program
+	(
+		type_block
+		(
+			type(int_signal,construct(field(Value,int),field(Status,bool),field(pad1,bool)),NullComment)
+		),
+		type_block
+		(
+			type(bool_signal,construct(field(Value,bool),field(Status,bool)),NullComment)
+		),
+		type_block
+		(
+			type(device_signal,construct(field(msgCod1,int),field(msgCod2,int)),NullComment)
+		),
+		type_block
+		(
+			type(real_signal,construct(field(Value,real),field(Status,bool),field(pad1,bool),field(pad2,bool),field(pad3,bool)),NullComment)
+		),
+		node
+		(
+			node,
+			52e27c4c-1272-4f31-bc67-4f4b486f0ee1,
+			Operator1,
+			NullComment,
+			params(var_decls(vars(Input1),int,(NullComment))),
+			returns(var_decls(vars(Output1),uint,(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),int,(NullComment)),var_decls(vars(_L28),uint,(NullComment))),
+				=(lvalue(ID(_L1,int,())),ID(Input1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,uint,())),ID(_L28,uint,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L28,uint,())),apply_expr((uint),(()),prefix(INT_to_UINT,param_types(int),ret_types(uint)),list_expr(ID(_L1,int,()))),INT_to_UINT,940a1c57-5cdd-49ca-ae3b-7e33251c6118,IMPORTED,1)
+			)
+		)
+,
+		node
+		(
+			node,
+			5bdbae2e-7fdb-456c-8bba-fe9738a8efa3,
+			INT_to_UINT,
+			NullComment,
+			params(var_decls(vars(x),int,(NullComment))),
+			returns(var_decls(vars(y),uint,(NullComment))),
+			body
+			(
+							)
+		)
+
+	)
+)

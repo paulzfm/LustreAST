@@ -1,0 +1,23 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		type_block
+		(
+			type(myInt,int,NullComment)
+		),
+		node
+		(
+			function,
+			,
+			fun1,
+			NullComment,
+			params( ),
+			returns( ),
+			body
+			(
+							)
+		)
+
+	)
+)

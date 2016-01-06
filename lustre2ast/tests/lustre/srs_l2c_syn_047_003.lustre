@@ -1,0 +1,11 @@
+type
+int2 = int ^2;
+
+node flatten_array(
+   Input1 : int2)
+returns (
+   Output1 : int; 
+   Output2 : int)
+let
+   Output1, Output2 = (flatten int2)(Input1);
+tel

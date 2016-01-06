@@ -1,0 +1,9 @@
+type myInt = int ;
+
+node Node1 (var1 : myInt) returns (output1: myInt; output2 : int ; output3 : int ; output4 : real)
+let
+  output1 = - var1;
+  output2 = + var1;
+  output3 = int 203.23;
+  output4 = real 23;
+tel

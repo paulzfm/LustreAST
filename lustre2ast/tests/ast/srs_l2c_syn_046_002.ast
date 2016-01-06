@@ -1,0 +1,50 @@
+TopLevel(
+	main(node2),
+	program
+	(
+		node
+		(
+			node,
+			,
+			node1,
+			NullComment,
+			params(var_decls(vars(input1),int,(NullComment))),
+			returns(var_decls(vars(output1),int,(NullComment)),var_decls(vars(output2),int,(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,int,())),tempo_fby((int),(()),list_expr(binop_add(int,(),ID(input1,int,()),INT(3))),INT(5),list_expr(INT(239))),NOCALL,NOGUID,NOIMPORT,0)
+,
+				=(lvalue(ID(output2,int,())),INT(20),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		node
+		(
+			node,
+			,
+			node2,
+			NullComment,
+			params(var_decls(vars(input2),int,(NullComment))),
+			returns(var_decls(vars(output2),int,(NullComment))),
+			body
+			(
+				=(lvalue(ID(output2,int,()),anonymous_id),apply_expr((int,int),((),()),prefix(node1,param_types(int),ret_types(int,int)),list_expr(ID(input2,int,()))),node1,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		node
+		(
+			node,
+			,
+			node3,
+			NullComment,
+			params(var_decls(vars(input1),int,(NullComment))),
+			returns(var_decls(vars(output1),int,(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,int,())),ID(input1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

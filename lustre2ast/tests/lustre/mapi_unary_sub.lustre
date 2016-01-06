@@ -1,0 +1,4 @@
+function fun1() returns(y1:int^5)
+let
+y1 = (mapi -$<<5>>)();
+tel

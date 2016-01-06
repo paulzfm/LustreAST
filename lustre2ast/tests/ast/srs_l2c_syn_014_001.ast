@@ -1,0 +1,24 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		type_block
+		(
+			type(myInt,int,NullComment)
+		),
+		node
+		(
+			function,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(var1,var2,var3),typename(myInt),(NullComment))),
+			returns(var_decls(vars(output1),typename(myInt),(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,int,())),binop_add(int,(),binop_add(int,(),ID(var1,int,()),ID(var2,int,())),ID(var3,int,())),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

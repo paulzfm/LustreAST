@@ -1,0 +1,64 @@
+TopLevel(
+	main(Operator5),
+	program
+	(
+		type_block
+		(
+			type(int_signal,construct(field(Value,int),field(Status,bool),field(pad1,bool)),NullComment)
+		),
+		type_block
+		(
+			type(bool_signal,construct(field(Value,bool),field(Status,bool)),NullComment)
+		),
+		type_block
+		(
+			type(device_signal,construct(field(msgCod1,int),field(msgCod2,int)),NullComment)
+		),
+		type_block
+		(
+			type(real_signal,construct(field(Value,real),field(Status,bool),field(pad1,bool),field(pad2,bool),field(pad3,bool)),NullComment)
+		),
+		type_block
+		(
+			type(Type1,construct(field(label1,bool),field(label2,bool)),NullComment)
+		),
+		type_block
+		(
+			type(Type2,array(bool,INT(2 )),NullComment)
+		),
+		type_block
+		(
+			type(Type3,array(array(bool,INT(2 )),INT(1 )),NullComment)
+		),
+		type_block
+		(
+			type(Type4,construct(field(label1,bool)),NullComment)
+		),
+		type_block
+		(
+			type(Type5,array(array(bool,INT(2 )),INT(6 )),NullComment)
+		),
+		type_block
+		(
+			type(Type6,array(array(bool,INT(2 )),INT(3 )),NullComment)
+		),
+		node
+		(
+			function,
+			25175783-c6a6-428c-a3f6-44ea374b3fc4,
+			Operator5,
+			NullComment,
+			params(var_decls(vars(Input1),typename(Type2),(NullComment)),var_decls(vars(Input2),bool,(NullComment))),
+			returns(var_decls(vars(Output1),bool,(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),bool,(NullComment)),var_decls(vars(_L2),typename(Type2),(NullComment)),var_decls(vars(_L3),bool,(NullComment))),
+				=(lvalue(ID(_L1,bool,())),dynamic_project(bool,(),ID(_L2,array(bool,INT(2 )),()),(INT(0)),ID(_L3,bool,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,array(bool,INT(2 )),())),ID(Input1,array(bool,INT(2 )),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L3,bool,())),ID(Input2,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,bool,())),ID(_L1,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

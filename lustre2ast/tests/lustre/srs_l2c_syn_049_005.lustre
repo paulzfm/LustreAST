@@ -1,0 +1,29 @@
+function map_test5(
+   Input1 : bool ^2 ^1; 
+   Input2 : struct1 ^10)
+returns (
+   Output1 : bool ^1; 
+   Output2 : bool ^1; 
+   Output3 : int ^10; 
+   Output4 : bool ^10)
+var
+   _L11 : bool ^1;
+   _L10 : bool ^1;
+   _L12 : bool ^2 ^1;
+   _L15 : int ^10;
+   _L14 : bool ^10;
+   _L16 : struct1 ^10;
+let
+   _L11, _L10 = ( map (flatten bool2)<<1>>)(_L12);
+   Output1 = _L11;
+   Output2 = _L10;
+   _L12 = Input1;
+   _L15, _L14 = ( map (flatten struct1)<<10>>)(_L16);
+   Output3 = _L15;
+   Output4 = _L14;
+   _L16 = Input2;
+tel
+
+type 
+bool2 = bool ^2;
+struct1 = {L1 : int, L2 : bool};

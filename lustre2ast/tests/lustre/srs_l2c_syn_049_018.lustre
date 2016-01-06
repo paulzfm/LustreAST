@@ -1,0 +1,49 @@
+function sum_tri(
+   a : int; 
+   b : int; 
+   c : int)
+returns (
+   x : int; 
+   y : int; 
+   z : int)
+var
+   _M1 : int;
+   _M2 : int;
+   _M3 : int;
+   _M4 : int;
+   _M6 : int;
+let
+   _M1 = a;
+   _M2 = b;
+   _M3 = c;
+   x = _M4;
+   y = _M6;
+   z = _M6;
+   _M4 = _M1 + _M2;
+   _M6 = _M4 + _M3;
+tel
+
+
+function mapi_test3(
+   Input1 : int ^3; 
+   Input2 : int ^3)
+returns (
+   Output1 : int ^3; 
+   Output2 : int ^3; 
+   Output3 : int ^3)
+var
+   _L1 : int ^3;
+   _L2 : int ^3;
+   _L3 : int ^3;
+   _L5 : int ^3;
+   _L4 : int ^3;
+let
+   _L1, _L4, _L5 = ( mapi sum_tri<<3>>)(_L2, _L3);
+   _L2 = Input1;
+   _L3 = Input2;
+   Output1 = _L1;
+   Output2 = _L4;
+   Output3 = _L5;
+tel
+
+

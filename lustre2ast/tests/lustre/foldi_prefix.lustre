@@ -1,0 +1,9 @@
+function fun1(x1: int)
+returns(y1:int; y2: int; y3: int; y4: int; y5: int)
+let
+y1 = (foldi $+$<<5>>) (x1);
+y2 = (foldi $-$<<5>>) (x1);
+y3 = (foldi $*$<<5>>) (x1);
+y4 = (foldi $div$<<5>>) (x1);
+y5 = (foldi $mod$<<5>>) (x1);
+tel

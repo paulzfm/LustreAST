@@ -1,0 +1,6 @@
+type myInt = int ;
+
+node Node1 (var1 : bool) returns (output1: bool)
+let
+  output1 = not var1;
+tel

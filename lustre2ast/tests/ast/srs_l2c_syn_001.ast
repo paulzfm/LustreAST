@@ -1,0 +1,28 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		const_block
+		(
+			const(myVar,typename(myInt),INT(10),NullComment)
+		),
+		node
+		(
+			function,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(var1),typename(myInt),(NullComment))),
+			returns(var_decls(vars(output1),typename(myInt),(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,int,())),ID(var1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		type_block
+		(
+			type(myInt,int,NullComment)
+		)
+	)
+)

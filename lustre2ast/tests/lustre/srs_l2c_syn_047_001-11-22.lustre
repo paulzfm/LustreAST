@@ -1,0 +1,13 @@
+type
+struct1 = {label1 : int, label2 :bool};
+struct_type = {label1 : int, label2 : bool^3, label3 : struct1};
+
+node root(
+   Input1 : int; 
+   Input2 : bool^3;
+   Input3 : struct1)
+returns (
+   Output1 : struct_type)
+let
+   Output1 = (make struct_type)(Input1, Input2, Input3);
+tel

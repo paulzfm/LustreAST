@@ -1,0 +1,25 @@
+const 
+   arr1 : at = [[0.1, 0.2], [0.01, 2.0], [0.2, 20.0]];
+
+type 
+   at = real ^2 ^3;
+
+   function fun1(
+      Input1 : real ^2)
+   returns (
+      Output1 : real ^2 ^2; 
+      Output2 : real ^2 ^3)
+   var
+      _L1 : at;
+      _L2 : real ^2;
+      _L3 : real ^2 ^2;
+      _L4 : real ^2;
+   let
+      _L1 = arr1;
+      _L2 = [0.001, 0.002];
+      _L3 = [_L2, _L4];
+      _L4 = Input1;
+      Output1 = _L3;
+      Output2 = _L1;
+   tel
+

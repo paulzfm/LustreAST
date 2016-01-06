@@ -1,0 +1,8 @@
+function fun1 (var1 : int) returns (output1 : int)
+let
+  output1 =
+	(case var1 of
+	| -1 : -1
+	| 1 : 1
+	| _ : 0);
+tel

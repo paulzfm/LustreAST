@@ -1,0 +1,4 @@
+function fun1(x1: bool) returns(y: bool)
+let
+y = (fold not$<<5>>)(x1);
+tel

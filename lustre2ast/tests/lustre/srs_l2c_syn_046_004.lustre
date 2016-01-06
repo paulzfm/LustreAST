@@ -1,0 +1,4 @@
+function fun2 () returns (output2 : int)
+let
+  output2 = 1203;
+tel

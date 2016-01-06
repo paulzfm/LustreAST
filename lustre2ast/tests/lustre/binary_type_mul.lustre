@@ -1,0 +1,12 @@
+type
+c1 = int^ 2*3;
+c2 = uint ^ 2u*3u;
+c3 = short ^ 2s*3s;
+c4 = ushort ^ 2us*3us;
+/*c5 = real^ 3.4*2.5;*/
+
+function fun1(var1: c1)
+returns(y1: int)
+let
+y1 = var1[3];
+tel

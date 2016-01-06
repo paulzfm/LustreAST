@@ -1,0 +1,10 @@
+function fun1(var1: int; var2: uint; var3: short; var4: ushort; var5: real; var6: float)
+returns(y1: int; y2: uint; y3: short; y4: ushort; y5: int; y6: int)
+let
+y1 = var1 div 1;
+y2 = var2 div 2u;
+y3 = var3 div 4s;
+y4 = var4 div 5us;
+y5 = var5 div 6.5;
+y6 = var6 div 7.5f;
+tel

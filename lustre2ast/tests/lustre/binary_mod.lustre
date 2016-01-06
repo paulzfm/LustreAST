@@ -1,0 +1,8 @@
+function fun1(var1: int; var2: uint; var3: short; var4: ushort)
+returns(y1: int; y2: uint; y3: short; y4: ushort)
+let
+y1 = var1 mod 1;
+y2 = var2 mod 2u;
+y3 = var3 mod 4s;
+y4 = var4 mod 5us;
+tel

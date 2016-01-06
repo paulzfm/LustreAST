@@ -1,0 +1,6 @@
+function Node1 (var1 : bool) returns (output1: bool; output2 : bool ; output3 : bool )
+let
+  output1 = var1 and true;
+  output2 = var1 or false;
+  output3 = var1 xor false;
+tel

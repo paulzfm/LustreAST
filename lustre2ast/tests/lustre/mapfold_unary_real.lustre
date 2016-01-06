@@ -1,0 +1,4 @@
+function fun1(x1: real) returns(y1: real)
+let
+y1 = (mapfold real$<<5>>) (x1);
+tel

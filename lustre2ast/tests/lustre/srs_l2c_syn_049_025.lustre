@@ -1,0 +1,17 @@
+type struct1 = {L1 : int, L2 : bool};
+
+function foldflatten(
+   Input1 : struct1)
+returns (
+   Output1 : int; 
+   Output2 : bool)
+var
+   _L2 : int;
+   _L1 : bool;
+   _L3 : struct1;
+let
+   _L2, _L1 = ( fold (flatten struct1)<<1>>)(_L3);
+   _L3 = Input1;
+   Output1 = _L2;
+   Output2 = _L1;
+tel

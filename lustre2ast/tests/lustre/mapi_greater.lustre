@@ -1,0 +1,4 @@
+function fun1(x1: int^5) returns(y1:bool^5)
+let
+y1 = (mapi $>$<<5>>)(x1);
+tel
