@@ -1,0 +1,11 @@
+type myInt = int ;
+
+function fun1 (var1 : int; var2 , var3 , var4: myInt ) returns (output1 : myInt )
+var 
+anotherClock : bool;
+temp : bool;
+let
+  anotherClock = true;	
+  temp = anotherClock;	
+  output1 = var1 + var2 + var3 + var4; 
+tel

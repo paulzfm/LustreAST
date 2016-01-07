@@ -1,0 +1,5 @@
+function fun1 (var1 : int) 
+        returns (output1 : int )
+let
+  output1 = var1 * 203; 
+tel

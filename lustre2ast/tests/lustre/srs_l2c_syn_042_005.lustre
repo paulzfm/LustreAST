@@ -1,0 +1,10 @@
+const size1 : int = 10;
+const size2 : int = 20;
+
+function fun1 (var1 : int) returns (output1 : int ^ (size1 +1) ; output2 : int)
+var array1 : int ^ (size1 + 1) ^ size2;
+let
+  array1 = var1 ^ (size1 + 1) ^ size2;
+  output1 = array1[16-3];
+  output2 = output1[3*2];
+tel

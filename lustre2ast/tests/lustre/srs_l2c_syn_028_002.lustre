@@ -1,0 +1,10 @@
+type 
+myInt = int ;
+myStruct = {Field1 : int , Field2 : bool};
+
+node Node1 (var1 : myInt; var2 : bool ; var3 : real ; var4 : char; var5 : myStruct ) 
+	returns (output1: myInt ; output2 : bool ; output3 : real; output4 : char; output5 : myStruct )
+let
+  output1 = fby( var1 ; 2; 10);	
+  output2, output3, output4, output5 = fby(var2, var3, var4, {Field1 : 120, Field2 : true};2; false, 12.03, 'b', var5);
+tel

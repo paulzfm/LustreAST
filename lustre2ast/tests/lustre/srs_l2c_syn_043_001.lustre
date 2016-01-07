@@ -1,0 +1,17 @@
+   function fun1(
+      Input1 : int ^10; 
+      Input2 : int)
+   returns (
+      Output1 : int ^10)
+   var
+      _L1 : int ^10;
+      _L2 : int ^10;
+      _L3 : int;
+      _L5 : int;
+   let
+      _L1 = Input1;
+      _L2 = (_L1 with [_L5] = _L3);
+      _L3 = 100;
+      Output1 = _L2;
+      _L5 = Input2;
+   tel

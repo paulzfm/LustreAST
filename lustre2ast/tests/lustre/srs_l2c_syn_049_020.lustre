@@ -1,0 +1,15 @@
+function mapi_test4(
+   Input1 : bool ^5)
+returns (
+   Output1 : struct1 ^5)
+var
+   _L1 : struct1 ^5;
+   _L2 : bool ^5;
+let
+   _L1 = ( mapi (make struct1)<<5>>)(_L2);
+   _L2 = Input1;
+   Output1 = _L1;
+tel
+
+type
+struct1 = {L1 : int, L2 : bool};

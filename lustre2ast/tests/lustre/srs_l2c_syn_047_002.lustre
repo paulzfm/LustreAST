@@ -1,0 +1,12 @@
+type
+myStruct = {label1 : bool, label2 : int2};
+int2 = int ^ 2;
+
+function flatten_id(
+   s : myStruct)
+returns (
+   a : bool; 
+   b : int2)
+let
+   a, b = (flatten myStruct)(s);
+tel

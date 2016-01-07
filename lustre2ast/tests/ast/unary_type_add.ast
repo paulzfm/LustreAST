@@ -1,0 +1,35 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		const_block
+		(
+			const(c1,int,INT(2),NullComment),
+			const(c2,real,REAL(2.5),NullComment),
+			const(c3,float,REAL(3.4000000953674316),NullComment),
+			const(c4,short,SHORT(5),NullComment),
+			const(c5,ushort,USHORT(6),NullComment),
+			const(c6,uint,UINT(7),NullComment)
+		),
+		node
+		(
+			node,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(var1),int,(NullComment))),
+			returns(var_decls(vars(y1),int,(NullComment)),var_decls(vars(y2),real,(NullComment)),var_decls(vars(y3),float,(NullComment)),var_decls(vars(y4),short,(NullComment)),var_decls(vars(y5),ushort,(NullComment)),var_decls(vars(y6),uint,(NullComment))),
+			body
+			(
+				=(lvalue(ID(y1,int,())),unop_pos(int,(),list_expr(binop_add(int,(),ID(var1,int,()),ID(c1,int,())))),NOCALL,NOGUID,NOIMPORT,0)
+,
+				=(lvalue(ID(y2,real,())),unop_pos(real,(),ID(c2,real,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y3,float,())),unop_pos(float,(),ID(c3,float,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y4,short,())),unop_pos(short,(),ID(c4,short,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y5,ushort,())),unop_pos(ushort,(),ID(c5,ushort,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y6,uint,())),unop_pos(uint,(),ID(c6,uint,())),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

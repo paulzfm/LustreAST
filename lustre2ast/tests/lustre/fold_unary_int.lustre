@@ -1,0 +1,4 @@
+function fun1(x: int) returns(y: int)
+let
+y = (fold int$<<5>>) (x);
+tel

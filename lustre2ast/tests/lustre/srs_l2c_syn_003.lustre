@@ -1,0 +1,9 @@
+type 
+myType = myInt;
+myInt = int ;
+
+
+function fun1 (var1 : myType) returns (output1 : myType)
+let
+  output1 = var1; 
+tel

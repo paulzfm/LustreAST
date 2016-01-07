@@ -1,0 +1,4 @@
+function fun1(x1: int) returns(y: int)
+let
+y = (foldi $*$<<5>>)(x1);
+tel

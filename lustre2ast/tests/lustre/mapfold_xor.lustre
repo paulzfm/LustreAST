@@ -1,0 +1,4 @@
+function fun1(x1:bool; x2: bool^5) returns(y1: bool)
+let
+y1 = (mapfold $xor$<<5>>)(x1,x2);
+tel

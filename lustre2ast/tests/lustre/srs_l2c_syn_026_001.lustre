@@ -1,0 +1,6 @@
+type myInt = int ;
+
+function fun1 (var1 : myInt) returns (output1,output2 : myInt)
+let
+  output1 , output2 = (var1, 20+3);
+tel

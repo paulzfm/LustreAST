@@ -1,0 +1,16 @@
+const
+c1 : int = +2;
+c2 : real = +2.5;
+c3 : float = +3.4f;
+c4 : short = +5s;
+c5 : ushort = +6us;
+c6 : uint = +7u;
+function fun1 (var1 :int) returns (y1: int; y2: real; y3: float; y4: short; y5: ushort; y6: uint)
+let
+  y1 = + (var1+c1);
+  y2 = + c2;
+  y3 = + c3;
+  y4 = + c4;
+  y5 = + c5;
+  y6 = + c6;
+tel

@@ -1,0 +1,10 @@
+const
+c5: real = 9.2/4.1;
+c6: float = 10.3f/2.4f;
+
+function fun1(var1: real)
+returns(y5: real; y6: float)
+let
+y5 = var1 + c5 / 6.5;
+y6 = c6 / 7.5f;
+tel

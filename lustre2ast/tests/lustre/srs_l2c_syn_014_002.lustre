@@ -1,0 +1,14 @@
+const
+myConst1 : { Field1 : bool , Field2 : { Field1 : bool , Field2 : int } }
+		 = {Field1 : true, Field2 : {Field1 : false, Field2 : 232} };
+
+function fun1 (var1 : { Field1 : bool , Field2 : int }; var2 : { Field1 : bool , Field2 : int }; 
+	var3 : { Field1 : bool , Field2 : { Field1 : bool , Field2 : int } } ) 
+        returns (output1 : { Field1 : bool , Field2 : int }; output2 : { Field1 : bool , Field2 : int } ; 
+		output3 : { Field1 : bool , Field2 : { Field1 : bool , Field2 : int } }
+)
+let
+  output1 = var1; 
+  output2 = { Field1 : var2.Field1 and myConst1.Field1, Field2 : var2.Field2};
+  output3 = { Field1 : var3.Field1, Field2 : var3.Field2};
+tel

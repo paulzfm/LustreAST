@@ -1,0 +1,4 @@
+function fun1(x1: real) returns(y1: int)
+let
+y1 = int$(x1);
+tel

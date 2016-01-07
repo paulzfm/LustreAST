@@ -1,0 +1,31 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		const_block
+		(
+			const(sa,typename(str_arr),construct(label_const(label1,construct_array(INT(0)))),NullComment)
+		),
+		type_block
+		(
+			type(str_arr,construct(field(label1,typename(arr))),NullComment),
+			type(arr,array(int,INT(1 )),NullComment)
+		),
+		node
+		(
+			function,
+			,
+			fun1,
+			NullComment,
+			params( ),
+			returns(var_decls(vars(Output1),typename(str_arr),(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),typename(str_arr),(NullComment))),
+				=(lvalue(ID(_L1,construct(field(label1,array(int,INT(1 )))),())),ID(sa,construct(field(label1,array(int,INT(1 )))),()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,construct(field(label1,array(int,INT(1 )))),())),ID(_L1,construct(field(label1,array(int,INT(1 )))),()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

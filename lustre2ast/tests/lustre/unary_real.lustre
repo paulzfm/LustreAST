@@ -1,0 +1,9 @@
+function fun1 (var1 :int; var2: real; var3: float; var4: short; var5: ushort; var6: uint) returns (y1: real; y2: real; y3: real; y4: real; y5: real; y6: real)
+let
+  y1 = real var1;
+  y2 = real var2;
+  y3 = real var3;
+  y4 = real var4;
+  y5 = real var5;
+  y6 = real var6;
+tel

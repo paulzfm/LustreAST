@@ -1,0 +1,177 @@
+\documentclass{article}
+\usepackage[rounded]{syntax}
+\usepackage{url}
+
+
+\title{\bf Lustre Grammar}
+
+\begin{document}
+\maketitle
+
+\section{Common}
+\begin{grammar} \small
+
+<char> ::= all printable character
+
+<bool> ::= true | false
+
+<int> ::= [-+]?(0|[1-9][0-9]*)
+
+<uint> ::= <int>u
+
+<short> ::= <int>s
+
+<ushort> ::= <int>us
+
+<real> ::= [-+]?(0|[1-9][0-9]*)(.[0-9]*[1-9])?
+
+<float> :: = <real>f
+
+<ident> ::= [a-zA-Z_][a-zA-Z0-9_]*
+
+<clock> ::= (<ident> [, ident]*)
+
+\end{grammar}
+
+\section{Program}
+\begin{grammar}
+
+<program> ::= <nodeBlk>*
+
+<nodeBlk> ::= <typeBlk> | <constBlk> | <funcBlk>
+
+\end{grammar}
+
+\section{Type}
+\begin{grammar}
+
+<typeBlk> ::= type <typeStmt>*
+
+<typeStmt> ::= [<modifier>] <ident> = <type>;
+
+<modifier> ::= private | public | protected
+
+<type> ::= <atomType> |  <struct> | <type> \^{} <expr> | <ident>
+
+<atomType> ::= char | bool | short | ushort | int | uint | float | real
+
+<struct> ::= \{<field> [, <field>]*\}
+
+<field> ::= <ident> : <type>
+
+\end{grammar}
+
+\section{Const}
+\begin{grammar}
+
+<constBlk> ::= const <constStmt>*
+
+<constStmt> ::= [<modifier>] <ident> : <type> = <expr>;
+
+
+\end{grammar}
+
+\section{Function}
+\begin{grammar}
+
+<funcBlk> ::= <funcType> [<modifier>] <ident> <paramBlk> <returnBlk> <funcBody>
+
+<funcType> ::= function | node
+
+<paramBlk> ::= (<field> [; <field>]*)
+
+<returnBlk> ::= returns(<field> [; <field>]*)
+
+<funcBody> ::= [<varBlk>] let [<eqStmt>]* tel | ;
+
+<varBlk> ::= var [<field>;]*
+
+<eqStmt> ::= <lhs> = <expr>;
+
+<lhs> := <ident> [, <ident>]*
+
+\end{grammar}
+
+\section{Expr}
+\begin{grammar}
+
+<expr> ::= <atomExpr> | <UnopExpr> | <BinopExpr> | <fieldExpr> | <structExpr> | <dynamicProjectExpr> |
+           <arrAccessExpr> | <arrInitExpr> | <arrConstructExpr> | <preExpr> | <fbyExpr> | <arrowExpr> |
+           <whenExpr> | <ifExpr> | <caseExpr> | <withExpr> | (<exprList>) | <applyExpr> | (<expr>)
+
+<atomExpr> ::= <bool> | <int> | <uint> | <short> | <ushort> | <real> | <float> | <char> | <ident>
+
+<UnopExpr> ::= <unop> <expr>
+
+<unop> ::= <atomType> | not | + | -
+
+<BinopExpr> ::= <expr> <binop> <expr>
+
+<binop> ::= + | - | * | / | div | mod | and | or | xor | = | \textless | \textgreater | \textless= | \textgreater= | \textless\textgreater
+
+<fieldExpr> ::= <expr>.<ident>
+
+<structExpr> ::= \{<expr> [, <expr>]*\}
+
+<dynamicProjectExpr> ::= (<expr>.[ \textbackslash[<expr>\textbackslash] ]+ default <expr>)
+
+<arrAccessExpr> ::= <expr>\textbackslash[<expr>\textbackslash]
+
+<arrConstructExpr> ::= \textbackslash[<expr> [,<expr>]*\textbackslash]
+
+<arrNameConstructExpr> ::= \textbackslash[<ident> : <expr> [,<ident> : <expr>]*\textbackslash]
+
+<arrInitExpr> ::= <expr> \^{} <expr>
+
+<preExpr> ::= pre <expr>
+
+<fbyExpr> ::= fby(<expr>; <int>; <expr>)
+
+<arrowExpr> ::= <expr> -\textgreater <expr>
+
+<whenExpr> ::= <expr> when <ident>
+
+<ifExpr> ::= if <expr> then <expr> else <expr>
+
+<caseExpr> ::= (case <expr> of [\textbackslash| <pattern> : <expr>]*)
+
+<pattern> ::= <bool> | <int> | <uint> | <short> | <ushort> | <real> | <float> | <char> | <ident> | _
+
+<withExpr> ::= ( <ident> with [<withItem>]+ = <expr>)
+
+<withItem> :: = .<ident> | \textbackslash[ <expr> \textbackslash]
+
+<exprList> ::= <expr> [, <expr>]*
+
+<applyExpr> ::= <prefixExpr> | <highorderExpr>
+
+<prefixExpr> ::= <prefixOp>(<exprList>)
+
+<prefixOp> ::= <ident> | <prefixUnop> | <prefixBinOp>
+
+<prefixUnOp> ::= short\(\$\) | int\(\$\) | float\(\$\) | real\(\$\) | not\(\$\) | +\(\$\) | -\(\$\) | (make <ident>) | (flatten <ident>)
+
+<prefixBinOp> ::= \(\$\)+\(\$\) | \(\$\)-\(\$\) | \(\$\)*\(\$\) | \(\$\)/\(\$\) |
+                  \(\$\)div\(\$\) | \(\$\)mod\(\$\) | \(\$\)and\(\$\) | \(\$\)or\(\$\) | \(\$\)xor\(\$\) |
+                  \(\$\)=\(\$\) | \(\$\)<>\(\$\) | \(\$\)\(>\)\(\$\) | \(\$\)\(>\)=\(\$\) | \(\$\)\textless\(\$\) | \(\$\)\textless=\(\$\)
+
+<highorderExpr> ::= (<highorderStmt>)(<exprList>)
+
+<highorderStmt> ::= <highorerOp> <highorderMiddle> |
+                    mapwi <highorderMiddle> if <expr> defualt <expr> |
+                    mapw <highorderMiddle> if <expr> defualt <expxr> |
+                    foldw <highorderMiddle> if <expr> |
+                    foldwi <highorderMiddle> if <expr>
+
+<highorderOp> ::= fold | foldi | map | mapfold | mapi
+
+<highorderMiddle> ::= <prefixOp>\textless \textless <int> \textgreater \textgreater
+
+
+
+
+\end{grammar}
+
+
+
+\end{document}

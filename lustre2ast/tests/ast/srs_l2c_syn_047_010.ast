@@ -1,0 +1,45 @@
+TopLevel(
+	main(foldwifoldwi),
+	program
+	(
+		node
+		(
+			function,
+			,
+			foldwifoldwi,
+			NullComment,
+			params(var_decls(vars(a),int,(NullComment))),
+			returns(var_decls(vars(Output14),int,(NullComment)),var_decls(vars(Output13),int,(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L3),bool,(NullComment)),var_decls(vars(_L1),int,(NullComment)),var_decls(vars(_L2),int,(NullComment)),var_decls(vars(_L4),int,(NullComment))),
+				=(lvalue(ID(_L1,int,()),ID(_L2,int,())),apply_expr((int,int),((),()),foldwi(prefix(test3,param_types(int,int),ret_types(bool,int)),INT(5 ),ID(_L3,bool,())),list_expr(ID(_L4,int,()))),test3,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output13,int,())),ID(_L1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L3,bool,())),BOOL(true),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output14,int,())),ID(_L2,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L4,int,())),ID(a,int,()),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		node
+		(
+			function,
+			,
+			test3,
+			NullComment,
+			params(var_decls(vars(Input1),int,(NullComment)),var_decls(vars(Input2),int,(NullComment))),
+			returns(var_decls(vars(Output1),bool,(NullComment)),var_decls(vars(Output2),int,(NullComment))),
+			body
+			(
+				localvars(var_decls(vars(_L1),int,(NullComment)),var_decls(vars(_L2),int,(NullComment)),var_decls(vars(_L3),int,(NullComment)),var_decls(vars(_L8),bool,(NullComment))),
+				=(lvalue(ID(_L1,int,())),ID(Input1,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L2,int,())),ID(Input2,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output1,bool,())),ID(_L8,bool,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L3,int,())),binop_subtract(int,(),ID(_L1,int,()),ID(_L2,int,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(Output2,int,())),ID(_L3,int,()),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(_L8,bool,())),BOOL(true),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

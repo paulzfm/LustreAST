@@ -1,0 +1,20 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		node
+		(
+			node,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(x1),array(bool,INT(5 )),(NullComment)),var_decls(vars(x2),array(bool,INT(5 )),(NullComment))),
+			returns(var_decls(vars(y1),array(bool,INT(5 )),(NullComment))),
+			body
+			(
+				=(lvalue(ID(y1,array(bool,INT(5 )),())),apply_expr((array(bool,INT(5 ))),(()),high_order(highorder_map,prefix($xor$),INT(5 )),list_expr(ID(x1,array(bool,INT(5 )),()),ID(x2,array(bool,INT(5 )),()))),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

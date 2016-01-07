@@ -1,0 +1,41 @@
+function foldi_test3(
+   Input1 : int; 
+   Input2 : int; 
+   Input3 : int ^3)
+returns (
+   Output1 : int; 
+   Output2 : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L4 : int;
+   _L6 : int ^3;
+let
+   _L1 = ( foldi $-$<<1>>)(_L2);
+   _L2 = Input1;
+   Output1 = _L1;
+   _L3 = ( foldi sum_three_one<<3>>)(_L4, _L6);
+   _L4 = Input2;
+   Output2 = _L3;
+   _L6 = Input3;
+tel
+
+function sum_three_one(
+   Input1 : int; 
+   Input2 : int; 
+   Input3 : int)
+returns (
+   Output1 : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L4 : int;
+let
+   _L1 = _L2 + _L3 + _L4;
+   _L2 = Input1;
+   _L3 = Input2;
+   _L4 = Input3;
+   Output1 = _L1;
+tel

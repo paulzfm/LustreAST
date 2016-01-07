@@ -1,0 +1,50 @@
+function foldwfoldw2(
+   A : int ^4; 
+   B : int ^4; 
+   C : bool; 
+   a : int)
+returns (
+   Output21 : int; 
+   Output20 : int)
+var
+   _L6 : int ^4;
+   _L5 : int ^4;
+   _L4 : bool;
+   _L1 : int;
+   _L2 : int;
+   _L7 : int;
+let
+   _L1, _L2 = ( foldw test6<<4>> if _L4)(_L7, _L6, _L5);
+   Output21 = _L2;
+   _L4 = C;
+   _L5 = A;
+   Output20 = _L1;
+   _L6 = B;
+   _L7 = a;
+tel
+
+function test6(
+   Input1 : int; 
+   Input2 : int; 
+   Input3 : int)
+returns (
+   Output1 : bool; 
+   Output2 : int)
+var
+   _L1 : int;
+   _L2 : int;
+   _L3 : int;
+   _L8 : bool;
+   _L9 : int;
+   _L10 : int;
+let
+   _L1 = Input1;
+   _L2 = Input2;
+   Output1 = _L8;
+   _L3 = _L1 - _L2;
+   Output2 = _L3;
+   _L8 = true;
+   _L9 = _L10 + _L2;
+   _L10 = Input3;
+   _ = _L9;
+tel

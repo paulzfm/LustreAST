@@ -1,0 +1,6 @@
+type myInt = int ;
+
+function fun1 (var1 : myInt) returns (output1,output2 , output3: myInt)
+let
+  output1,output2 , output3= (var1, var1+ output1 * output3, output1+3); 
+tel

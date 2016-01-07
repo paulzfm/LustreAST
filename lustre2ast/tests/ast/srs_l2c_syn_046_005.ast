@@ -1,0 +1,35 @@
+TopLevel(
+	main(fun2),
+	program
+	(
+		node
+		(
+			node,
+			,
+			fun2,
+			NullComment,
+			params( ),
+			returns( ),
+			body
+			(
+				localvars(var_decls(vars(output2),int,(NullComment))),
+				=(lvalue(ID(output2,int,())),apply_expr((int),(()),prefix(Node1,param_types(bool),ret_types(int)),list_expr(BOOL(false))),Node1,NOGUID,NOIMPORT,0)
+			)
+		)
+,
+		node
+		(
+			node,
+			,
+			Node1,
+			NullComment,
+			params(var_decls(vars(input1),bool,(NullComment))),
+			returns(var_decls(vars(output1),int,(NullComment))),
+			body
+			(
+				=(lvalue(ID(output1,int,())),if_expr((int),(()),list_expr(ID(input1,bool,())),tempo_fby((int),(()),list_expr(INT(1)),INT(23),list_expr(INT(1200))),INT(1300)),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

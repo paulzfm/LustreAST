@@ -1,0 +1,10 @@
+type enum1 = enum{one, ten, centum};
+
+function fun1 (var1 : enum1) returns (output1 : int)
+let
+  output1 =
+	(case var1 of
+	| one : 1
+	| ten : 10
+	| centum : 100);
+tel

@@ -1,0 +1,23 @@
+const 
+   private light_blue : lights = blue;
+
+type 
+   private lights = enum {red, yellow, blue};
+
+   function private enum_const(
+      control : bool)
+   returns (
+      Output1 : lights)
+   var
+      _L1 : lights;
+      _L2 : bool;
+      _L6 : lights;
+      _L7 : lights;
+   let
+      _L1 = if _L2 then (_L6) else (_L7);
+      _L2 = control;
+      Output1 = _L1;
+      _L6 = light_blue;
+      _L7 = red;
+   tel
+

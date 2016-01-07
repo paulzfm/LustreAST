@@ -1,0 +1,76 @@
+type HOA = int^5;
+
+type BOOLArry = bool^5;
+
+
+function Mapwi_uo(Input1 : BOOLArry; Input2 : HOA; Input3 : bool)
+  returns (
+    Output1 : int;
+    Output2 : HOA;
+    Output3 : int;
+    Output4 : HOA;
+    Output5 : HOA)
+var
+  _L23 : int^5;
+  _L24 : int;
+  _L25 : bool;
+  _L26 : HOA;
+  _L114 : BOOLArry;
+  _L119 : int^5;
+  _L118 : int^5;
+  _L120 : int;
+  _L121 : bool;
+  _L122 : BOOLArry;
+  _L123 : HOA;
+let
+  _L24, _L23= (mapwi  test3 <<5>> if _L25 default 3)(_L26, _L114);
+  _L25= Input3;
+  _L26= Input2;
+  Output1= _L24;
+  Output2= _L23;
+  _L114= Input1;
+  _L120, _L118, _L119=
+    (mapwi test4 <<5>> if _L121 default (4, 5))(_L123, _L122);
+  _L121= Input3;
+  _L122= Input1;
+  _L123= Input2;
+  Output3= _L120;
+  Output4= _L118;
+  Output5= _L119;
+tel
+
+function test3(index : int; Input2 : int; Input3 : bool)
+  returns (Output1 : bool; Output2 : int)
+var
+  _L1 : int;
+  _L2 : int;
+  _L3 : int;
+  _L9 : bool;
+let
+  _L1= index;
+  _L2= Input2;
+  Output1= _L9;
+  _L3= _L1 - _L2;
+  Output2= _L3;
+  _L9= Input3;
+tel
+
+function test4(index : int; Input2 : int; Input3 : bool)
+  returns (Output1 : bool; Output2 : int; Output3 : int)
+var
+  _L1 : int;
+  _L2 : int;
+  _L3 : int;
+  _L9 : bool;
+  _L10 : int;
+let
+  _L1= index;
+  _L2= Input2;
+  Output1= _L9;
+  _L3= _L1 - _L2;
+  Output2= _L3;
+  _L9= Input3;
+  _L10= _L1 * _L2;
+  Output3= _L10;
+tel
+

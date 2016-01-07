@@ -1,0 +1,10 @@
+type
+c1 = int^(9-3);
+c2 = int^(6u - 3u);
+c3 = int^(10s - 4s);
+c4 = int^(16us - 7us);
+function fun1(var1: c1)
+returns(y1: int)
+let
+y1 = var1[3];
+tel

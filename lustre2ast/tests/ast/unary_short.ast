@@ -1,0 +1,26 @@
+TopLevel(
+	main(fun1),
+	program
+	(
+		node
+		(
+			node,
+			,
+			fun1,
+			NullComment,
+			params(var_decls(vars(var1),int,(NullComment)),var_decls(vars(var2),real,(NullComment)),var_decls(vars(var3),float,(NullComment)),var_decls(vars(var4),short,(NullComment)),var_decls(vars(var5),ushort,(NullComment)),var_decls(vars(var6),uint,(NullComment))),
+			returns(var_decls(vars(y1),short,(NullComment)),var_decls(vars(y2),short,(NullComment)),var_decls(vars(y3),short,(NullComment)),var_decls(vars(y4),short,(NullComment)),var_decls(vars(y5),short,(NullComment)),var_decls(vars(y6),short,(NullComment))),
+			body
+			(
+				=(lvalue(ID(y1,short,())),unop_shortcast(short,(),ID(var1,int,())),NOCALL,NOGUID,NOIMPORT,0)
+,
+				=(lvalue(ID(y2,short,())),unop_shortcast(short,(),ID(var2,real,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y3,short,())),unop_shortcast(short,(),ID(var3,float,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y4,short,())),unop_shortcast(short,(),ID(var4,short,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y5,short,())),unop_shortcast(short,(),ID(var5,ushort,())),NOCALL,NOGUID,NOIMPORT,0)
+,				=(lvalue(ID(y6,short,())),unop_shortcast(short,(),ID(var6,uint,())),NOCALL,NOGUID,NOIMPORT,0)
+			)
+		)
+
+	)
+)

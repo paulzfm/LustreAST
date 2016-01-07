@@ -1,0 +1,10 @@
+type
+c1 = int^+(2+3);
+c2 = int^(2u + 3u);
+c3 = int^(2s + 4s);
+c4 = int^(6us + 7us);
+function fun1(var1: c1)
+returns(y1: int)
+let
+y1 = var1[3];
+tel

@@ -1,0 +1,11 @@
+type
+c1 = int^(25 mod 9);
+c2 = uint^(26u mod 4u);
+c3 = short^(5s mod 2s);
+c4 = ushort^(17us mod 3us);
+/*c5 = int^('g' div 'c');*/
+
+function fun1(var1: c1) returns(y1: int)
+let
+y1 = var1[4];
+tel

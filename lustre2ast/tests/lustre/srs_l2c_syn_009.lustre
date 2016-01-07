@@ -1,0 +1,9 @@
+const
+myConst2 : int = myConst1 + 3;
+myConst1 : int = 120;
+
+
+function fun1 (var1 : int) returns (output1 : int)
+let
+  output1 = var1 + myConst2; 
+tel
