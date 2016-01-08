@@ -4,6 +4,8 @@ open Tree
 
 let indent depth str = Printf.sprintf "%s%s" (String.make (depth * 4) ' ') str
 
+(* evaluate expr *)
+
 type value =
     | VBool of bool
     | VInt of int
@@ -147,6 +149,46 @@ let evalToAtomExpr kind expr = match eval expr with
         | _ -> raise (EvalError "evaluated type 'float' is incompatible with declared type")
     )
 
+(* infer types *)
+
+(* symbol table *)
+module SymbolTable = struct
+    type symbolType =
+        | ConstSym of kind
+        | VarSym of kind
+        | ParamSym of kind
+        | RetSym of kind
+    exception SymbolError of string
+
+    let symbolTable : (string, symbolType) Hashtbl.t array = (Array.make 0 (Hashtbl.create 20))
+
+    let table = ref symbolTable
+
+    let length () =
+        Array.length !table
+
+    let enter () =
+        let newTable : (string, symbolType) Hashtbl.t = Hashtbl.create 20 in
+        table := Array.append !table [|newTable|]
+
+    let exit () =
+        table := Array.sub !table 0 (length () - 1)
+
+    let insert ident value =
+        Printf.printf "insert: %s\n" ident;
+        Hashtbl.add !table.(length () - 1) ident value
+
+    let rec recSearch ident i = if i < 0 then
+        raise (SymbolError (Printf.sprintf "symbol '%s' not found" ident))
+    else
+        match Hashtbl.find_all !table.(i) ident with
+        | [] -> recSearch ident (i - 1)
+        | [value] -> value
+        | _ -> raise (SymbolError (Printf.sprintf "more than one symbol '%s' found" ident))
+
+    let search ident = recSearch ident (length () - 1)
+end
+
 (* to ast *)
 
 let clockToAST = function
@@ -158,10 +200,6 @@ let nullComment = "NullComment"
 let funcTypeToAST = function
     | Function -> "function"
     | Node -> "node"
-
-let lhsToAST = function
-    | ID ident -> Printf.sprintf "ID(%s, %s, %s)" ident "" (clockToAST NOCLOCK)
-    | ANNOYMITY -> "anonymous_id"
 
 let atomTypeToAST = function
     | Bool -> "bool"
@@ -313,6 +351,16 @@ and withItemToAST = function
     | FieldItem ident -> ident
     | AccessItem expr -> exprToAST expr
 
+let searchIdentType ident = match SymbolTable.search ident with
+    | SymbolTable.ConstSym kind -> kindToAST kind
+    | SymbolTable.VarSym kind -> kindToAST kind
+    | SymbolTable.ParamSym kind -> kindToAST kind
+    | SymbolTable.RetSym kind -> kindToAST kind
+
+let lhsToAST = function
+    | ID ident -> Printf.sprintf "ID(%s, %s, %s)" ident (searchIdentType ident) (clockToAST NOCLOCK)
+    | ANNOYMITY -> "anonymous_id"
+
 let callFuncName = function
     | PrefixExpr (Ident name, _) -> name
     | _ -> "NOCALL"
@@ -324,34 +372,54 @@ let declStmtToAST depth stmt = match stmt with
     Field (idents, kind) -> indent depth (Printf.sprintf "var_decls(vars(%s), %s, (%s))" (String.concat ", " idents) (kindToAST kind) nullComment)
 
 let varBlkToAST depth stmt = match stmt with
-    | VarList fields -> String.concat "\n" [
-        indent depth "localvars(";
-        String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
-        indent depth "),"
-      ]
+    | VarList fields ->
+        List.iter (fun field -> match field with
+            Field (idents, kind) -> List.iter (fun ident ->
+                SymbolTable.insert ident (SymbolTable.VarSym kind)
+            ) idents
+        ) fields;
+        String.concat "\n" [
+            indent depth "localvars(";
+            String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
+            indent depth "),"
+        ]
     | NOVARBLK -> ""
 
 let paramBlkToAST depth stmt = match stmt with
-    ParamBlk fields -> String.concat "\n" [
-        indent depth "params(";
-        String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
-        indent depth ")"
-    ]
+    ParamBlk fields ->
+        List.iter (fun field -> match field with
+            Field (idents, kind) -> List.iter (fun ident ->
+                SymbolTable.insert ident (SymbolTable.ParamSym kind)
+            ) idents
+        ) fields;
+        String.concat "\n" [
+            indent depth "params(";
+            String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
+            indent depth ")"
+        ]
 
 let returnBlkToAST depth stmt = match stmt with
-    ReturnBlk fields -> String.concat "\n" [
-        indent depth "returns(";
-        String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
-        indent depth ")"
-    ]
+    ReturnBlk fields ->
+        List.iter (fun field -> match field with
+            Field (idents, kind) -> List.iter (fun ident ->
+                SymbolTable.insert ident (SymbolTable.RetSym kind)
+            ) idents
+        ) fields;
+        String.concat "\n" [
+            indent depth "returns(";
+            String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
+            indent depth ")"
+        ]
+
 
 let bodyBlkToAST depth stmt = match stmt with
     | BodyBlk (NOVARBLK, eqs) ->
-    String.concat "\n" [
-        indent depth "body(";
-        String.concat ",\n" (List.map (eqStmtToAST (depth + 1)) eqs);
-        indent depth ")"
-      ]
+        Printf.printf "in body\n";
+        String.concat "\n" [
+            indent depth "body(";
+            String.concat ",\n" (List.map (eqStmtToAST (depth + 1)) eqs);
+            indent depth ")"
+        ]
     | BodyBlk (varBlk, eqs) -> String.concat "\n" [
         indent depth "body(";
         varBlkToAST (depth + 1) varBlk;
@@ -364,7 +432,9 @@ let typeStmtToAST depth stmt = match stmt with
     TypeStmt (_, ident, kind) -> indent depth (Printf.sprintf "type(%s, %s, %s)" ident (kindToAST kind) nullComment)
 
 let constStmtToAST depth stmt = match stmt with
-    ConstStmt (_, ident, kind, expr) -> indent depth (Printf.sprintf "const(%s, %s, %s, %s)" ident (kindToAST kind) (evalExpr kind expr) nullComment)
+    ConstStmt (_, ident, kind, expr) ->
+        SymbolTable.insert ident (SymbolTable.ConstSym kind);
+        indent depth (Printf.sprintf "const(%s, %s, %s, %s)" ident (kindToAST kind) (evalExpr kind expr) nullComment)
 
 let nodeBlkToAST depth stmt = match stmt with
     | TypeBlk stmts -> String.concat "\n" [
@@ -377,19 +447,26 @@ let nodeBlkToAST depth stmt = match stmt with
         String.concat ",\n" (List.map (constStmtToAST (depth + 1)) stmts);
         indent depth ")"
       ]
-    | FuncBlk (funcType, _, ident, paramBlk, returnBlk, bodyBlk) -> String.concat "\n" [
-        indent depth "node(";
-        String.concat ",\n" [
-            indent (depth + 1) (funcTypeToAST funcType);
-            indent (depth + 1) "";
-            indent (depth + 1) ident;
-            indent (depth + 1) nullComment;
-            paramBlkToAST (depth + 1) paramBlk;
-            returnBlkToAST (depth + 1) returnBlk;
-            bodyBlkToAST (depth + 1) bodyBlk;
-        ];
-        indent depth ")"
-      ]
+    | FuncBlk (funcType, _, ident, paramBlk, returnBlk, bodyBlk) ->
+        SymbolTable.enter ();
+        Printf.printf "open\n";
+        let tmp = String.concat "\n" [
+            indent depth "node(";
+            String.concat ",\n" (List.rev [
+                bodyBlkToAST (depth + 1) bodyBlk;
+                returnBlkToAST (depth + 1) returnBlk;
+                paramBlkToAST (depth + 1) paramBlk;
+                indent (depth + 1) nullComment;
+                indent (depth + 1) ident;
+                indent (depth + 1) "";
+                indent (depth + 1) (funcTypeToAST funcType);
+            ]);
+            indent depth ")"
+        ] in
+        SymbolTable.exit ();
+        Printf.printf "close\n";
+        tmp
+
 
 let searchMain nodes = match (List.hd (List.filter (
     fun node -> match node with
@@ -400,14 +477,20 @@ let searchMain nodes = match (List.hd (List.filter (
         | _ -> ""
 
 let programToAST depth program = match program with
-    Program nodes -> String.concat "\n" [
-        indent depth "TopLevel(";
-        indent (depth + 1) (Printf.sprintf "main(%s)," (searchMain nodes));
-        indent (depth + 1) "program(";
-        String.concat ",\n" (List.map (nodeBlkToAST (depth + 2)) nodes);
-        indent (depth + 1) ")";
-        indent depth ")";
-    ]
+    Program nodes ->
+        SymbolTable.enter ();
+        Printf.printf "open\n";
+        let tmp = String.concat "\n" [
+            indent depth "TopLevel(";
+            indent (depth + 1) (Printf.sprintf "main(%s)," (searchMain nodes));
+            indent (depth + 1) "program(";
+            String.concat ",\n" (List.map (nodeBlkToAST (depth + 2)) nodes);
+            indent (depth + 1) ")";
+            indent depth ")";
+        ] in
+        SymbolTable.exit ();
+        Printf.printf "close\n";
+        tmp
 
 let toAST program = programToAST 0 program
 
