@@ -2,9 +2,150 @@
 
 open Tree
 
-let indent depth str = Printf.sprintf "%s%s\n" (String.make (depth * 4) ' ') str
+let indent depth str = Printf.sprintf "%s%s" (String.make (depth * 4) ' ') str
 
-let evalExpr x = "value"
+type value =
+    | VBool of bool
+    | VInt of int
+    | VFloat of float
+
+exception EvalError of string
+
+let rec eval = function
+    | AtomExpr (EIdent ident) -> VInt 0
+    | AtomExpr (EBool ident) -> VBool (bool_of_string ident)
+    | AtomExpr (EChar ident) -> VInt (int_of_char (String.get ident 0))
+    | AtomExpr (EShort ident) -> VInt (int_of_string ident)
+    | AtomExpr (EUShort ident) -> VInt (int_of_string ident)
+    | AtomExpr (EInt ident) -> VInt (int_of_string ident)
+    | AtomExpr (EUInt ident) -> VInt (int_of_string ident)
+    | AtomExpr (EFloat ident) -> VFloat (float_of_string ident)
+    | AtomExpr (EReal ident) -> VFloat (float_of_string ident)
+    | UnOpExpr (op, expr) -> (match op with
+        | NOT -> (match eval expr with
+            | VBool value -> VBool (not value)
+            | _ -> raise (EvalError "'not' must be applied to bool values")
+        )
+        | POS -> (match eval expr with
+            | VInt value -> VInt value
+            | VFloat value -> VFloat value
+            | _ -> raise (EvalError "'+' cannot be applied to bool values")
+        )
+        | NEG -> (match eval expr with
+            | VInt value -> VInt (- value)
+            | VFloat value -> VFloat (-. value)
+            | _ -> raise (EvalError "'-' cannot be applied to bool values")
+        )
+        | _ -> raise (EvalError "not supported")
+    )
+    | BinOpExpr (op, exprL, exprR) -> (match op with
+        | ADD -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 + v2)
+            | (VFloat v1, VFloat v2) -> VFloat (v1 +. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) +. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 +. (float_of_int v2))
+            | _ -> raise (EvalError "operands for '+' are incompatible")
+        )
+        | SUB -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 - v2)
+            | (VFloat v1, VFloat v2) -> VFloat (v1 -. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) -. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 -. (float_of_int v2))
+            | _ -> raise (EvalError "operands for '-' are incompatible")
+        )
+        | MUL -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 * v2)
+            | (VFloat v1, VFloat v2) -> VFloat (v1 *. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) *. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 *. (float_of_int v2))
+            | _ -> raise (EvalError "operands for '*' are incompatible")
+        )
+        | DIVF -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VFloat ((float_of_int v1) /. (float_of_int v2))
+            | (VFloat v1, VFloat v2) -> VFloat (v1 /. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) /. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 /. (float_of_int v2))
+            | _ -> raise (EvalError "operands for '/' are incompatible")
+        )
+        | DIV -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 / v2)
+            | _ -> raise (EvalError "operands for 'div' are incompatible")
+        )
+        | MOD -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 mod v2)
+            | _ -> raise (EvalError "operands for 'mod' are incompatible")
+        )
+        | AND -> (match (eval exprL, eval exprR) with
+            | (VBool v1, VBool v2) -> VBool (v1 && v2)
+            | _ -> raise (EvalError "operands for 'and' are incompatible")
+        )
+        | OR -> (match (eval exprL, eval exprR) with
+            | (VBool v1, VBool v2) -> VBool (v1 || v2)
+            | _ -> raise (EvalError "operands for 'or' are incompatible")
+        )
+        | XOR -> (match (eval exprL, eval exprR) with
+            | (VBool v1, VBool v2) -> VBool (v1 <> v2)
+            | _ -> raise (EvalError "operands for 'xor' are incompatible")
+        )
+        | GT -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 > v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 > v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) > v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 > (float_of_int v2))
+            | _ -> raise (EvalError "operands for '>' are incompatible")
+        )
+        | LT -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 < v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 < v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) < v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 < (float_of_int v2))
+            | _ -> raise (EvalError "operands for '<' are incompatible")
+        )
+        | GE -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 >= v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 >= v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) >= v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 >= (float_of_int v2))
+            | _ -> raise (EvalError "operands for '>=' are incompatible")
+        )
+        | LE -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 <= v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 <= v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) <= v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 <= (float_of_int v2))
+            | _ -> raise (EvalError "operands for '<=' are incompatible")
+        )
+        | EQ -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 == v2)
+            | (VBool v1, VBool v2) -> VBool (v1 == v2)
+            | _ -> raise (EvalError "operands for '=' are incompatible")
+        )
+        | NE -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 != v2)
+            | (VBool v1, VBool v2) -> VBool (v1 != v2)
+            | _ -> raise (EvalError "operands for '!=' are incompatible")
+        )
+    )
+    | _ -> raise (EvalError "complex expr not supported")
+
+let evalToAtomExpr kind expr = match eval expr with
+    | VBool value -> (match kind with
+        | AtomType Bool -> EBool (string_of_bool value)
+        | _ -> raise (EvalError "evaluated type 'bool' is incompatible with declared type")
+    )
+    | VInt value -> (match kind with
+        | AtomType Short -> EShort (string_of_int value)
+        | AtomType UShort -> EUShort (string_of_int value)
+        | AtomType Int -> EInt (string_of_int value)
+        | AtomType UInt -> EUInt (string_of_int value)
+        | AtomType Char -> EChar (string_of_int value)
+        | _ -> raise (EvalError "evaluated type 'int' is incompatible with declared type")
+    )
+    | VFloat value -> (match kind with
+        | AtomType Float -> EFloat (string_of_float value)
+        | AtomType Real -> EReal (string_of_float value)
+        | _ -> raise (EvalError "evaluated type 'float' is incompatible with declared type")
+    )
 
 (* to ast *)
 
@@ -19,7 +160,7 @@ let funcTypeToAST = function
     | Node -> "node"
 
 let lhsToAST = function
-    | ID ident -> Printf.sprintf "ID (%s, %s, %s)" ident "" ""
+    | ID ident -> Printf.sprintf "ID(%s, %s, %s)" ident "" (clockToAST NOCLOCK)
     | ANNOYMITY -> "anonymous_id"
 
 let atomTypeToAST = function
@@ -100,7 +241,7 @@ let prefixOpToAST = function
     | Make ident -> Printf.sprintf "make(%s, %s)" ident ""
 
 let atomExprToAST = function
-    | EIdent ident -> Printf.sprintf "ID(%s)" ident
+    | EIdent ident -> Printf.sprintf "ID(%s, %s, %s)" ident "" (clockToAST NOCLOCK)
     | EBool ident -> Printf.sprintf "BOOL(%s)" ident
     | EChar ident -> Printf.sprintf "CHAR(%s)" ident
     | EShort ident -> Printf.sprintf "SHORT(%s)" ident
@@ -122,15 +263,17 @@ let patternToAST = function
     | PReal ident -> Printf.sprintf "REAL(%s)" ident
     | DefaultPattern -> "pattern_any"
 
+let evalExpr kind expr = atomExprToAST (evalToAtomExpr kind expr)
+
 let rec kindToAST = function
     | AtomType kind -> atomTypeToAST kind
     | Struct fields -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map fieldToAST fields))
-    | Array (kind, expr) -> Printf.sprintf "array(%s, %s)" (kindToAST kind) (exprToAST expr)
+    | Array (kind, expr) -> Printf.sprintf "array(%s, %s)" (kindToAST kind) (evalExpr kind expr)
     | IDENT name -> Printf.sprintf "typename(%s)" name
     | EnumType idents -> Printf.sprintf "construct_enum(%s)" (String.concat ", " idents)
 
 and fieldToAST = function
-    Field (idents, kind) -> Printf.sprintf "field(%s, %s)" (String.concat ", " idents) (kindToAST kind)
+    Field (idents, kind) -> Printf.sprintf "var_decls(vars(%s), %s, (%s))" (String.concat ", " idents) (kindToAST kind) nullComment
 
 and exprToAST e = match e with
     | AtomExpr expr -> atomExprToAST expr
@@ -151,16 +294,12 @@ and exprToAST e = match e with
     | CaseExpr (expr, cases) -> Printf.sprintf "switch_expr(%s, %s, %s, %s)" (evalType e) (clockToAST NOCLOCK) (exprToAST expr) (String.concat ", " (List.map caseItemToAST cases))
     | WithExpr (ident, items, expr) -> ""
     | ExprList (exprs) -> Printf.sprintf "list_expr(%s)" (String.concat ", " (List.map exprToAST exprs))
-    | PrefixExpr (op, exprs) -> Printf.sprintf "prefix(%s)" (prefixOpToAST op)
-    | HighOrderExpr (hop, op, value, exprs) -> Printf.sprintf "high_order(%s, %s, %s)" (highOrderOpToAST hop) (exprToAST (PrefixExpr (op, exprs))) value
-    | MapwiExpr (op, integer, expr1, expr2, exprs) -> Printf.sprintf "mapw_default(%s, %s, %s, %s,)"
-    (prefixOpToAST op) integer (exprToAST expr1) (exprToAST (ExprList exprs))
-    | MapwExpr (op, integer, expr1, expr2, exprs) -> Printf.sprintf "mapw_default(%s, %s, %s, %s,)"
-    (prefixOpToAST op) integer (exprToAST expr1) (exprToAST (ExprList exprs))
-    | FoldwiExpr (op, integer, expr, exprs) -> Printf.sprintf "foldwi(%s, %s, %s)"
-    (prefixOpToAST op) integer (exprToAST expr)
-    | FoldwExpr (op, integer, expr, exprs) -> Printf.sprintf "foldw_if(%s, %s, %s)"
-    (prefixOpToAST op) integer (exprToAST expr)
+    | PrefixExpr (op, exprs) -> Printf.sprintf "apply_expr(%s, %s, prefix(%s), %s" (evalType e) (clockToAST NOCLOCK) (prefixOpToAST op) (exprToAST (ExprList exprs))
+    | HighOrderExpr (hop, op, value, exprs) -> Printf.sprintf "apply_expr(%s, %s, high_order(%s, %s, %s), %s)" (evalType e) (clockToAST NOCLOCK) (highOrderOpToAST hop) (exprToAST (PrefixExpr (op, exprs))) value (exprToAST (ExprList exprs))
+    | MapwiExpr (op, integer, expr1, expr2, exprs) -> Printf.sprintf "apply_expr(%s, %s, mapwi_default(%s, %s, %s, %s), %s" (evalType e) (clockToAST NOCLOCK) (prefixOpToAST op) integer (exprToAST expr1) (exprToAST expr2) (exprToAST (ExprList exprs))
+    | MapwExpr (op, integer, expr1, expr2, exprs) -> Printf.sprintf "apply_expr(%s, %s, mapw_default(%s, %s, %s, %s), %s" (evalType e) (clockToAST NOCLOCK) (prefixOpToAST op) integer (exprToAST expr1) (exprToAST expr2) (exprToAST (ExprList exprs))
+    | FoldwiExpr (op, integer, expr, exprs) -> Printf.sprintf "apply_expr(%s, %s, foldwi(%s, %s, %s), %s)" (evalType e) (clockToAST NOCLOCK) (prefixOpToAST op) integer (exprToAST expr) (exprToAST (ExprList exprs))
+    | FoldwExpr (op, integer, expr, exprs) -> Printf.sprintf "apply_expr(%s, %s, foldw_if(%s, %s, %s), %s)" (evalType e) (clockToAST NOCLOCK) (prefixOpToAST op) integer (exprToAST expr) (exprToAST (ExprList exprs))
 
 and evalType x = kindToAST (AtomType Bool)
 
@@ -174,13 +313,20 @@ and withItemToAST = function
     | FieldItem ident -> ident
     | AccessItem expr -> exprToAST expr
 
+let callFuncName = function
+    | PrefixExpr (Ident name, _) -> name
+    | _ -> "NOCALL"
+
 let eqStmtToAST depth stmt = match stmt with
-    EqStmt (lhss, expr) -> indent depth (Printf.sprintf "=(lvalue(%s), %s, NOCALL, NOGUID, NOIMPORT, 0)" (String.concat ", " (List.map lhsToAST lhss)) (exprToAST expr))
+    EqStmt (lhss, expr) -> indent depth (Printf.sprintf "=(lvalue(%s), %s, %s, NOGUID, NOIMPORT, 0)" (String.concat ", " (List.map lhsToAST lhss)) (exprToAST expr) (callFuncName expr))
+
+let declStmtToAST depth stmt = match stmt with
+    Field (idents, kind) -> indent depth (Printf.sprintf "var_decls(vars(%s), %s, (%s))" (String.concat ", " idents) (kindToAST kind) nullComment)
 
 let varBlkToAST depth stmt = match stmt with
     | VarList fields -> String.concat "\n" [
         indent depth "localvars(";
-        String.concat ",\n" (List.map fieldToAST fields);
+        String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
         indent depth "),"
       ]
     | NOVARBLK -> ""
@@ -188,18 +334,24 @@ let varBlkToAST depth stmt = match stmt with
 let paramBlkToAST depth stmt = match stmt with
     ParamBlk fields -> String.concat "\n" [
         indent depth "params(";
-        String.concat ",\n" (List.map fieldToAST fields);
+        String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
         indent depth ")"
     ]
 
 let returnBlkToAST depth stmt = match stmt with
     ReturnBlk fields -> String.concat "\n" [
         indent depth "returns(";
-        String.concat ",\n" (List.map fieldToAST fields);
+        String.concat ",\n" (List.map (declStmtToAST (depth + 1)) fields);
         indent depth ")"
     ]
 
 let bodyBlkToAST depth stmt = match stmt with
+    | BodyBlk (NOVARBLK, eqs) ->
+    String.concat "\n" [
+        indent depth "body(";
+        String.concat ",\n" (List.map (eqStmtToAST (depth + 1)) eqs);
+        indent depth ")"
+      ]
     | BodyBlk (varBlk, eqs) -> String.concat "\n" [
         indent depth "body(";
         varBlkToAST (depth + 1) varBlk;
@@ -212,7 +364,7 @@ let typeStmtToAST depth stmt = match stmt with
     TypeStmt (_, ident, kind) -> indent depth (Printf.sprintf "type(%s, %s, %s)" ident (kindToAST kind) nullComment)
 
 let constStmtToAST depth stmt = match stmt with
-    ConstStmt (_, ident, kind, expr) -> indent depth (Printf.sprintf "const(%s, %s, %s, %s)" ident (kindToAST kind) (evalExpr expr) nullComment)
+    ConstStmt (_, ident, kind, expr) -> indent depth (Printf.sprintf "const(%s, %s, %s, %s)" ident (kindToAST kind) (evalExpr kind expr) nullComment)
 
 let nodeBlkToAST depth stmt = match stmt with
     | TypeBlk stmts -> String.concat "\n" [
@@ -229,7 +381,7 @@ let nodeBlkToAST depth stmt = match stmt with
         indent depth "node(";
         String.concat ",\n" [
             indent (depth + 1) (funcTypeToAST funcType);
-            "";
+            indent (depth + 1) "";
             indent (depth + 1) ident;
             indent (depth + 1) nullComment;
             paramBlkToAST (depth + 1) paramBlk;
@@ -251,7 +403,9 @@ let programToAST depth program = match program with
     Program nodes -> String.concat "\n" [
         indent depth "TopLevel(";
         indent (depth + 1) (Printf.sprintf "main(%s)," (searchMain nodes));
-        String.concat ",\n" (List.map (nodeBlkToAST (depth + 1)) nodes);
+        indent (depth + 1) "program(";
+        String.concat ",\n" (List.map (nodeBlkToAST (depth + 2)) nodes);
+        indent (depth + 1) ")";
         indent depth ")";
     ]
 
@@ -265,7 +419,7 @@ let _ =
 	try
 		let lexbuf = Lexing.from_channel stdin in
 		let result = Parser.programY Lexer.token lexbuf in
-            print_endline (toLustre result);
+            print_endline (toAST result);
 			flush stdout;
 			exit 0
 	with Parsing.Parse_error ->
