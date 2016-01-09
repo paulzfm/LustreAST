@@ -228,26 +228,36 @@ unOpY:
 ;
 
 binOpExprY:
-	exprY binOpY exprY
-		{BinOpExpr($2, $1, $3)}
-;
-
-binOpY:
-		ADD		{ADD}
-	|	MINUS	{SUB}
-	|	MUL		{MUL}
-	|	DIVF	{DIVF}
-	|	DIV		{DIV}
-	|	MOD		{MOD}
-	|	AND		{AND}
-	|	OR		{OR}
-	|	XOR		{XOR}
-	|	EQ		{EQ}
-	|	LES		{LT}
-	|	GRE		{GT}
-	|	GREEQ	{GE}
-	|	LESEQ	{LE}
-	|	NE		{NE}
+		exprY OR exprY
+			{BinOpExpr(OR, $1, $3)}
+	|	exprY XOR exprY
+			{BinOpExpr(XOR, $1, $3)}
+	|	exprY AND exprY
+			{BinOpExpr(AND, $1, $3)}
+	|	exprY LES exprY
+			{BinOpExpr(LT, $1, $3)}
+	|	exprY GRE exprY
+			{BinOpExpr(GT, $1, $3)}
+	|	exprY GREEQ exprY
+			{BinOpExpr(GE, $1, $3)}
+	|	exprY LESEQ exprY
+			{BinOpExpr(LE, $1, $3)}
+	|	exprY NE exprY
+			{BinOpExpr(NE, $1, $3)}
+	|	exprY EQ exprY
+			{BinOpExpr(EQ, $1, $3)}
+	|	exprY ADD exprY
+			{BinOpExpr(ADD, $1, $3)}
+	|	exprY MINUS exprY
+			{BinOpExpr(SUB, $1, $3)}
+	|	exprY MUL exprY
+			{BinOpExpr(MUL, $1, $3)}
+	|	exprY DIVF exprY
+			{BinOpExpr(DIVF, $1, $3)}
+	|	exprY DIV exprY
+			{BinOpExpr(DIV, $1, $3)}
+	|	exprY MOD exprY
+			{BinOpExpr(MOD, $1, $3)}
 ;
 
 fieldExprY:
