@@ -11,6 +11,20 @@ exception Error of string
 
 (* symbol table *)
 
+let rec kindToString = function
+    | AtomType Bool -> "bool"
+    | AtomType Short -> "short"
+    | AtomType UShort -> "ushort"
+    | AtomType Int -> "int"
+    | AtomType UInt -> "uint"
+    | AtomType Float -> "float"
+    | AtomType Real -> "real"
+    | AtomType Char -> "char"
+    | EnumType idents -> Printf.sprintf "enum { %s }" (String.concat ", " idents)
+    | Struct cons -> Printf.sprintf "struct { %s }" (String.concat ", " (List.map (fun c -> match c with Field (is, k) -> Printf.sprintf "%s: %s" (String.concat ", " is) (kindToString k)) cons))
+    | Array (kind, _) -> Printf.sprintf "[%s]" (kindToString kind)
+    | IDENT ident -> Printf.sprintf "ref %s" ident
+
 module SymbolTable = struct
     type symbolType =
         | VarSym of kind
@@ -42,9 +56,7 @@ module SymbolTable = struct
         | _ -> ()
 
     and insert ident value =
-        (* Printf.printf "insert: %s\n" ident; *)
-        Hashtbl.add !table.(length () - 1) ident value;
-        insertStruct value ident
+        Hashtbl.replace !table.(length () - 1) ident value
 
     and recSearch ident i = if i < 0 then
         raise (SymbolError (Printf.sprintf "symbol '%s' not found" ident))
@@ -55,135 +67,54 @@ module SymbolTable = struct
         | _ -> raise (SymbolError (Printf.sprintf "more than one symbol '%s' found" ident))
 
     and search ident = recSearch ident (length () - 1)
+
+    let iter func = Hashtbl.iter func !table.(length () - 1)
+
+    let show () =
+        Hashtbl.iter (fun k -> fun v ->
+            Printf.printf "%s : %s\n" k (match v with
+                | VarSym kind -> kindToString kind
+                | FuncSym (kp, kr) -> String.concat " -> " [
+                    String.concat " * " (List.map kindToString kp);
+                    String.concat " * " (List.map kindToString kr)
+                ]
+            )
+        ) !table.(length () - 1)
 end
 
-(* evaluate expr *)
+(* constant table *)
 
-type value =
-    | VBool of bool
-    | VInt of int
-    | VFloat of float
-    | VString of string
+module ConstTable = struct
+    let constTable : (string, expr * string option) Hashtbl.t = Hashtbl.create 20
 
-exception EvalError of string
+    let table = ref constTable
 
-let rec eval = function
-    | AtomExpr (EIdent ident) -> VString ident
-    | AtomExpr (EBool ident) -> VBool (bool_of_string ident)
-    | AtomExpr (EChar ident) -> VInt (int_of_char (String.get ident 0))
-    | AtomExpr (EShort ident) -> VInt (int_of_string ident)
-    | AtomExpr (EUShort ident) -> VInt (int_of_string ident)
-    | AtomExpr (EInt ident) -> VInt (int_of_string ident)
-    | AtomExpr (EUInt ident) -> VInt (int_of_string ident)
-    | AtomExpr (EFloat ident) -> VFloat (float_of_string ident)
-    | AtomExpr (EReal ident) -> VFloat (float_of_string ident)
-    | UnOpExpr (op, expr) -> (match op with
-        | NOT -> (match eval expr with
-            | VBool value -> VBool (not value)
-            | _ -> raise (EvalError "'not' must be applied to bool values")
-        )
-        | POS -> (match eval expr with
-            | VInt value -> VInt value
-            | VFloat value -> VFloat value
-            | _ -> raise (EvalError "'+' cannot be applied to bool values")
-        )
-        | NEG -> (match eval expr with
-            | VInt value -> VInt (- value)
-            | VFloat value -> VFloat (-. value)
-            | _ -> raise (EvalError "'-' cannot be applied to bool values")
-        )
-        | _ -> raise (EvalError "not supported")
-    )
-    | BinOpExpr (op, exprL, exprR) -> (match op with
-        | ADD -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 + v2)
-            | (VFloat v1, VFloat v2) -> VFloat (v1 +. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) +. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 +. (float_of_int v2))
-            | _ -> raise (EvalError "operands for '+' are incompatible")
-        )
-        | SUB -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 - v2)
-            | (VFloat v1, VFloat v2) -> VFloat (v1 -. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) -. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 -. (float_of_int v2))
-            | _ -> raise (EvalError "operands for '-' are incompatible")
-        )
-        | MUL -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 * v2)
-            | (VFloat v1, VFloat v2) -> VFloat (v1 *. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) *. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 *. (float_of_int v2))
-            | _ -> raise (EvalError "operands for '*' are incompatible")
-        )
-        | DIVF -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VFloat ((float_of_int v1) /. (float_of_int v2))
-            | (VFloat v1, VFloat v2) -> VFloat (v1 /. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) /. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 /. (float_of_int v2))
-            | _ -> raise (EvalError "operands for '/' are incompatible")
-        )
-        | DIV -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 / v2)
-            | _ -> raise (EvalError "operands for 'div' are incompatible")
-        )
-        | MOD -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 mod v2)
-            | _ -> raise (EvalError "operands for 'mod' are incompatible")
-        )
-        | AND -> (match (eval exprL, eval exprR) with
-            | (VBool v1, VBool v2) -> VBool (v1 && v2)
-            | _ -> raise (EvalError "operands for 'and' are incompatible")
-        )
-        | OR -> (match (eval exprL, eval exprR) with
-            | (VBool v1, VBool v2) -> VBool (v1 || v2)
-            | _ -> raise (EvalError "operands for 'or' are incompatible")
-        )
-        | XOR -> (match (eval exprL, eval exprR) with
-            | (VBool v1, VBool v2) -> VBool (v1 <> v2)
-            | _ -> raise (EvalError "operands for 'xor' are incompatible")
-        )
-        | GT -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 > v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 > v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) > v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 > (float_of_int v2))
-            | _ -> raise (EvalError "operands for '>' are incompatible")
-        )
-        | LT -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 < v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 < v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) < v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 < (float_of_int v2))
-            | _ -> raise (EvalError "operands for '<' are incompatible")
-        )
-        | GE -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 >= v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 >= v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) >= v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 >= (float_of_int v2))
-            | _ -> raise (EvalError "operands for '>=' are incompatible")
-        )
-        | LE -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 <= v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 <= v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) <= v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 <= (float_of_int v2))
-            | _ -> raise (EvalError "operands for '<=' are incompatible")
-        )
-        | EQ -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 == v2)
-            | (VBool v1, VBool v2) -> VBool (v1 == v2)
-            | _ -> raise (EvalError "operands for '=' are incompatible")
-        )
-        | NE -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 != v2)
-            | (VBool v1, VBool v2) -> VBool (v1 != v2)
-            | _ -> raise (EvalError "operands for '!=' are incompatible")
-        )
-    )
-    (* | _ -> VInt 0 *)
-    | _ -> raise (EvalError "complex expr not supported")
+    let insert ident expr =
+        (* Printf.printf "insert: %s\n" ident; *)
+        Hashtbl.replace !table ident (expr, None)
+
+    let update ident value =
+        let (expr, str) = Hashtbl.find !table ident in
+            Hashtbl.replace !table ident (expr, Some value)
+
+    let search ident =
+        let (expr, str) = Hashtbl.find !table ident in
+            expr
+
+    let get ident =
+        let (expr, str) = Hashtbl.find !table ident in
+            str
+
+    let iter func = Hashtbl.iter func !table
+
+    let show () =
+        Hashtbl.iter (fun k -> fun (_, v) ->
+            Printf.printf "%s : %s\n" k (match v with
+                | Some str -> str
+                | None -> "NULL"
+            )
+        ) !table
+end
 
 (*
 let evalToAtomExpr kind expr = match eval expr with
@@ -192,11 +123,11 @@ let evalToAtomExpr kind expr = match eval expr with
         | IDENT ident -> (match SymbolTable.search ident with
             SymbolTable.TypeSym kind -> (match kind with
                 | AtomType Bool -> EBool (string_of_bool value)
-                | _ -> raise (EvalError "evaluated type 'bool' is incompatible with declared type")
+                | _ -> raise (Error "evaluated type 'bool' is incompatible with declared type")
             )
-            | _ -> raise (EvalError "evaluated type 'bool' is incompatible with declared type")
+            | _ -> raise (Error "evaluated type 'bool' is incompatible with declared type")
         )
-        | _ -> raise (EvalError "evaluated type 'bool' is incompatible with declared type")
+        | _ -> raise (Error "evaluated type 'bool' is incompatible with declared type")
     )
     | VInt value -> (match kind with
         | AtomType Short -> EShort (string_of_int value)
@@ -211,11 +142,11 @@ let evalToAtomExpr kind expr = match eval expr with
                 | AtomType Int -> EInt (string_of_int value)
                 | AtomType UInt -> EUInt (string_of_int value)
                 | AtomType Char -> EChar (string_of_int value)
-                | _ -> raise (EvalError "evaluated type 'int' is incompatible with declared type")
+                | _ -> raise (Error "evaluated type 'int' is incompatible with declared type")
             )
-            | _ -> raise (EvalError "evaluated type 'int' is incompatible with declared type")
+            | _ -> raise (Error "evaluated type 'int' is incompatible with declared type")
         )
-        | _ -> raise (EvalError "evaluated type 'int' is incompatible with declared type")
+        | _ -> raise (Error "evaluated type 'int' is incompatible with declared type")
     )
     | VFloat value -> (match kind with
         | AtomType Float -> EFloat (string_of_float value)
@@ -224,21 +155,191 @@ let evalToAtomExpr kind expr = match eval expr with
             SymbolTable.TypeSym kind -> (match kind with
                 | AtomType Float -> EFloat (string_of_float value)
                 | AtomType Real -> EReal (string_of_float value)
-                | _ -> raise (EvalError "evaluated type 'float' is incompatible with declared type")
+                | _ -> raise (Error "evaluated type 'float' is incompatible with declared type")
             )
-            | _ -> raise (EvalError "evaluated type 'float' is incompatible with declared type")
+            | _ -> raise (Error "evaluated type 'float' is incompatible with declared type")
         )
-        | _ -> raise (EvalError "evaluated type 'float' is incompatible with declared type")
+        | _ -> raise (Error "evaluated type 'float' is incompatible with declared type")
     )
     | VString value -> EIdent value *)
-
-
-(* to ast with types *)
 
 type expected =
     | ExpIdent of string
     | ExpKind of tKind
     | NoExp
+
+(* 1. generate symbol table *)
+
+let genSymTable ast =
+    SymbolTable.enter ();
+    match ast with Program nodes -> List.iter (fun node ->
+        match node with
+            | TypeBlk stmts -> List.iter (fun stmt ->
+                match stmt with TypeStmt (_, i, k) -> SymbolTable.insert i (SymbolTable.VarSym k)
+            ) stmts
+            | _ -> ()
+    ) nodes;
+    match ast with Program nodes -> List.iter (fun node ->
+        match node with
+            | ConstBlk stmts -> List.iter (fun stmt ->
+                match stmt with ConstStmt (_, i, k, e) ->
+                SymbolTable.insert i (SymbolTable.VarSym k);
+                ConstTable.insert i e
+            ) stmts
+            | _ -> ()
+    ) nodes;
+    match ast with Program nodes -> List.iter (fun node ->
+        match node with
+            | FuncBlk (_, _, ident, params, rets, _) ->
+                let ps = List.concat (match params with ParamBlk fields -> List.map (fun field ->
+                    match field with Field (is, k) -> makeList (List.length is) k) fields)
+                in let rs = List.concat (match rets with ReturnBlk fields -> List.map (fun field ->
+                    match field with Field (is, k) -> makeList (List.length is) k) fields)
+                in SymbolTable.insert ident (SymbolTable.FuncSym (ps, rs))
+            | _ -> ()
+    ) nodes;
+    SymbolTable.show ()
+
+(* 2. evaluate const expr *)
+
+type value =
+    | VBool of bool
+    | VInt of int
+    | VFloat of float
+    | VString of string
+
+let rec evalConstExprs ast =
+    ConstTable.iter (fun k -> fun (expr, str) ->
+        let result = match eval expr with
+            | VBool value -> string_of_bool value
+            | VInt value -> string_of_int value
+            | VFloat value -> string_of_float value
+            | VString value -> value
+        in ConstTable.update k result
+    );
+    ConstTable.show ()
+
+and eval = function
+    | AtomExpr (EIdent ident) -> VString ident
+    | AtomExpr (EBool ident) -> VBool (bool_of_string ident)
+    | AtomExpr (EChar ident) -> VInt (int_of_char (String.get ident 0))
+    | AtomExpr (EShort ident) -> VInt (int_of_string ident)
+    | AtomExpr (EUShort ident) -> VInt (int_of_string ident)
+    | AtomExpr (EInt ident) -> VInt (int_of_string ident)
+    | AtomExpr (EUInt ident) -> VInt (int_of_string ident)
+    | AtomExpr (EFloat ident) -> VFloat (float_of_string ident)
+    | AtomExpr (EReal ident) -> VFloat (float_of_string ident)
+    | UnOpExpr (op, expr) -> (match op with
+        | NOT -> (match eval expr with
+            | VBool value -> VBool (not value)
+            | _ -> raise (Error "'not' must be applied to bool values")
+        )
+        | POS -> (match eval expr with
+            | VInt value -> VInt value
+            | VFloat value -> VFloat value
+            | _ -> raise (Error "'+' cannot be applied to bool values")
+        )
+        | NEG -> (match eval expr with
+            | VInt value -> VInt (- value)
+            | VFloat value -> VFloat (-. value)
+            | _ -> raise (Error "'-' cannot be applied to bool values")
+        )
+        | _ -> raise (Error "not supported")
+    )
+    | BinOpExpr (op, exprL, exprR) -> (match op with
+        | ADD -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 + v2)
+            | (VFloat v1, VFloat v2) -> VFloat (v1 +. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) +. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 +. (float_of_int v2))
+            | _ -> raise (Error "operands for '+' are incompatible")
+        )
+        | SUB -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 - v2)
+            | (VFloat v1, VFloat v2) -> VFloat (v1 -. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) -. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 -. (float_of_int v2))
+            | _ -> raise (Error "operands for '-' are incompatible")
+        )
+        | MUL -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 * v2)
+            | (VFloat v1, VFloat v2) -> VFloat (v1 *. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) *. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 *. (float_of_int v2))
+            | _ -> raise (Error "operands for '*' are incompatible")
+        )
+        | DIVF -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VFloat ((float_of_int v1) /. (float_of_int v2))
+            | (VFloat v1, VFloat v2) -> VFloat (v1 /. v2)
+            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) /. v2)
+            | (VFloat v1, VInt v2) -> VFloat (v1 /. (float_of_int v2))
+            | _ -> raise (Error "operands for '/' are incompatible")
+        )
+        | DIV -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 / v2)
+            | _ -> raise (Error "operands for 'div' are incompatible")
+        )
+        | MOD -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VInt (v1 mod v2)
+            | _ -> raise (Error "operands for 'mod' are incompatible")
+        )
+        | AND -> (match (eval exprL, eval exprR) with
+            | (VBool v1, VBool v2) -> VBool (v1 && v2)
+            | _ -> raise (Error "operands for 'and' are incompatible")
+        )
+        | OR -> (match (eval exprL, eval exprR) with
+            | (VBool v1, VBool v2) -> VBool (v1 || v2)
+            | _ -> raise (Error "operands for 'or' are incompatible")
+        )
+        | XOR -> (match (eval exprL, eval exprR) with
+            | (VBool v1, VBool v2) -> VBool (v1 <> v2)
+            | _ -> raise (Error "operands for 'xor' are incompatible")
+        )
+        | GT -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 > v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 > v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) > v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 > (float_of_int v2))
+            | _ -> raise (Error "operands for '>' are incompatible")
+        )
+        | LT -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 < v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 < v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) < v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 < (float_of_int v2))
+            | _ -> raise (Error "operands for '<' are incompatible")
+        )
+        | GE -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 >= v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 >= v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) >= v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 >= (float_of_int v2))
+            | _ -> raise (Error "operands for '>=' are incompatible")
+        )
+        | LE -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 <= v2)
+            | (VFloat v1, VFloat v2) -> VBool (v1 <= v2)
+            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) <= v2)
+            | (VFloat v1, VInt v2) -> VBool (v1 <= (float_of_int v2))
+            | _ -> raise (Error "operands for '<=' are incompatible")
+        )
+        | EQ -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 == v2)
+            | (VBool v1, VBool v2) -> VBool (v1 == v2)
+            | _ -> raise (Error "operands for '=' are incompatible")
+        )
+        | NE -> (match (eval exprL, eval exprR) with
+            | (VInt v1, VInt v2) -> VBool (v1 != v2)
+            | (VBool v1, VBool v2) -> VBool (v1 != v2)
+            | _ -> raise (Error "operands for '!=' are incompatible")
+        )
+    )
+    (* | _ -> VInt 0 *)
+    | _ -> raise (Error "complex expr not supported")
+
+
+
+(* to ast with types *)
 
 let rec programToAST = function
     Program nodes -> TTopLevel (
@@ -669,15 +770,18 @@ and highOrderOpOut = function
     | FOLDI -> "highorder_foldi"
 
 
-(* main *)
-let main result =
-    output (programToAST result)
+(* driver *)
+let drive result =
+    genSymTable result;
+    evalConstExprs result
+    (* output (programToAST result) *)
 
 let _ =
 	try
 		let lexbuf = Lexing.from_channel stdin in
 		let result = Parser.programY Lexer.token lexbuf in
-            print_endline (main result);
+            (* print_endline (main result); *)
+            drive result;
 			flush stdout;
 			exit 0
 	with Parsing.Parse_error ->
