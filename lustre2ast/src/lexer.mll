@@ -4,8 +4,8 @@ open Parser        (* The type token is defined in parser.mli *)
 exception Eof
 }
 rule token = parse
-	[' ' '\t' '\n' '\r']	{ token lexbuf }     (* skip blanks *)
-
+	[' ' '\t' '\n' '\r' ]	{ token lexbuf }     (* skip blanks *)
+	| '/'[^'\n']*'*''/' { token lexbuf }     (* skip blanks *)
 	| "type"	{ TYPE }
 	| "private" { PRIVATE }
 	| "public"	{ PUBLIC }
