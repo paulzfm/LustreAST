@@ -18,7 +18,16 @@ for fileName in fileList:
 	fName = fileName[:len(fileName)-7]
 	print fName
 	lustreData = os.popen("cat "+lustreFolder+"/"+fName+".lustre | ../src/lustre").readlines()
-	lustreData = reduce(lambda x,y:x+y, lustreData)
+
+	if (len(lustreData) > 1):
+		lustreData = reduce(lambda x,y:x+y, lustreData)
+	elif (len(lustreData) == 1):
+		lustreData = lustreData[0]
+	else:
+		mistakeNum = mistakeNum + 1
+		foutHead.write(fName+"\t: mistake"+"\n")
+		foutHead.write("No output\n\n")
+		continue
 	astFile = astFolder+"/"+fName+".ast"
 	if (os.path.isfile(astFile)):
 		fin = open(astFile,'r')
@@ -29,8 +38,8 @@ for fileName in fileList:
 		astData = astData.replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 		lustreData = lustreData.replace('\n','').replace('\r','').replace('\t','').replace(' ','')
 
-		astData = astData.replace('(','').replace(')','')
-		lustreData = lustreData.replace('(','').replace(')','')
+#		astData = astData.replace('(','').replace(')','')
+#		lustreData = lustreData.replace('(','').replace(')','')
 
 		astData = astData.replace('node','').replace('function','')
 		lustreData = lustreData.replace('node','').replace('function','').replace('private','')
@@ -62,6 +71,7 @@ for fileName in fileList:
 		fout.close()
 		lackNum = lackNum + 1
 foutHead.close()
+print "total: "+str(len(fileList))
 print "match: "+str(matchNum)
 print "mistake: "+str(mistakeNum)
 print "lack lustre file: "+str(lackNum)
