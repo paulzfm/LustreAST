@@ -15,7 +15,7 @@
 
 /* tokens */
 /* keywords */
-%token TYPE PRIVATE PUBLIC PROTECTED FUNCTION NODE RETURNS LET TEL 
+%token TYPE PRIVATE PUBLIC PROTECTED FUNCTION NODE RETURNS LET TEL
 %token VAR CONST PRE FBY IF THEN ELSE WHEN CASE OF DEFAULTPATTERN ARROW SEG ENUM MAKE FLATTEN WITH
 %token SHORTSSS INTSSS FLOATSSS REALSSS NOTSSS ADDSSS MINUSSSS
 %token SSSADDSSS SSSMINUSSSS SSSMULSSS SSSDIVFSSS SSSDIVSSS SSSMODSSS SSSANDSSS SSSORSSS SSSXORSSS
@@ -25,6 +25,7 @@
 
 %token NOT ADD MINUS MUL DIVF DIV MOD AND OR XOR LESEQ GREEQ NE EQ LES GRE
 
+
 %left OR
 %left XOR
 %left AND
@@ -33,6 +34,7 @@
 %left ADD MINUS
 %left MUL DIVF DIV MOD
 %right NOT
+%left CARET
 
 %token TRUE FALSE
 %token <string> CONST_USINT CONST_SINT CONST_UINT CONST_INT CONST_FLO CONST_REAL IDENT CONST_CHAR
@@ -163,7 +165,7 @@ fields2Y:
 
 funcBodyY:
 		varBlkY LET eqStmtsY TEL	{BodyBlk($1, $3)}
-	|	SEMICOLON					{NOBODYBLK}		
+	|	SEMICOLON					{NOBODYBLK}
 ;
 
 varBlkY:
@@ -192,7 +194,7 @@ lhsLY:
 ;
 
 lhs:
-		IDENT			{Ident $1}
+		IDENT			{ID $1}
 	|	DEFAULTPATTERN	{ANNOYMITY}
 
 identsY:
@@ -219,33 +221,43 @@ unOpExprY:
 ;
 
 unOpY:
-		atomTypeY	{AtomType $1}
+		atomTypeY	{AtomTypeOp $1}
 	|	NOT			{NOT}
 	|	ADD			{POS}
 	|	MINUS		{NEG}
 ;
 
 binOpExprY:
-	exprY binOpY exprY
-		{BinOpExpr($2, $1, $3)}
-;
-
-binOpY:
-		ADD		{ADD}
-	|	MINUS	{SUB}
-	|	MUL		{MUL}
-	|	DIVF	{DIVF}
-	|	DIV		{DIV}
-	|	MOD		{MOD}
-	|	AND		{AND}
-	|	OR		{OR}
-	|	XOR		{XOR}
-	|	EQ		{EQ}
-	|	LES		{LT}
-	|	GRE		{GT}
-	|	GREEQ	{GE}
-	|	LESEQ	{LE}
-	|	NE		{NE}
+		exprY OR exprY
+			{BinOpExpr(OR, $1, $3)}
+	|	exprY XOR exprY
+			{BinOpExpr(XOR, $1, $3)}
+	|	exprY AND exprY
+			{BinOpExpr(AND, $1, $3)}
+	|	exprY LES exprY
+			{BinOpExpr(LT, $1, $3)}
+	|	exprY GRE exprY
+			{BinOpExpr(GT, $1, $3)}
+	|	exprY GREEQ exprY
+			{BinOpExpr(GE, $1, $3)}
+	|	exprY LESEQ exprY
+			{BinOpExpr(LE, $1, $3)}
+	|	exprY NE exprY
+			{BinOpExpr(NE, $1, $3)}
+	|	exprY EQ exprY
+			{BinOpExpr(EQ, $1, $3)}
+	|	exprY ADD exprY
+			{BinOpExpr(ADD, $1, $3)}
+	|	exprY MINUS exprY
+			{BinOpExpr(SUB, $1, $3)}
+	|	exprY MUL exprY
+			{BinOpExpr(MUL, $1, $3)}
+	|	exprY DIVF exprY
+			{BinOpExpr(DIVF, $1, $3)}
+	|	exprY DIV exprY
+			{BinOpExpr(DIV, $1, $3)}
+	|	exprY MOD exprY
+			{BinOpExpr(MOD, $1, $3)}
 ;
 
 fieldExprY:
@@ -464,7 +476,7 @@ exprY:
 	|	caseExprY				{$1}
 	|	withExprY				{$1}
 	|	LPAREN exprListY RPAREN	{$2}
-	|	LPAREN exprY RPAREN		{$2}
+/*	|	LPAREN exprY RPAREN		{$2} */
 	|	prefixExprY				{$1}
 	|	highOrderExprY			{$1}
 ;
@@ -505,4 +517,3 @@ new_FLO:
 	|	ADD CONST_FLO	{$2}
 	|	MINUS CONST_FLO {"-" ^ $2}
 ;
-

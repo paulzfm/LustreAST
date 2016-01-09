@@ -97,11 +97,11 @@ rule token = parse
 
 	| "true" 			{ TRUE }
 	| "false"			{ FALSE }
-	| ['0'-'9']+ "us" as lxm	{ CONST_USINT lxm }
-	| ['0'-'9']+ 'u' as lxm	{ CONST_UINT lxm }
-	| ['0'-'9']+ 's' as lxm	{ CONST_SINT lxm }
+	| ['0'-'9']+ "us" as lxm	{ CONST_USINT (String.sub lxm 0 (String.length lxm - 2)) }
+	| ['0'-'9']+ 'u' as lxm	{ CONST_UINT (String.sub lxm 0 (String.length lxm - 1)) }
+	| ['0'-'9']+ 's' as lxm	{ CONST_SINT (String.sub lxm 0 (String.length lxm - 1)) }
 	| ['0'-'9']+ as lxm	{ CONST_INT lxm }
-	| ['0'-'9']+ '.' ['0'-'9']+ 'f' as lxm	{ CONST_FLO lxm }
+	| ['0'-'9']+ '.' ['0'-'9']+ 'f' as lxm	{ CONST_FLO (String.sub lxm 0 (String.length lxm - 1)) }
 	| ['0'-'9']+ '.' ['0'-'9']+ as lxm	{ CONST_REAL lxm }
 	| '\''['a'-'z''A'-'Z']'\'' as lxm	{ CONST_CHAR (String.sub lxm 1 1) }
 	| ['a'-'z''A'-'Z''_']['a'-'z''A'-'Z''0'-'9''_']* as lxm	{ IDENT (lxm) }

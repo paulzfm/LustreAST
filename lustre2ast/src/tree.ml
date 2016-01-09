@@ -19,8 +19,8 @@ type funcType =
     | Node
 
 type lhs =
-    | Ident of ident
-    | ANNOYMITY 
+    | ID of ident
+    | ANNOYMITY
 
 type lhsL = lhs list
 
@@ -34,10 +34,10 @@ type atomType =
     | Real
     | Char
 
-type unOp = 
-    | AtomType of atomType
-    | NOT 
-    | POS 
+type unOp =
+    | AtomTypeOp of atomType
+    | NOT
+    | POS
     | NEG
 
 type binOp = ADD | SUB | MUL | DIVF | DIV | MOD | AND | OR | XOR | GT | LT | GE | LE | EQ | NE
@@ -76,11 +76,11 @@ type pattern =
     | DefaultPattern
 
 type kind =
-    | AtomType of atomType 
+    | AtomType of atomType
     | Struct of field list
     | Array of kind * expr
-    | IDENT of ident 
-    | EnumType of ident list 
+    | IDENT of ident
+    | EnumType of ident list
 
 and field = Field of ident list * kind
 
@@ -120,13 +120,13 @@ and withItem =
 
 type eqStmt = EqStmt of lhsL * expr
 
-type varBlk = 
+type varBlk =
     | VarList of field list
     | NOVARBLK
 
 type paramBlk = ParamBlk of field list
 type returnBlk = ReturnBlk of field list
-type bodyBlk = 
+type bodyBlk =
     | BodyBlk of varBlk * eqStmt list
     | NOBODYBLK
 
