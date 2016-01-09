@@ -224,7 +224,7 @@ and applyBlk =
     | TMapwDefaultStmt of tPrefixStmt * integer * tExpr * tExpr
     | TMapwiDefaultStmt of tPrefixStmt * integer * tExpr * tExpr
     | TFoldwIfStmt of tPrefixStmt * integer * tExpr
-    | TFoldwiStmt of tPrefixStmt * integer * expr
+    | TFoldwiStmt of tPrefixStmt * integer * tExpr
 
 type tLHS =
     | TID of (ident * tKind * clock)
