@@ -230,8 +230,12 @@ type tLHS =
     | TID of (ident * tKind * clock)
     | TANONYMOUS_ID
 
+type tGuidOp =
+    | TGUIDOp of ident
+    | TNOCALL
+
 type tDeclStmt = TDeclStmt of ident list * tKind * comment
-type tAssignStmt = TAssignStmt of tLHS list * tExpr
+type tAssignStmt = TAssignStmt of tLHS list * tExpr * tGuidOp
 
 type tParamBlk = TParamBlk of tDeclStmt list
 type tReturnBlk = TReturnBlk of tDeclStmt list

@@ -729,7 +729,7 @@ and exprOut = function
     | TConstructExpr (kind, clk, cons) -> Printf.sprintf "construct(%s, %s, %s)" (kindOut kind) (clockOut clk) (String.concat " " (List.map (fun (i, e) -> Printf.sprintf "label_expr(%s, %s)," i (exprOut e)) cons))
     | TConstructArrExpr (kind, clk, exprs) -> Printf.sprintf "construct_array(%s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut (TListExpr exprs))
     | TMixedConstructorExpr (kind, clk, expr1, labels, expr2) -> Printf.sprintf "mixed_constructor(%s, %s, %s, (%s), %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (String.concat ", " (List.map labelIdxOut labels)) (exprOut expr2)
-    | TArrDimExpr (kind, clk, expr, len) -> Printf.sprintf "array_dim(%s, %s, %s, INT(%s))" (kindOut kind) (clockOut clk) (exprOut expr) len
+    | TArrDimExpr (kind, clk, expr, len) -> Printf.sprintf "array_dim((%s), (%s), %s, INT(%s))" (kindOut kind) (clockOut clk) (exprOut expr) len
     | TArrIdxExpr (kind, clk, expr, idx) -> Printf.sprintf "array_index(%s, %s, %s, INT(%s))" (kindOut kind) (clockOut clk) (exprOut expr) idx
     | TArrSliceExpr (kind, clk, expr1, expr2, expr3) -> Printf.sprintf "array_slice(%s, %s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (exprOut expr2) (exprOut expr3)
     | TApplyExpr (kinds, clks, blk, exprs) -> Printf.sprintf "apply_expr((%s), (%s), %s, %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))
@@ -752,14 +752,17 @@ and applyBlkOut = function
     | TFoldwiStmt (stmt, value, expr) -> Printf.sprintf "foldwi(%s, INT(%s), %s)" (prefixStmtOut stmt) value (exprOut expr)
 
 and unOpOut = function
+    | AtomTypeOp Bool -> "unop_boolcast"
     | AtomTypeOp Short -> "unop_shortcast"
+    | AtomTypeOp UShort -> "unop_intcast"
     | AtomTypeOp Int -> "unop_intcast"
+    | AtomTypeOp UInt -> "unop_intcast"
     | AtomTypeOp Float -> "unop_floatcast"
     | AtomTypeOp Real -> "unop_realcast"
+    | AtomTypeOp Char -> "unop_charcast"
     | NOT -> "unop_not"
     | POS -> "unop_pos"
     | NEG -> "unop_neg"
-    | _ -> "!ERROR!"
 
 and binOpOut = function
     | ADD -> "binop_add"
