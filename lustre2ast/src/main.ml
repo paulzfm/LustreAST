@@ -195,7 +195,8 @@ let rec eval = function
             | _ -> raise (EvalError "operands for '!=' are incompatible")
         )
     )
-    | _ -> raise (EvalError "complex expr not supported")
+    | _ -> VInt 0
+    (* | _ -> raise (EvalError "complex expr not supported") *)
 
 let evalToAtomExpr kind expr = match eval expr with
     | VBool value -> (match kind with
@@ -435,7 +436,7 @@ and exprToAST ident e = match e with
     | ArrowExpr (exprL, exprR) -> Printf.sprintf "tempo_arrow(%s, %s, %s, %s)" (searchIdentType ident) (clockToAST NOCLOCK) (exprToAST ident exprL) (exprToAST ident exprR)
     | WhenExpr (expr, ident) -> "!!!4"
     | IfExpr (cond, exprT, exprF) -> Printf.sprintf "if_expr(%s, %s, %s, %s, %s)" (searchIdentType ident) (clockToAST NOCLOCK) (exprToAST ident cond) (exprToAST ident exprT) (exprToAST ident exprF)
-    | CaseExpr (expr, cases) -> Printf.sprintf "switch_expr(%s, %s, %s, %s)" (searchIdentType ident) (clockToAST NOCLOCK) (exprToAST ident expr) (String.concat ", " (List.map caseItemToAST cases))
+    | CaseExpr (expr, cases) -> Printf.sprintf "switch_expr((%s), (%s), %s, %s)" (searchIdentType ident) (clockToAST NOCLOCK) (exprToAST ident expr) (String.concat ", " (List.map (caseItemToAST ident) cases))
     | WithExpr (ident, items, expr) -> ""
     | ExprList (exprs) -> Printf.sprintf "list_expr(%s)" (String.concat ", " (List.map (exprToAST ident) exprs))
     | PrefixExpr (op, exprs) ->
@@ -473,8 +474,8 @@ and exprToAST ident e = match e with
         isApplyBlock := false;
         tmp
 
-and caseItemToAST = function
-    CaseItem (pattern, expr) -> Printf.sprintf "case(%s, %s)" (patternToAST pattern) (exprToAST "" expr)
+and caseItemToAST ident item = match item with
+    CaseItem (pattern, expr) -> Printf.sprintf "case(%s, %s)" (patternToAST ident pattern) (exprToAST "" expr)
 
 and nameArrItemToAST ident e = match e with
     NameArrItem (name, expr) -> Printf.sprintf "label_expr(%s, %s)" name (exprToAST (ident ^ "." ^ name) expr)
@@ -487,8 +488,8 @@ and lhsToAST = function
     | ID ident -> Printf.sprintf "ID(%s, %s, %s)" ident (searchIdentType ident) (clockToAST NOCLOCK)
     | ANNOYMITY -> "anonymous_id"
 
-and patternToAST = function
-    | PIdent ident -> Printf.sprintf "ID(%s)" ident
+and patternToAST sel pat = match pat with
+    | PIdent ident -> Printf.sprintf "ID(%s, %s)" ident (searchIdentType ident)
     | PBool ident -> Printf.sprintf "BOOL(%s)" ident
     | PChar ident -> Printf.sprintf "CHAR(%s)" ident
     | PShort ident -> Printf.sprintf "SHORT(%s)" ident
@@ -623,6 +624,7 @@ let searchMain nodes = match (List.hd (List.filter (
 let programToAST depth program = match program with
     Program nodes ->
         SymbolTable.enter ();
+        SymbolTable.insert "#bool" (SymbolTable.VarSym (AtomType Bool));
         (* types *)
         List.iter (fun node -> match node with
             | TypeBlk stmts -> List.iter (
