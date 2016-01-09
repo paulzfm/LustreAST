@@ -2,6 +2,10 @@
 
 type ident = string
 
+type comment =
+    | Comment of ident
+    | NULL_COMMENT
+
 type clock =
     | Clock of ident
     | NOCLOCK
@@ -139,4 +143,109 @@ type nodeBlk =
     | FuncBlk of funcType * modifier * ident * paramBlk * returnBlk * bodyBlk
 
 type program = Program of nodeBlk list
+;;
+
+(* with types *)
+
+type tKind =
+    | TBool
+    | TShort
+    | TUShort
+    | TInt
+    | TUInt
+    | TFloat
+    | TReal
+    | TChar
+    | TEnum of ident list
+    | TConstruct of (ident * tKind) list
+    | TArray of tKind * ident
+    | TTypeName of ident
+
+type tValue =
+    | TVIdent of ident * tKind
+    | TVBool of ident
+    | TVShort of ident
+    | TVUShort of ident
+    | TVInt of ident
+    | TVUInt of ident
+    | TVFloat of ident
+    | TVReal of ident
+    | TVChar of ident
+    | TVConstructor of (ident * tValue) list
+    | TVArray of tValue list
+    | TVPatternAny
+
+type tPrefixStmt =
+    | TFuncStmt of ident * tKind list * tKind list
+    | TUnOpStmt of prefixUnOp
+    | TBinOpStmt of prefixBinOp
+
+type tAtomExpr =
+    | TEID of ident * tKind * clock
+    | TEIdent of ident
+    | TEBool of ident
+    | TEChar of ident
+    | TEShort of ident
+    | TEUShort of ident
+    | TEInt of ident
+    | TEUInt of ident
+    | TEFloat of ident
+    | TEReal of ident
+
+type tExpr =
+    | TAtomExpr of tAtomExpr
+    | TBinOpExpr of binOp * tKind * clock * tExpr * tExpr
+    | TUnOpExpr of unOp * tKind * clock * tExpr
+    | TIfExpr of tKind * clock * tExpr * tExpr * tExpr
+    | TSwitchExpr of tKind * clock * tExpr * (tValue * tExpr) list
+    | TTempoPreExpr of tKind list * clock list * tExpr
+    | TTempoArrowExpr of tKind list * clock list * tExpr * tExpr
+    | TTempoFbyExpr of tKind list * clock list * tExpr list * tExpr * tExpr list
+    | TFieldAccessExpr of tKind * clock * tExpr * ident
+    | TConstructExpr of tKind * clock * (ident * tExpr) list
+    | TConstructArrExpr of tKind * clock * tExpr list
+    | TMixedConstructorExpr of tKind * clock * tExpr * labelIdx list * tExpr
+    | TArrDimExpr of tKind * clock * tExpr * integer
+    | TArrIdxExpr of tKind * clock * tExpr * integer
+    | TArrSliceExpr of tKind * clock * tExpr * tExpr * tExpr
+    | TApplyExpr of tKind list * clock list * applyBlk * tExpr list
+    | TDynamicProjExpr of tKind * clock * tExpr * tExpr list * tExpr
+    | TListExpr of tExpr list
+
+and labelIdx =
+    | TIdent of ident
+    | TExpr of tExpr
+
+and applyBlk =
+    | TMakeStmt of ident * tKind
+    | TFlattenStmt of ident * tKind
+    | THighOrderStmt of highOrderOp * tPrefixStmt * integer
+    | TPrefixStmt of tPrefixStmt
+    | TMapwDefaultStmt of tPrefixStmt * integer * tExpr * tExpr
+    | TMapwiDefaultStmt of tPrefixStmt * integer * tExpr * tExpr
+    | TFoldwIfStmt of tPrefixStmt * integer * tExpr
+    | TFoldwiStmt of tPrefixStmt * integer * expr
+
+type tLHS =
+    | TID of (ident * tKind * clock)
+    | TANONYMOUS_ID
+
+type tDeclStmt = TDeclStmt of ident list * tKind * comment
+type tAssignStmt = TAssignStmt of tLHS list * tExpr
+
+type tParamBlk = TParamBlk of tDeclStmt list
+type tReturnBlk = TReturnBlk of tDeclStmt list
+type tBodyBlk = TBodyBlk of tDeclStmt list * tAssignStmt list
+
+type tTypeStmt = TTypeStmt of ident * tKind * comment
+type tConstStmt = TConstStmt of ident * tKind * tValue * comment
+
+type tStmtBlk =
+    | TTypeBlk of tTypeStmt list
+    | TConstBlk of tConstStmt list
+    | TNodeBlk of funcType * ident * comment * tParamBlk * tReturnBlk * tBodyBlk
+
+type tMainBlk = TMainBlk of ident
+type tProgramBlk = TProgramBlk of tStmtBlk list
+type tTopLevel = TTopLevel of tMainBlk * tProgramBlk
 ;;

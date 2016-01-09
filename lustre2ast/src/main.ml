@@ -302,26 +302,6 @@ let funcTypeToAST = function
     | Function -> "function"
     | Node -> "node"
 
-let atomTypeToAST = function
-    | Bool -> "bool"
-    | Short -> "short"
-    | UShort -> "ushort"
-    | Int -> "int"
-    | UInt -> "uint"
-    | Float -> "float"
-    | Real -> "real"
-    | Char -> "char"
-
-let unOpToAST = function
-    | AtomTypeOp Short -> "unop_shortcast"
-    | AtomTypeOp Int -> "unop_intcast"
-    | AtomTypeOp Float -> "unop_floatcast"
-    | AtomTypeOp Real -> "unop_realcast"
-    | NOT -> "unop_not"
-    | POS -> "unop_pos"
-    | NEG -> "unop_neg"
-    | _ -> "ERROR"
-
 let binOpToAST = function
     | ADD -> "binop_add"
     | SUB -> "binop_subtract"
@@ -657,6 +637,247 @@ let toAST program = programToAST 0 program
 let toLustre = function
     Program (_) -> "OK"
 ;;
+
+(* output *)
+let rec output = function
+    TTopLevel (main, prog) -> String.concat "\n" [
+        indent 0 "TopLevel(";
+        mainBlkOut (depth + 1) main;
+        programBlkOut (depth + 1) prog;
+        indent 0 ")";
+    ]
+
+and programBlkOut depth blk = match blk with
+    TMainBlk blks -> String.concat "\n" [
+        indent depth "program(";
+        String.concat ",\n" (List.map (stmtBlkOut (depth + 1)) blks);
+        indent depth ")"
+    ]
+
+and mainBlkOut depth blk = match blk with
+    TMainBlk ident -> indent depth (Printf.sprintf "main(%s)" ident);
+
+and stmtBlkOut depth blk = match blk with
+    | TTypeBlk stmts -> String.concat "\n" [
+        indent depth "type_block(";
+        String.concat ",\n" (List.map (typeStmtOut (depth + 1)) stmts);
+        indent depth ")"
+    ]
+    | TConstBlk stmts -> String.concat "\n" [
+        indent depth "const_block(";
+        String.concat ",\n" (List.map (constStmtOut (depth + 1)) stmts);
+        indent depth ")"
+    ]
+    | TNodeBlk (func, ident, com, paramBlk, returnBlk, bodyBlk) -> String.concat "\n" [
+        indent depth "node(";
+        String.concat ",\n" [
+            indent (depth + 1) (funcTypeOut func);
+            indent (depth + 1) "";
+            indent (depth + 1) ident;
+            indent (depth + 1) (commentOut com);
+            paramBlkOut (depth + 1) paramBlk;
+            returnBlkOut (depth + 1) returnBlk;
+            bodyBlkOut (depth + 1) bodyBlk;
+        ];
+        indent depth ")"
+    ]
+
+and typeStmtOut depth stmt = match stmt with
+    TTypeStmt (ident, kind, com) -> indent depth (Printf.sprintf "type(%s, %s, %s)" ident (kindOut kind) (commentOut com))
+
+and constStmtOut depth stmt = match stmt with
+    TConstStmt (ident, kind, value, com) -> indent depth (Printf.sprintf "const(%s, %s, %s)" ident (kindOut kind) (valueOut) (commentOut com))
+
+and funcTypeOut = function
+    | Node -> "node"
+    | Function -> "function"
+
+and clockOut = function
+    | NOCLOCK -> "()"
+
+and commentOut = function
+    | Comment com -> com
+    | NULL_COMMENT -> "NullComment"
+
+and paramBlkOut depth stmt = match stmt with
+    TParamBlk stmts -> String.concat "\n" [
+        indent depth "params(";
+        String.concat ",\n" (List.map (declStmtOut (depth + 1)) stmts);
+        indent depth ")"
+    ]
+
+and returnBlkOut depth stmt = match stmt with
+    TReturnBlk stmts -> String.concat "\n" [
+        indent depth "returns(";
+        String.concat ",\n" (List.map (declStmtOut (depth + 1)) stmts);
+        indent depth ")"
+    ]
+
+and declStmtOut depth stmt = match stmt with
+    TDeclStmt (idents, kind, com) -> indent depth (Printf.sprintf "var_decls(vars(%s), %s, %s)" (String.concat ", " idents) (kindOut kind) (commentOut com))
+
+and bodyBlkOut depth stmt = match stmt with
+    | TBodyBlk (_, eqs) -> String.concat "\n" [
+        indent depth "body(";
+        String.concat ",\n" (List.map (assignStmtOut (depth + 1)) eqs);
+        indent depth ")"
+    ]
+    | TBodyBlk (vars, eqs) -> String.concat "\n" [
+        indent depth "body(";
+        indent (depth + 1) "localvars(";
+        List.map (declStmtOut (depth + 2)) vars;
+        indent (depth + 1) ")";
+        String.concat ",\n" (List.map (assignStmtOut (depth + 1)) eqs);
+        indent depth ")"
+    ]
+
+and assignStmtOut depth stmt = match stmt with
+    TAssignStmt (lhss, expr) -> indent depth (Printf.sprintf "=(lvalue(%s), %s, NULL)" (List.map lhsOut lhss) (exprOut expr))
+
+and lhsOut = function
+    | TID (ident, kind, clk) -> Printf.sprintf "ID(%s, %s, %s)" ident (kindOut kind) (clockOut clk)
+    | TANONYMOUS_ID -> "anonymous_id"
+
+and kindOut = function
+    | TBool -> "bool"
+    | TShort -> "short"
+    | TUShort -> "ushort"
+    | TInt -> "int"
+    | TUInt -> "uint"
+    | TFloat -> "float"
+    | TReal -> "real"
+    | TChar -> "char"
+    | TEnum idents -> Printf.sprintf "enum(%s)" (String.concat ", " idents)
+    | TConstruct cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut k)) cons))
+    | TArray (kind, len) -> Printf.sprintf "array(%s, %s)" (kindOut kind) len
+    | TTypeName ident -> Printf.sprintf "typename(%s)" ident
+
+and valueOut = function
+    | TVIdent (ident, kind) -> ident
+    | TVBool ident -> ident
+    | TVShort ident -> ident
+    | TVUShort ident -> ident
+    | TVInt ident -> ident
+    | TVUInt ident -> ident
+    | TVFloat ident -> ident
+    | TVReal ident -> ident
+    | TVChar ident -> ident
+    | TVConstructor cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut k)) cons))
+    | TVArray vals -> Printf.sprintf "construct_array(%s)" (String.concat ", " (List.map valueOut vals))
+    | TVPatternAny -> "pattern_any"
+
+and prefixStmtOut = function
+    | TFuncStmt (ident, params, rets) -> Printf.sprintf "prefix(%s, param_types(%s), ret_types(%s))" ident (String.concat ", " (List.map kindOut params)) (String.concat ", " (List.map kindOut rets))
+    | TUnOpStmt op -> Printf.sprintf "prefix(%s)" (prefixUnOpOut op)
+    | TBinOpStmt op -> Printf.sprint "prefix(%s)" (prefixBinOpOut op)
+
+and atomExprOut = function
+    | TEID (ident, kind, clk) -> Printf.sprintf "ID(%s, %s, %s)" ident (kindOut kind) (clockOut clk)
+    | TEIdent ident -> ident
+    | TEBool ident -> ident
+    | TEChar ident -> ident
+    | TEShort ident -> ident
+    | TEUShort ident -> ident
+    | TEInt ident -> ident
+    | TEUInt ident -> ident
+    | TEFloat ident -> ident
+    | TEReal ident -> ident
+
+and exprOut = function
+    | TAtomExpr expr -> atomExprOut expr
+    | TBinOpExpr (op, kind, clk, exprL, exprR) -> Printf.sprintf "%s(%s, %s, %s, %s)" (binOpOut op) (kindOut kind) (clockOut clk) (exprOut exprL) (exprOut exprR)
+    | TUnOpExpr (op, kind, clk, expr) -> Printf.sprintf "%s(%s, %s, %s)" (unOpOut op) (kindOut kind) (clockOut clk) (exprOut expr)
+    | TIfExpr (kind, clk, exprC, exprT, exprF) -> Printf.sprintf "if_expr(%s, %s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut exprC) (exprOut exprT) (exprOut exprF)
+    | TSwitchExpr (kind, clk, expr, cases) -> Printf.sprintf "switch_expr(%s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr) (String.concat ", " (List.map (fun (v, e) -> Printf.sprintf "case(%s, %s)" (valueOut v) (exprOut e)) cases))
+    | TTempoPreExpr (kinds, clks, expr) -> Printf.sprintf "tempo_pre((%s), (%s), %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks)) (exprOut expr)
+    | TTempoArrowExpr (kinds, clks, exprL, exprR) -> Printf.sprintf "tempo_arrow((%s), (%s), %s, %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))  (exprOut exprL) (exprOut exprR)
+    | TTempoFbyExpr (kinds, clks, exprs1, expr, exprs2) -> Printf.sprintf "tempo_fby((%s), (%s), %s, %s, %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks)) (exprOut (TListExpr exprs1)) (exprOut expr) (exprOut (TListExpr exprs2))
+    | TConstructExpr (kind, clk, cons) -> Printf.sprintf "construct(%s, %s, %s)" (kindOut kind) (clockOut clk) (String.concat ", " (List.map (fun (i, e) -> Printf.sprintf "label_expr(%s, %s)" i (exprOut e)) cons))
+    | TConstructArrExpr (kind, clk, exprs) -> Printf.sprintf "construct_array(%s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut (TListExpr exprs))
+    | TMixedConstructorExpr (kind, clk, expr1, labels, expr2) -> Printf.sprintf "mixed_constructor(%s, %s, %s, (%s), %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (String.concat ", " (List.map labelIdxOut labels)) (exprOut expr2)
+    | TArrDimExpr (kind, clk, expr, len) -> Printf.sprintf "array_dim(%s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr) len
+    | TArrIdxExpr (kind, clk, expr, idx) -> Printf.sprintf "array_index(%s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr) idx
+    | TArrSliceExpr (kind, clk, expr1, expr2, expr3) -> Printf.sprintf "array_slice(%s, %s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (exprOut expr2) (exprOut expr3)
+    | TApplyExpr (kinds, clks, blk, exprs) -> Printf.sprintf "apply_expr((%s), (%s), %s, %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))
+    (applyBlkOut blk) (exprOut (TListExpr exprs))
+    | TDynamicProjExpr (kind, clk, expr1, exprs, expr2) -> Printf.sprintf "dynamic_project(%s, %s, %s, (%s), %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (String.concat ", " (List.map exprOut exprs)) (exprOut expr2)
+    | TListExpr exprs -> Printf.sprintf "list_expr(%s)" (String.concat ", " (List.map exprOut exprs))
+
+and labelIdxOut = function
+    | TIdent ident -> Printf.sprintf "struct_item(%s)" ident
+    | TExpr expr -> exprOut expr
+
+and applyBlkOut = function
+    | TMakeStmt (ident, kind) -> Printf.sprintf "make(%s, %s)" ident (kindOut kind)
+    | TFlattenStmt (ident, kind) -> Printf.sprintf "flatten(%s, %s)" ident (kindOut kind)
+    | THighOrderStmt (op, stmt, value) -> Printf.sprintf "high_order(%s, %s, %s)" (highOrderOpOut op) (prefixStmtOut stmt) value
+    | TMapwDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapw_default(%s, %s, %s, %s)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
+    | TMapwiDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapwi_default(%s, %s, %s, %s)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
+    | TFoldwIfStmt (stmt, value, expr) -> Printf.sprintf "foldw_if(%s, %s, %s)" (prefixStmtOut stmt) value (exprOut expr)
+    | TFoldwiStmt (stmt, value, expr) -> Printf.sprintf "foldwi(%s, %s, %s)" (prefixStmtOut stmt) value (exprOut expr)
+
+and unOpOut = function
+    | AtomTypeOp Short -> "unop_shortcast"
+    | AtomTypeOp Int -> "unop_intcast"
+    | AtomTypeOp Float -> "unop_floatcast"
+    | AtomTypeOp Real -> "unop_realcast"
+    | NOT -> "unop_not"
+    | POS -> "unop_pos"
+    | NEG -> "unop_neg"
+    | _ -> "!ERROR!"
+
+and binOpOut = function
+    | ADD -> "binop_add"
+    | SUB -> "binop_subtract"
+    | MUL -> "binop_multiply"
+    | DIVF -> "binop_divide"
+    | DIV -> "binop_div"
+    | MOD -> "binop_mod"
+    | AND -> "binop_and"
+    | OR -> "binop_or"
+    | XOR -> "binop_xor"
+    | GT -> "binop_gt"
+    | LT -> "binop_lt"
+    | GE -> "binop_ge"
+    | LE -> "binop_le"
+    | EQ -> "binop_eq"
+    | NE -> "binop_neq"
+
+and prefixUnOpOut = function
+    | PSHORT -> "short$"
+    | PINT -> "int$"
+    | PFLOAT -> "float$"
+    | PREAL -> "real$"
+    | PNOT -> "not$"
+    | PPOS -> "+$"
+    | PNEG -> "-$"
+
+and prefixBinOpOut = function
+    | PADD -> "$+$"
+    | PSUB -> "$-$"
+    | PMUL -> "$*$"
+    | PDIVF -> "$/$"
+    | PDIV -> "$div$"
+    | PMOD -> "$mod$"
+    | PAND -> "$and$"
+    | POR -> "$or$"
+    | PXOR -> "$xor$"
+    | PGT -> "$>$"
+    | PLT -> "$<$"
+    | PGE -> "$>=$"
+    | PLE -> "$<=$"
+    | PEQ -> "$=$"
+    | PNE -> "$<>$"
+
+and highOrderOpOut = function
+    | MAP -> "highorder_map"
+    | FOLD -> "highorder_fold"
+    | MAPFOLD -> "highorder_mapfold"
+    | MAPI -> "highorder_mapi"
+    | FOLDI -> "highorder_foldi"
+
+
+(* main *)
 
 let _ =
 	try
