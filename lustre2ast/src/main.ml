@@ -9,8 +9,6 @@ let rec makeList times elem =
 
 exception Error of string
 
-(* symbol table *)
-
 let rec kindToString = function
     | AtomType Bool -> "bool"
     | AtomType Short -> "short"
@@ -25,10 +23,40 @@ let rec kindToString = function
     | Array (kind, _) -> Printf.sprintf "[%s]" (kindToString kind)
     | IDENT ident -> Printf.sprintf "ref %s" ident
 
+let rec kindOut = function
+    | TBool -> "bool"
+    | TShort -> "short"
+    | TUShort -> "ushort"
+    | TInt -> "int"
+    | TUInt -> "uint"
+    | TFloat -> "float"
+    | TReal -> "real"
+    | TChar -> "char"
+    | TEnum idents -> Printf.sprintf "enum(%s)" (String.concat ", " idents)
+    | TConstruct cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut k)) cons))
+    | TArray (kind, len) -> Printf.sprintf "array(%s, %s)" (kindOut kind) len
+    | TTypeName ident -> Printf.sprintf "typename(%s)" ident
+
+let rec valueOut = function
+    | TVIdent (ident, kind) -> ident
+    | TVBool ident -> ident
+    | TVShort ident -> ident
+    | TVUShort ident -> ident
+    | TVInt ident -> ident
+    | TVUInt ident -> ident
+    | TVFloat ident -> ident
+    | TVReal ident -> ident
+    | TVChar ident -> ident
+    | TVConstructor cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (valueOut k)) cons))
+    | TVArray vals -> Printf.sprintf "construct_array(%s)" (String.concat ", " (List.map valueOut vals))
+    | TVPatternAny -> "pattern_any"
+
+(* symbol table *)
+
 module SymbolTable = struct
     type symbolType =
-        | VarSym of kind
-        | FuncSym of kind list * kind list
+        | VarSym of tKind
+        | FuncSym of tKind list * tKind list
     exception SymbolError of string
 
     let symbolTable : (string, symbolType) Hashtbl.t array = (Array.make 0 (Hashtbl.create 20))
@@ -45,7 +73,7 @@ module SymbolTable = struct
     let exit () =
         table := Array.sub !table 0 (length () - 1)
 
-    let rec insertStruct s ident = match s with
+    (* let rec insertStruct s ident = match s with
         | VarSym kind -> (match kind with
             | Struct fields -> List.iter (fun f -> match f with         Field (is, k) ->
                 List.iter (fun i -> Hashtbl.add !table.(length () - 1) (ident ^ "." ^ i) (VarSym k)) is
@@ -53,12 +81,12 @@ module SymbolTable = struct
             | IDENT name -> insertStruct (search name) ident
             | _ -> ()
         )
-        | _ -> ()
+        | _ -> () *)
 
-    and insert ident value =
+    let insert ident value =
         Hashtbl.replace !table.(length () - 1) ident value
 
-    and recSearch ident i = if i < 0 then
+    let rec recSearch ident i = if i < 0 then
         raise (SymbolError (Printf.sprintf "symbol '%s' not found" ident))
     else
         match Hashtbl.find_all !table.(i) ident with
@@ -73,10 +101,10 @@ module SymbolTable = struct
     let show () =
         Hashtbl.iter (fun k -> fun v ->
             Printf.printf "%s : %s\n" k (match v with
-                | VarSym kind -> kindToString kind
+                | VarSym kind -> kindOut kind
                 | FuncSym (kp, kr) -> String.concat " -> " [
-                    String.concat " * " (List.map kindToString kp);
-                    String.concat " * " (List.map kindToString kr)
+                    String.concat " * " (List.map kindOut kp);
+                    String.concat " * " (List.map kindOut kr)
                 ]
             )
         ) !table.(length () - 1)
@@ -85,36 +113,200 @@ end
 (* constant table *)
 
 module ConstTable = struct
-    let constTable : (string, expr * string option) Hashtbl.t = Hashtbl.create 20
+    let constTable : (string, tKind * expr * tValue option) Hashtbl.t = Hashtbl.create 20
 
     let table = ref constTable
 
-    let insert ident expr =
+    let insert ident kind expr =
         (* Printf.printf "insert: %s\n" ident; *)
-        Hashtbl.replace !table ident (expr, None)
+        Hashtbl.replace !table ident (kind, expr, None)
 
     let update ident value =
-        let (expr, str) = Hashtbl.find !table ident in
-            Hashtbl.replace !table ident (expr, Some value)
+        let (kind, expr, str) = Hashtbl.find !table ident in
+            Hashtbl.replace !table ident (kind, expr, Some value)
 
     let search ident =
-        let (expr, str) = Hashtbl.find !table ident in
-            expr
+        match Hashtbl.find_all !table ident with
+            | [] -> None
+            | [(_, expr, _)] -> Some expr
+            | _ -> raise (Error "in const table: multiple keys")
 
     let get ident =
-        let (expr, str) = Hashtbl.find !table ident in
+        let (_, _, str) = Hashtbl.find !table ident in
             str
 
     let iter func = Hashtbl.iter func !table
 
     let show () =
-        Hashtbl.iter (fun k -> fun (_, v) ->
+        Hashtbl.iter (fun k -> fun (_, _, v) ->
             Printf.printf "%s : %s\n" k (match v with
-                | Some str -> str
+                | Some str -> valueOut str
                 | None -> "NULL"
             )
         ) !table
 end
+
+let rec eval kind e = match e with
+    | AtomExpr (EIdent ident) -> (match ConstTable.search ident with
+        | None -> TVIdent (ident, kind)
+        | Some expr -> eval kind expr
+    )
+    | AtomExpr (EBool ident) -> TVBool ident
+    | AtomExpr (EChar ident) -> TVChar ident
+    | AtomExpr (EShort ident) -> TVShort ident
+    | AtomExpr (EUShort ident) -> TVUShort ident
+    | AtomExpr (EInt ident) -> TVInt ident
+    | AtomExpr (EUInt ident) -> TVUInt ident
+    | AtomExpr (EFloat ident) -> TVFloat ident
+    | AtomExpr (EReal ident) -> TVReal ident
+    | UnOpExpr (op, expr) -> (
+        let x = eval kind expr
+        in (match op with
+            | POS -> x
+            | NOT -> (match x with
+                | TVBool value -> TVBool (string_of_bool (not (bool_of_string value)))
+                | _ -> raise (Error "eval: type mismatched for operator 'not'")
+            )
+            | NEG -> (match x with
+                | TVInt a -> TVInt (string_of_int (- (int_of_string a)))
+                | TVUInt a -> TVUInt (string_of_int (- (int_of_string a)))
+                | TVShort a -> TVShort (string_of_int (- (int_of_string a)))
+                | TVUShort a -> TVUShort (string_of_int (- (int_of_string a)))
+                | TVFloat a -> TVFloat (string_of_float (-. (float_of_string a)))
+                | TVReal a -> TVReal (string_of_float (-. (float_of_string a)))
+                | _ -> raise (Error "eval: type mismatched for operator '-'")
+            )
+            | _ -> raise (Error "not supported")
+        )
+    )
+    | BinOpExpr (op, exprL, exprR) -> (
+        let x = eval kind exprL
+        in let y = eval kind exprR
+        in (match op with
+            | ADD | SUB | MUL | DIVF | DIV | MOD ->
+                let func = opToFunc op
+                in let ffunc = opToFFunc op
+                in (match (x, y) with
+                    | (TVInt a, TVInt b) -> TVInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUInt a, TVUInt b) -> TVUInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVShort a, TVShort b) -> TVShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUShort a, TVUShort b) -> TVUShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVFloat a, TVFloat b) -> TVFloat (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (TVReal a, TVReal b) -> TVReal (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (_, _) -> raise (Error "eval: type mismatched for numeric operator")
+                )
+            | GT | LT | GE | LE ->
+                let cfunc = opToCmpFunc op
+                in let cfuncf = opToCmpFuncF op
+                in (match (x, y) with
+                    | (TVInt a, TVInt b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVUInt a, TVUInt b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVShort a, TVShort b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVUShort a, TVUShort b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVFloat a, TVFloat b) -> TVBool (string_of_bool (cfuncf (float_of_string a) (float_of_string b)))
+                    | (TVReal a, TVReal b) -> TVBool (string_of_bool (cfuncf (float_of_string a) (float_of_string b)))
+                    | (_, _) -> raise (Error "eval: type mismatched for compare operator")
+                )
+            | AND | OR | XOR ->
+                let bfunc = opToBoolFunc op
+                in (match (x, y) with
+                    | (TVBool a, TVBool b) -> TVBool (string_of_bool (bfunc (bool_of_string a) (bool_of_string b)))
+                    | (_, _) -> raise (Error "eval: type mismatched for boolean operator")
+                )
+            | EQ | NE ->
+                let func = opToFunc op
+                in let ffunc = opToFFunc op
+                in let bfunc = opToBoolFunc op
+                in (match (x, y) with
+                    | (TVInt a, TVInt b) -> TVInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUInt a, TVUInt b) -> TVUInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVShort a, TVShort b) -> TVShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUShort a, TVUShort b) -> TVUShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVFloat a, TVFloat b) -> TVFloat (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (TVReal a, TVReal b) -> TVReal (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (TVBool a, TVBool b) -> TVBool (string_of_bool (bfunc (bool_of_string a) (bool_of_string b)))
+                    | (_, _) -> raise (Error "eval: type mismatched for equal operator")
+                )
+            )
+        )
+    | FieldExpr _ -> raise (Error "eval: 1")
+    | StructExpr _ -> raise (Error "eval: 2")
+    | ArrConstructExpr exprs -> TVArray (List.map (eval kind) exprs)
+    | ArrNameConstructExpr items -> TVConstructor (List.map (fun item -> match item with NameArrItem (i, e) -> (i, eval kind e)) items)
+    | ArrInitExpr _ -> raise (Error "eval: 5")
+    | ArrAccessExpr _ -> raise (Error "eval: 6")
+    | PreExpr _ -> raise (Error "eval: 7")
+    | FbyExpr _ -> raise (Error "eval: 8")
+    | ArrowExpr _ -> raise (Error "eval: 9")
+    | WhenExpr _ -> raise (Error "eval: 10")
+    | IfExpr _ -> raise (Error "eval: 11")
+    | CaseExpr _ -> raise (Error "eval: 12")
+    | WithExpr _ -> raise (Error "eval: 13")
+    | ExprList exprs -> eval kind (List.hd exprs)
+    | PrefixExpr _ -> raise (Error "eval: 15")
+    | HighOrderExpr _ -> raise (Error "eval: 16")
+    | MapwiExpr _ -> raise (Error "eval: 17")
+    | MapwExpr _ -> raise (Error "eval: 18")
+    | FoldwiExpr _ -> raise (Error "eval: 19")
+    | FoldwExpr _ -> raise (Error "eval: 20")
+    | DynamicProjectExpr _ -> raise (Error "eval: 21")
+
+and opToFunc = function
+    | ADD -> (+)
+    | SUB -> (-)
+    | MUL -> (fun x -> fun y -> x * y)
+    | DIV -> (/)
+    | MOD -> (mod)
+    | _ -> (+)
+
+and opToFFunc = function
+    | ADD -> (+.)
+    | SUB -> (-.)
+    | MUL -> (fun x -> fun y -> x *. y)
+    | DIVF -> (/.)
+    | _ -> (+.)
+
+and opToBoolFunc = function
+    | AND -> (&&)
+    | OR -> (||)
+    | XOR -> (<>)
+    | _ -> (&&)
+
+and opToCmpFunc = function
+    | GT -> (>)
+    | LT -> (<)
+    | GE -> (>=)
+    | LE -> (<=)
+    | EQ -> (=)
+    | NE -> (<>)
+    | _ -> (=)
+
+and opToCmpFuncF = function
+    | GT -> (>)
+    | LT -> (<)
+    | GE -> (>=)
+    | LE -> (<=)
+    | EQ -> (=)
+    | NE -> (<>)
+    | _ -> (=)
+
+let rec kindToAST = function
+    | AtomType Bool -> TBool
+    | AtomType Short -> TShort
+    | AtomType UShort -> TUShort
+    | AtomType Int -> TInt
+    | AtomType UInt -> TUInt
+    | AtomType Float -> TFloat
+    | AtomType Real -> TReal
+    | AtomType Char -> TChar
+    | Struct fields -> TConstruct (List.concat (List.map (fun f -> match f with Field (is, k) -> (List.map (fun i -> (i, kindToAST k)) is)) fields))
+    | Array (kind, expr) -> TArray (kindToAST kind, exprToInteger expr)
+    | IDENT ident -> TTypeName ident
+    | EnumType idents -> TEnum idents
+
+and exprToInteger expr = match eval TInt expr with
+    | TVInt x | TVShort x | TVUInt x | TVUShort x -> x
+    | _ -> raise (Error "expr cannot be evaluated to an integer")
 
 (*
 let evalToAtomExpr kind expr = match eval expr with
@@ -175,7 +367,7 @@ let genSymTable ast =
     match ast with Program nodes -> List.iter (fun node ->
         match node with
             | TypeBlk stmts -> List.iter (fun stmt ->
-                match stmt with TypeStmt (_, i, k) -> SymbolTable.insert i (SymbolTable.VarSym k)
+                match stmt with TypeStmt (_, i, k) -> SymbolTable.insert i (SymbolTable.VarSym (kindToAST k))
             ) stmts
             | _ -> ()
     ) nodes;
@@ -183,8 +375,8 @@ let genSymTable ast =
         match node with
             | ConstBlk stmts -> List.iter (fun stmt ->
                 match stmt with ConstStmt (_, i, k, e) ->
-                SymbolTable.insert i (SymbolTable.VarSym k);
-                ConstTable.insert i e
+                SymbolTable.insert i (SymbolTable.VarSym (kindToAST k));
+                ConstTable.insert i (kindToAST k) e
             ) stmts
             | _ -> ()
     ) nodes;
@@ -192,9 +384,9 @@ let genSymTable ast =
         match node with
             | FuncBlk (_, _, ident, params, rets, _) ->
                 let ps = List.concat (match params with ParamBlk fields -> List.map (fun field ->
-                    match field with Field (is, k) -> makeList (List.length is) k) fields)
+                    match field with Field (is, k) -> makeList (List.length is) (kindToAST k)) fields)
                 in let rs = List.concat (match rets with ReturnBlk fields -> List.map (fun field ->
-                    match field with Field (is, k) -> makeList (List.length is) k) fields)
+                    match field with Field (is, k) -> makeList (List.length is) (kindToAST k)) fields)
                 in SymbolTable.insert ident (SymbolTable.FuncSym (ps, rs))
             | _ -> ()
     ) nodes;
@@ -202,142 +394,9 @@ let genSymTable ast =
 
 (* 2. evaluate const expr *)
 
-type value =
-    | VBool of bool
-    | VInt of int
-    | VFloat of float
-    | VString of string
-
 let rec evalConstExprs ast =
-    ConstTable.iter (fun k -> fun (expr, str) ->
-        let result = match eval expr with
-            | VBool value -> string_of_bool value
-            | VInt value -> string_of_int value
-            | VFloat value -> string_of_float value
-            | VString value -> value
-        in ConstTable.update k result
-    );
+    ConstTable.iter (fun k -> fun (kind, expr, _) -> ConstTable.update k (eval kind expr));
     ConstTable.show ()
-
-and eval = function
-    | AtomExpr (EIdent ident) -> VString ident
-    | AtomExpr (EBool ident) -> VBool (bool_of_string ident)
-    | AtomExpr (EChar ident) -> VInt (int_of_char (String.get ident 0))
-    | AtomExpr (EShort ident) -> VInt (int_of_string ident)
-    | AtomExpr (EUShort ident) -> VInt (int_of_string ident)
-    | AtomExpr (EInt ident) -> VInt (int_of_string ident)
-    | AtomExpr (EUInt ident) -> VInt (int_of_string ident)
-    | AtomExpr (EFloat ident) -> VFloat (float_of_string ident)
-    | AtomExpr (EReal ident) -> VFloat (float_of_string ident)
-    | UnOpExpr (op, expr) -> (match op with
-        | NOT -> (match eval expr with
-            | VBool value -> VBool (not value)
-            | _ -> raise (Error "'not' must be applied to bool values")
-        )
-        | POS -> (match eval expr with
-            | VInt value -> VInt value
-            | VFloat value -> VFloat value
-            | _ -> raise (Error "'+' cannot be applied to bool values")
-        )
-        | NEG -> (match eval expr with
-            | VInt value -> VInt (- value)
-            | VFloat value -> VFloat (-. value)
-            | _ -> raise (Error "'-' cannot be applied to bool values")
-        )
-        | _ -> raise (Error "not supported")
-    )
-    | BinOpExpr (op, exprL, exprR) -> (match op with
-        | ADD -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 + v2)
-            | (VFloat v1, VFloat v2) -> VFloat (v1 +. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) +. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 +. (float_of_int v2))
-            | _ -> raise (Error "operands for '+' are incompatible")
-        )
-        | SUB -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 - v2)
-            | (VFloat v1, VFloat v2) -> VFloat (v1 -. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) -. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 -. (float_of_int v2))
-            | _ -> raise (Error "operands for '-' are incompatible")
-        )
-        | MUL -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 * v2)
-            | (VFloat v1, VFloat v2) -> VFloat (v1 *. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) *. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 *. (float_of_int v2))
-            | _ -> raise (Error "operands for '*' are incompatible")
-        )
-        | DIVF -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VFloat ((float_of_int v1) /. (float_of_int v2))
-            | (VFloat v1, VFloat v2) -> VFloat (v1 /. v2)
-            | (VInt v1, VFloat v2) -> VFloat ((float_of_int v1) /. v2)
-            | (VFloat v1, VInt v2) -> VFloat (v1 /. (float_of_int v2))
-            | _ -> raise (Error "operands for '/' are incompatible")
-        )
-        | DIV -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 / v2)
-            | _ -> raise (Error "operands for 'div' are incompatible")
-        )
-        | MOD -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VInt (v1 mod v2)
-            | _ -> raise (Error "operands for 'mod' are incompatible")
-        )
-        | AND -> (match (eval exprL, eval exprR) with
-            | (VBool v1, VBool v2) -> VBool (v1 && v2)
-            | _ -> raise (Error "operands for 'and' are incompatible")
-        )
-        | OR -> (match (eval exprL, eval exprR) with
-            | (VBool v1, VBool v2) -> VBool (v1 || v2)
-            | _ -> raise (Error "operands for 'or' are incompatible")
-        )
-        | XOR -> (match (eval exprL, eval exprR) with
-            | (VBool v1, VBool v2) -> VBool (v1 <> v2)
-            | _ -> raise (Error "operands for 'xor' are incompatible")
-        )
-        | GT -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 > v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 > v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) > v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 > (float_of_int v2))
-            | _ -> raise (Error "operands for '>' are incompatible")
-        )
-        | LT -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 < v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 < v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) < v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 < (float_of_int v2))
-            | _ -> raise (Error "operands for '<' are incompatible")
-        )
-        | GE -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 >= v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 >= v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) >= v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 >= (float_of_int v2))
-            | _ -> raise (Error "operands for '>=' are incompatible")
-        )
-        | LE -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 <= v2)
-            | (VFloat v1, VFloat v2) -> VBool (v1 <= v2)
-            | (VInt v1, VFloat v2) -> VBool ((float_of_int v1) <= v2)
-            | (VFloat v1, VInt v2) -> VBool (v1 <= (float_of_int v2))
-            | _ -> raise (Error "operands for '<=' are incompatible")
-        )
-        | EQ -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 == v2)
-            | (VBool v1, VBool v2) -> VBool (v1 == v2)
-            | _ -> raise (Error "operands for '=' are incompatible")
-        )
-        | NE -> (match (eval exprL, eval exprR) with
-            | (VInt v1, VInt v2) -> VBool (v1 != v2)
-            | (VBool v1, VBool v2) -> VBool (v1 != v2)
-            | _ -> raise (Error "operands for '!=' are incompatible")
-        )
-    )
-    (* | _ -> VInt 0 *)
-    | _ -> raise (Error "complex expr not supported")
-
-
 
 (* to ast with types *)
 
@@ -388,20 +447,6 @@ and eqStmtToAST = function
 and lhsToAST = function
     | ID ident -> TID (ident, getKind ident, NOCLOCK)
     | ANNOYMITY -> TANONYMOUS_ID
-
-and kindToAST = function
-    | AtomType Bool -> TBool
-    | AtomType Short -> TShort
-    | AtomType UShort -> TUShort
-    | AtomType Int -> TInt
-    | AtomType UInt -> TUInt
-    | AtomType Float -> TFloat
-    | AtomType Real -> TReal
-    | AtomType Char -> TChar
-    | Struct fields -> TConstruct (List.concat (List.map (fun f -> match f with Field (is, k) -> (List.map (fun i -> (i, kindToAST k)) is)) fields))
-    | Array (kind, expr) -> TArray (kindToAST kind, exprToInteger expr)
-    | IDENT ident -> TTypeName ident
-    | EnumType idents -> TEnum idents
 
 and exprToAST expected e =
     let kind = match expected with
@@ -488,37 +533,18 @@ and atomExprToAST = function
     | EFloat ident -> TEFloat ident
     | EReal ident -> TEReal ident
 
-and exprToValue kind expr = let str =
-    match eval expr with
-        | VBool value -> string_of_bool value
-        | VInt value -> string_of_int value
-        | VFloat value -> string_of_float value
-        | VString value -> value
-    in match kind with
-        | TBool -> TVBool str
-        | TShort -> TVShort str
-        | TUShort -> TVUShort str
-        | TInt -> TVInt str
-        | TUInt -> TVUInt str
-        | TFloat -> TVFloat str
-        | TReal -> TVReal str
-        | TChar -> TVChar str
-        | _ -> raise (Error "in exprToValue: unexpected type")
-
-and exprToInteger = function
-    | AtomExpr (EInt ident) -> ident
-    | _ -> raise (Error "expr is not an integer")
+and exprToValue kind expr = eval kind expr
 
 and getKind ident = match SymbolTable.search ident with
-    | SymbolTable.VarSym kind -> kindToAST kind
+    | SymbolTable.VarSym kind -> kind
     | _ -> raise (Error "symbol doesn't name a variable")
 
 and getFuncParams ident = match SymbolTable.search ident with
-    | SymbolTable.FuncSym (ks, _) -> List.map kindToAST ks
+    | SymbolTable.FuncSym (ks, _) -> ks
     | _ -> raise (Error "symbol doesn't name a function")
 
 and getFuncRets ident = match SymbolTable.search ident with
-    | SymbolTable.FuncSym (_, ks) -> List.map kindToAST ks
+    | SymbolTable.FuncSym (_, ks) -> ks
     | _ -> raise (Error "symbol doesn't name a function")
 
 and getFieldKind ident field = getKind (ident ^ "." ^ field)
@@ -628,34 +654,6 @@ and assignStmtOut depth stmt = match stmt with
 and lhsOut = function
     | TID (ident, kind, clk) -> Printf.sprintf "ID(%s, %s, %s)" ident (kindOut kind) (clockOut clk)
     | TANONYMOUS_ID -> "anonymous_id"
-
-and kindOut = function
-    | TBool -> "bool"
-    | TShort -> "short"
-    | TUShort -> "ushort"
-    | TInt -> "int"
-    | TUInt -> "uint"
-    | TFloat -> "float"
-    | TReal -> "real"
-    | TChar -> "char"
-    | TEnum idents -> Printf.sprintf "enum(%s)" (String.concat ", " idents)
-    | TConstruct cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut k)) cons))
-    | TArray (kind, len) -> Printf.sprintf "array(%s, %s)" (kindOut kind) len
-    | TTypeName ident -> Printf.sprintf "typename(%s)" ident
-
-and valueOut = function
-    | TVIdent (ident, kind) -> ident
-    | TVBool ident -> ident
-    | TVShort ident -> ident
-    | TVUShort ident -> ident
-    | TVInt ident -> ident
-    | TVUInt ident -> ident
-    | TVFloat ident -> ident
-    | TVReal ident -> ident
-    | TVChar ident -> ident
-    | TVConstructor cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (valueOut k)) cons))
-    | TVArray vals -> Printf.sprintf "construct_array(%s)" (String.concat ", " (List.map valueOut vals))
-    | TVPatternAny -> "pattern_any"
 
 and prefixStmtOut = function
     | TFuncStmt (ident, params, rets) -> Printf.sprintf "prefix(%s, param_types(%s), ret_types(%s))" ident (String.concat ", " (List.map kindOut params)) (String.concat ", " (List.map kindOut rets))
