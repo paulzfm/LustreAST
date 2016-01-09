@@ -83,8 +83,17 @@ module SymbolTable = struct
         )
         | _ -> () *)
 
-    let insert ident value =
+    let rawInsert value ident =
         Hashtbl.replace !table.(length () - 1) ident value
+
+    let insert ident value =
+        rawInsert value ident;
+        match value with
+            | VarSym kind -> (match kind with
+                | TEnum idents -> List.iter (rawInsert value) idents
+                | _ -> ()
+            )
+            | _ -> ()
 
     let rec recSearch ident i = if i < 0 then
         raise (SymbolError (Printf.sprintf "symbol '%s' not found" ident))
@@ -389,16 +398,16 @@ let genSymTable ast =
                     match field with Field (is, k) -> makeList (List.length is) (kindToAST k)) fields)
                 in SymbolTable.insert ident (SymbolTable.FuncSym (ps, rs))
             | _ -> ()
-    ) nodes;
-    SymbolTable.show ()
+    ) nodes
+    (* SymbolTable.show () *)
 
 (* 2. evaluate const expr *)
 
 let rec evalConstExprs ast =
-    ConstTable.iter (fun k -> fun (kind, expr, _) -> ConstTable.update k (eval kind expr));
-    ConstTable.show ()
+    ConstTable.iter (fun k -> fun (kind, expr, _) -> ConstTable.update k (eval kind expr))
+    (* ConstTable.show () *)
 
-(* to ast with types *)
+(* 3. transfer to ast with types *)
 
 let rec programToAST = function
     Program nodes -> TTopLevel (
@@ -414,7 +423,14 @@ let rec programToAST = function
 and nodeBlkToAST = function
     | TypeBlk stmts -> TTypeBlk (List.map typeStmtToAST stmts)
     | ConstBlk stmts -> TConstBlk (List.map constStmtToAST stmts)
-    | FuncBlk (func, _, ident, par, ret, body) -> TNodeBlk (func, ident, NULL_COMMENT, paramBlkToAST par, returnBlkToAST ret, bodyBlkToAST body)
+    | FuncBlk (func, _, ident, par, ret, body) ->
+        SymbolTable.enter ();
+        let par = paramBlkToAST par in
+        let ret = returnBlkToAST ret in
+        let body = bodyBlkToAST body in
+        let tmp = TNodeBlk (func, ident, NULL_COMMENT, par, ret, body) in
+            SymbolTable.exit ();
+            tmp
 
 and typeStmtToAST = function
     TypeStmt (_, ident, kind) -> TTypeStmt (ident, kindToAST kind, NULL_COMMENT)
@@ -429,14 +445,18 @@ and returnBlkToAST = function
     ReturnBlk fields -> TReturnBlk (List.map fieldToAST fields)
 
 and bodyBlkToAST = function
-    | BodyBlk (var, eqs) -> TBodyBlk ((match var with
+    | BodyBlk (var, eqs) ->
+        let varBlk = (match var with
             | VarList fields -> List.map fieldToAST fields
             | NOVARBLK -> []
-        ), List.map eqStmtToAST eqs)
+        ) in let eqBlk = List.map eqStmtToAST eqs in
+            TBodyBlk (varBlk, eqBlk)
     | NOBODYBLK -> TBodyBlk ([], [])
 
 and fieldToAST = function
-    Field (idents, kind) -> TDeclStmt (idents, kindToAST kind, NULL_COMMENT)
+    Field (idents, kind) ->
+        List.iter (fun i -> SymbolTable.insert i (SymbolTable.VarSym (kindToAST kind))) idents;
+        TDeclStmt (idents, kindToAST kind, NULL_COMMENT)
 
 and eqStmtToAST = function
     EqStmt (lhss, expr) -> let guess = match List.hd lhss with
@@ -547,7 +567,10 @@ and getFuncRets ident = match SymbolTable.search ident with
     | SymbolTable.FuncSym (_, ks) -> ks
     | _ -> raise (Error "symbol doesn't name a function")
 
-and getFieldKind ident field = getKind (ident ^ "." ^ field)
+and getFieldKind ident field = match getOriginalKind (getKind ident) with
+    | TConstruct cons -> (match List.hd (List.filter (fun (i, k) -> i = field) cons) with
+        (_, k) -> k)
+    | _ -> raise (Error "symbol doesn't name a field")
 
 and getOriginalKind kind = match kind with
     | TTypeName ident -> getOriginalKind (getKind ident)
@@ -771,14 +794,13 @@ and highOrderOpOut = function
 (* driver *)
 let drive result =
     genSymTable result;
-    evalConstExprs result
-    (* output (programToAST result) *)
+    evalConstExprs result;
+    print_endline (output (programToAST result))
 
 let _ =
 	try
 		let lexbuf = Lexing.from_channel stdin in
 		let result = Parser.programY Lexer.token lexbuf in
-            (* print_endline (main result); *)
             drive result;
 			flush stdout;
 			exit 0
