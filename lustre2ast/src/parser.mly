@@ -476,7 +476,7 @@ exprY:
 	|	caseExprY				{$1}
 	|	withExprY				{$1}
 	|	LPAREN exprListY RPAREN	{$2}
-	|	LPAREN exprY RPAREN		{$2}
+/*	|	LPAREN exprY RPAREN		{$2} */
 	|	prefixExprY				{$1}
 	|	highOrderExprY			{$1}
 ;
