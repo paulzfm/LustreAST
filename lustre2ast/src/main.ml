@@ -59,16 +59,6 @@ module SymbolTable = struct
     let exit () =
         table := Array.sub !table 0 (length () - 1)
 
-    (* let rec insertStruct s ident = match s with
-        | VarSym kind -> (match kind with
-            | Struct fields -> List.iter (fun f -> match f with         Field (is, k) ->
-                List.iter (fun i -> Hashtbl.add !table.(length () - 1) (ident ^ "." ^ i) (VarSym k)) is
-            ) fields
-            | IDENT name -> insertStruct (search name) ident
-            | _ -> ()
-        )
-        | _ -> () *)
-
     let rawInsert value ident =
         Hashtbl.replace !table.(length () - 1) ident value
 
@@ -471,11 +461,27 @@ and kindOut = function
     | TArray (kind, len) -> Printf.sprintf "array(%s, INT(%s))" (kindOut kind) len
     | TTypeName ident -> kindOut (getKind ident)
 
+and typeInfer = function
+    | AtomExpr (EIdent ident) -> getKind ident
+    | AtomExpr (EBool _) -> TBool
+    | AtomExpr (EChar _) -> TChar
+    | AtomExpr (EShort _) -> TShort
+    | AtomExpr (EUShort _) -> TUShort
+    | AtomExpr (EInt _) -> TInt
+    | AtomExpr (EUInt _) -> TUInt
+    | AtomExpr (EFloat _) -> TFloat
+    | AtomExpr (EReal _) -> TReal
+    | UnOpExpr (_, expr) -> typeInfer expr
+    | BinOpExpr (_, expr, _) -> typeInfer expr
+    | IfExpr (_, expr, _) -> typeInfer expr
+    | ArrowExpr (_, expr) -> typeInfer expr
+    | _ -> TInt
+
 and exprToAST expected e =
     let kind = match expected with
         | ExpKind k -> k
         | ExpIdent ident -> getKind ident
-        | NoExp -> TBool
+        | NoExp -> typeInfer e
     in match e with
         | AtomExpr expr -> TAtomExpr (atomExprToAST expr)
         | UnOpExpr (op, expr) -> TUnOpExpr (op, kind, NOCLOCK, exprToAST (match op with
