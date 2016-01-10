@@ -11,7 +11,7 @@ let rec makeList times elem =
 
 let rec findElem x lst =
     match lst with
-        | [] -> raise (Error "Not Found")
+        | [] -> raise (Error "element not found")
         | h :: t -> if x = h then 0 else 1 + findElem x t
 
 let rec getElem idx lst = if idx = 0 then List.hd lst else getElem (idx - 1) (List.tl lst)
@@ -168,7 +168,7 @@ let rec eval kind e = match e with
                 | TVReal a -> TVReal (string_of_float (-. (float_of_string a)))
                 | _ -> raise (Error "eval: type mismatched for operator '-'")
             )
-            | _ -> raise (Error "not supported")
+            | _ -> raise (Error "eval: expr not supported")
         )
     )
     | BinOpExpr (op, exprL, exprR) -> (
@@ -221,27 +221,10 @@ let rec eval kind e = match e with
                 )
             )
         )
-    | FieldExpr _ -> raise (Error "eval: 1")
-    | StructExpr _ -> raise (Error "eval: 2")
     | ArrConstructExpr exprs -> TVArray (List.map (eval kind) exprs)
     | ArrNameConstructExpr items -> TVConstructor (List.map (fun item -> match item with NameArrItem (i, e) -> (i, eval kind e)) items)
-    | ArrInitExpr _ -> raise (Error "eval: 5")
-    | ArrAccessExpr _ -> raise (Error "eval: 6")
-    | PreExpr _ -> raise (Error "eval: 7")
-    | FbyExpr _ -> raise (Error "eval: 8")
-    | ArrowExpr _ -> raise (Error "eval: 9")
-    | WhenExpr _ -> raise (Error "eval: 10")
-    | IfExpr _ -> raise (Error "eval: 11")
-    | CaseExpr _ -> raise (Error "eval: 12")
-    | WithExpr _ -> raise (Error "eval: 13")
     | ExprList exprs -> eval kind (List.hd exprs)
-    | PrefixExpr _ -> raise (Error "eval: 15")
-    | HighOrderExpr _ -> raise (Error "eval: 16")
-    | MapwiExpr _ -> raise (Error "eval: 17")
-    | MapwExpr _ -> raise (Error "eval: 18")
-    | FoldwiExpr _ -> raise (Error "eval: 19")
-    | FoldwExpr _ -> raise (Error "eval: 20")
-    | DynamicProjectExpr _ -> raise (Error "eval: 21")
+    | _ -> raise (Error "eval: expr not supported")
 
 and opToFunc = function
     | ADD -> (+)
@@ -300,53 +283,6 @@ and exprToInteger expr = match eval TInt expr with
     | TVInt x | TVShort x | TVUInt x | TVUShort x -> x
     | _ -> raise (Error "expr cannot be evaluated to an integer")
 
-(*
-let evalToAtomExpr kind expr = match eval expr with
-    | VBool value -> (match kind with
-        | AtomType Bool -> EBool (string_of_bool value)
-        | IDENT ident -> (match SymbolTable.search ident with
-            SymbolTable.TypeSym kind -> (match kind with
-                | AtomType Bool -> EBool (string_of_bool value)
-                | _ -> raise (Error "evaluated type 'bool' is incompatible with declared type")
-            )
-            | _ -> raise (Error "evaluated type 'bool' is incompatible with declared type")
-        )
-        | _ -> raise (Error "evaluated type 'bool' is incompatible with declared type")
-    )
-    | VInt value -> (match kind with
-        | AtomType Short -> EShort (string_of_int value)
-        | AtomType UShort -> EUShort (string_of_int value)
-        | AtomType Int -> EInt (string_of_int value)
-        | AtomType UInt -> EUInt (string_of_int value)
-        | AtomType Char -> EChar (string_of_int value)
-        | IDENT ident -> (match SymbolTable.search ident with
-            SymbolTable.TypeSym kind -> (match kind with
-                | AtomType Short -> EShort (string_of_int value)
-                | AtomType UShort -> EUShort (string_of_int value)
-                | AtomType Int -> EInt (string_of_int value)
-                | AtomType UInt -> EUInt (string_of_int value)
-                | AtomType Char -> EChar (string_of_int value)
-                | _ -> raise (Error "evaluated type 'int' is incompatible with declared type")
-            )
-            | _ -> raise (Error "evaluated type 'int' is incompatible with declared type")
-        )
-        | _ -> raise (Error "evaluated type 'int' is incompatible with declared type")
-    )
-    | VFloat value -> (match kind with
-        | AtomType Float -> EFloat (string_of_float value)
-        | AtomType Real -> EReal (string_of_float value)
-        | IDENT ident -> (match SymbolTable.search ident with
-            SymbolTable.TypeSym kind -> (match kind with
-                | AtomType Float -> EFloat (string_of_float value)
-                | AtomType Real -> EReal (string_of_float value)
-                | _ -> raise (Error "evaluated type 'float' is incompatible with declared type")
-            )
-            | _ -> raise (Error "evaluated type 'float' is incompatible with declared type")
-        )
-        | _ -> raise (Error "evaluated type 'float' is incompatible with declared type")
-    )
-    | VString value -> EIdent value *)
-
 type expected =
     | ExpIdent of string
     | ExpKind of tKind
@@ -382,13 +318,11 @@ let genSymTable ast =
                 in SymbolTable.insert ident (SymbolTable.FuncSym (ps, rs))
             | _ -> ()
     ) nodes
-    (* ;SymbolTable.show () *)
 
 (* 2. evaluate const expr *)
 
 let rec evalConstExprs ast =
     ConstTable.iter (fun k -> fun (kind, expr, _) -> ConstTable.update k (eval kind expr))
-    (* ConstTable.show () *)
 
 (* 3. transfer to ast with types *)
 
@@ -487,26 +421,20 @@ and inferType order e = match e with
     | ArrowExpr (_, expr) -> inferType order expr
     | ArrAccessExpr (expr, _) -> (match inferType order expr with
         | TArray (kind, _) -> kind
-        | _ -> raise (Error "not an array1")
+        | _ -> TInt
     )
     | FieldExpr (expr, ident) -> (match inferType order expr with
         | TConstruct cons -> (match List.hd (List.filter (fun (i, k) -> i = ident) cons) with
             (_, k) -> k)
-        | _ -> raise (Error "not a construct")
+        | _ -> TInt
     )
-    | StructExpr _ -> raise (Error "here1")
-    | DynamicProjectExpr _ -> raise (Error "here2")
     | ArrConstructExpr cons -> TArray (inferType order (List.hd cons), string_of_int (List.length cons))
-    | ArrNameConstructExpr _ -> raise (Error "here4")
-    | WithExpr _ -> raise (Error "here5")
-    | ExprList _ -> TInt
     | FbyExpr (exprs, _, _) -> inferType order (List.hd exprs)
-    | PreExpr _ -> raise (Error "here7")
     | PrefixExpr (op, _) -> (match op with
         | Ident func -> getElem order (getFuncRets func)
-        | _ -> raise (Error "here7 do not know")
+        | _ -> TInt
     )
-    | _ -> raise (Error "unknown type")
+    | _ -> TInt
 
 and exprToAST order expected e =
     let kinds = List.map (fun x -> match x with
@@ -570,7 +498,7 @@ and exprToAST order expected e =
         | ArrInitExpr (expr, exprV) ->
             let guess = (match getOriginalKind kind with
                 | TArray (k, _) -> ExpKind k
-                | _ -> raise (Error "nicht glaube")
+                | _ -> NoExp
             ) in
             TArrDimExpr (kind, NOCLOCK, exprToAST 0 [guess] expr, exprToInteger exprV)
         | DynamicProjectExpr (expr1, exprs, expr2) -> TDynamicProjExpr (kind, NOCLOCK, exprToAST 0 [NoExp] expr1, List.map (exprToAST 0 [NoExp]) exprs, exprToAST 0 expected expr2)
@@ -588,7 +516,7 @@ and prefixOpToAST = function
     | Ident ident -> TFuncStmt (ident, getFuncParams ident, getFuncRets ident)
     | UnOp op ->  TUnOpStmt op
     | BinOp op -> TBinOpStmt op
-    | _ -> raise (Error "type error")
+    | _ -> raise (Error "ast syntax error")
 
 and prefixOpToAST1 = function
     | Make ident -> TMakeStmt (ident, getKind ident)
