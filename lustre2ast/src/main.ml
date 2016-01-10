@@ -499,7 +499,7 @@ and inferType order e = match e with
     | ArrConstructExpr cons -> TArray (inferType order (List.hd cons), string_of_int (List.length cons))
     | ArrNameConstructExpr _ -> raise (Error "here4")
     | WithExpr _ -> raise (Error "here5")
-    | ExprList _ -> TBool
+    | ExprList _ -> TInt
     | FbyExpr (exprs, _, _) -> inferType order (List.hd exprs)
     | PreExpr _ -> raise (Error "here7")
     | PrefixExpr (op, _) -> (match op with
@@ -548,7 +548,7 @@ and exprToAST order expected e =
             )
         | FieldExpr (expr, ident) -> TFieldAccessExpr (kind, NOCLOCK, exprToAST 0 [NoExp] expr, ident)
         | ArrNameConstructExpr items ->
-            TConstructExpr (kind, NOCLOCK, List.map (
+            TConstructExpr (getElem order kinds, NOCLOCK, List.map (
                 fun x -> match x with NameArrItem (i, e) -> (i, exprToAST 0 [
                     match getElem order expected with
                         | ExpIdent sym -> ExpKind (getFieldKind sym i)
