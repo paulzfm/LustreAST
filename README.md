@@ -2,9 +2,9 @@
 
 A compiler both translating AST to Lustre source code and translating Lustre to AST.
 
-The AST syntax is shown in [the AST  document](https://github.com/paulzfm/LustreAST/blob/master/ast2lustre/doc/ast.pdf).
+The AST syntax is shown in [the AST  document](https://github.com/paulzfm/LustreAST/blob/master/doc/ast.pdf).
 
-The Lustre syntax we supported is shown in [the Lustre document](https://github.com/paulzfm/LustreAST/blob/master/ast2lustre/doc/lustre.pdf).
+The Lustre syntax we supported is shown in [the Lustre document](https://github.com/paulzfm/LustreAST/blob/master/doc/lustre.pdf).
 
 ### Compilation
 
