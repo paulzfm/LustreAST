@@ -14,6 +14,8 @@ let rec findElem x lst =
         | [] -> raise (Error "Not Found")
         | h :: t -> if x = h then 0 else 1 + findElem x t
 
+let rec getElem idx lst = if idx = 0 then List.hd lst else getElem (idx - 1) (List.tl lst)
+
 let rec kindToString = function
     | AtomType Bool -> "bool"
     | AtomType Short -> "short"
@@ -495,9 +497,12 @@ and inferType order e = match e with
     | ArrNameConstructExpr _ -> raise (Error "here4")
     | WithExpr _ -> raise (Error "here5")
     | ExprList _ -> TBool
-    | FbyExpr _ -> raise (Error "here6")
+    | FbyExpr (exprs, _, _) -> inferType order (List.hd exprs)
     | PreExpr _ -> raise (Error "here7")
-    | PrefixExpr _ -> TBool
+    | PrefixExpr (op, _) -> (match op with
+        | Ident func -> getElem order (getFuncRets func)
+        | _ -> raise (Error "here7 do not know")
+    )
     | _ -> raise (Error "unknown type")
 
 and exprToAST expected e =
