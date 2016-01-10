@@ -921,12 +921,12 @@ let drive result =
     print_endline (output (programToAST result))
 
 let _ =
-	try
-		let lexbuf = Lexing.from_channel stdin in
-		let result = Parser.programY Lexer.token lexbuf in
+    try
+        let lexbuf = Lexing.from_channel stdin in
+        let result = Parser.programY Lexer.token lexbuf in
             drive result;
-			flush stdout;
-			exit 0
-	with Parsing.Parse_error ->
-		exit 2
+            flush stdout;
+            exit 0
+    with Parsing.Parse_error ->
+        exit 2
 ;;
