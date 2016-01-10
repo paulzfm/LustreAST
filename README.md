@@ -1,6 +1,10 @@
 # LustreAST
 
-A compiler translating AST to Lustre source code. The AST syntax is shown in [the document](https://github.com/paulzfm/LustreAST/blob/master/ast2lustre/doc/ast.pdf).
+A compiler both translating AST to Lustre source code and translating Lustre to AST.
+
+The AST syntax is shown in [the AST  document](https://github.com/paulzfm/LustreAST/blob/master/ast2lustre/doc/ast.pdf).
+
+The Lustre syntax we supported is shown in [the Lustre document](https://github.com/paulzfm/LustreAST/blob/master/ast2lustre/doc/lustre.pdf).
 
 ### Compilation
 
@@ -8,8 +12,16 @@ You should first install `ocaml` with `ocamllex` and `ocamlyacc`. In `ast2lustre
 
     $ make
 
+and in `lustre2ast/src`, type
+
+    $ make
+
 ### Usage
 
-To translate an AST, type
+To translate an AST, in `ast2lustre/src` type
 
     $ python lexer.py -i <ast_file> | ./ast
+
+To compile a Lustre code into AST, in `lustre2ast/src` type
+
+    $ ./lustre < <lustre_file>
