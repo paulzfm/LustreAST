@@ -446,7 +446,10 @@ and eqStmtToAST = function
         | ID ident -> ExpIdent ident
         | ANNOYMITY -> NoExp) lhss in
     let guidOp = match expr with
-        | PrefixExpr (Ident name, _) -> TGUIDOp name
+        | PrefixExpr (Ident name, _) | MapwiExpr (Ident name, _, _, _, _)
+        | MapwExpr (Ident name, _, _, _, _) | FoldwiExpr (Ident name, _, _, _)
+        | FoldwExpr (Ident name, _, _, _) | HighOrderExpr (_, Ident name, _, _)
+            -> TGUIDOp name
         | _ -> TNOCALL
     in TAssignStmt (List.map lhsToAST lhss, exprToAST guess expr, guidOp)
 
@@ -535,9 +538,9 @@ and exprToAST expected e =
             | PReal ident -> TVReal ident
             | DefaultPattern -> TVPatternAny
         ), exprToAST expected e)) cases)
-        | PreExpr expr -> TTempoPreExpr (kinds, [NOCLOCK], exprToAST expected expr)
-        | ArrowExpr (exprL, exprR) -> TTempoArrowExpr (kinds, [NOCLOCK], exprToAST expected exprL, exprToAST expected exprR)
-        | FbyExpr (exprs1, value, exprs2) -> TTempoFbyExpr (kinds, [NOCLOCK], List.map (exprToAST expected) exprs1, TAtomExpr (TEInt value), List.map (exprToAST expected) exprs2)
+        | PreExpr expr -> TTempoPreExpr (kinds, makeList (List.length kinds) NOCLOCK, exprToAST expected expr)
+        | ArrowExpr (exprL, exprR) -> TTempoArrowExpr (kinds, makeList (List.length kinds) NOCLOCK, exprToAST expected exprL, exprToAST expected exprR)
+        | FbyExpr (exprs1, value, exprs2) -> TTempoFbyExpr (kinds, makeList (List.length kinds) NOCLOCK, List.map (exprToAST expected) exprs1, TAtomExpr (TEInt value), List.map (exprToAST expected) exprs2)
         | FieldExpr (expr, ident) -> TFieldAccessExpr (kind, NOCLOCK, exprToAST [NoExp] expr, ident)
         | ArrNameConstructExpr items -> TConstructExpr (kind, NOCLOCK, List.map (fun x -> match x with NameArrItem (i, e) -> (i, exprToAST [match List.hd expected with
             | ExpIdent sym -> ExpKind (getFieldKind sym i)
@@ -787,8 +790,8 @@ and applyBlkOut = function
     | TFlattenStmt (ident, kind) -> Printf.sprintf "flatten(%s, %s)" ident (kindOut kind)
     | THighOrderStmt (op, stmt, value) -> Printf.sprintf "high_order(%s, %s, INT(%s))" (highOrderOpOut op) (prefixStmtOut stmt) value
     | TPrefixStmt stmt -> prefixStmtOut stmt
-    | TMapwDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapw_default(%s, INT(%s), %s, %s)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
-    | TMapwiDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapwi_default(%s, INT(%s), %s, %s)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
+    | TMapwDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapw_default(%s, INT(%s), %s, %s,)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
+    | TMapwiDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapwi_default(%s, INT(%s), %s, %s,)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
     | TFoldwIfStmt (stmt, value, expr) -> Printf.sprintf "foldw_if(%s, INT(%s), %s)" (prefixStmtOut stmt) value (exprOut expr)
     | TFoldwiStmt (stmt, value, expr) -> Printf.sprintf "foldwi(%s, INT(%s), %s)" (prefixStmtOut stmt) value (exprOut expr)
 
