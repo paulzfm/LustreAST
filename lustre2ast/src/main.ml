@@ -564,12 +564,12 @@ and exprToAST expected e =
             TArrDimExpr (kind, NOCLOCK, exprToAST [guess] expr, exprToInteger exprV)
         | DynamicProjectExpr (expr1, exprs, expr2) -> TDynamicProjExpr (kind, NOCLOCK, exprToAST [NoExp] expr1, List.map (exprToAST [NoExp]) exprs, exprToAST expected expr2)
         | PrefixExpr (op, exprs) -> let blk = prefixOpToAST1 op
-        in TApplyExpr (kinds, [NOCLOCK], blk, List.map (exprToAST [NoExp]) exprs)
-        | HighOrderExpr (hop, op, value, exprs) -> TApplyExpr (kinds, [NOCLOCK], THighOrderStmt (hop, prefixOpToAST op, value), List.map (exprToAST [NoExp]) exprs)
-        | MapwExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, [NOCLOCK], TMapwDefaultStmt (prefixOpToAST op, value, exprToAST [NoExp] expr1, exprToAST [NoExp] expr2), List.map (exprToAST [NoExp]) exprs)
-        | MapwiExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, [NOCLOCK], TMapwiDefaultStmt (prefixOpToAST op, value, exprToAST [NoExp] expr1, exprToAST [NoExp] expr2), List.map (exprToAST [NoExp]) exprs)
-        | FoldwiExpr (op, value, expr, exprs) -> TApplyExpr (kinds, [NOCLOCK], TFoldwiStmt (prefixOpToAST op, value, exprToAST [NoExp] expr), List.map (exprToAST [NoExp]) exprs)
-        | FoldwExpr (op, value, expr, exprs) -> TApplyExpr (kinds, [NOCLOCK], TFoldwIfStmt (prefixOpToAST op, value, exprToAST [NoExp] expr), List.map (exprToAST [NoExp]) exprs)
+        in TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, blk, List.map (exprToAST [NoExp]) exprs)
+        | HighOrderExpr (hop, op, value, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, THighOrderStmt (hop, prefixOpToAST op, value), List.map (exprToAST [NoExp]) exprs)
+        | MapwExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TMapwDefaultStmt (prefixOpToAST op, value, exprToAST [NoExp] expr1, exprToAST [NoExp] expr2), List.map (exprToAST [NoExp]) exprs)
+        | MapwiExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TMapwiDefaultStmt (prefixOpToAST op, value, exprToAST [NoExp] expr1, exprToAST [NoExp] expr2), List.map (exprToAST [NoExp]) exprs)
+        | FoldwiExpr (op, value, expr, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TFoldwiStmt (prefixOpToAST op, value, exprToAST [NoExp] expr), List.map (exprToAST [NoExp]) exprs)
+        | FoldwExpr (op, value, expr, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TFoldwIfStmt (prefixOpToAST op, value, exprToAST [NoExp] expr), List.map (exprToAST [NoExp]) exprs)
         | ExprList exprs -> TListExpr (List.map (exprToAST expected) exprs)
         | _ -> raise (Error "cannot parse this expr")
 
