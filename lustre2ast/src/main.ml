@@ -584,7 +584,7 @@ and prefixOpToAST1 = function
     | BinOp op -> TPrefixStmt (TBinOpStmt op)
 
 and atomExprToAST = function
-    | EIdent ident -> TEID (ident, getKind ident, NOCLOCK) (*TODO: TEID and TEIdent*)
+    | EIdent ident -> TEID (ident, getKind ident, NOCLOCK)
     | EBool ident -> TEBool ident
     | EChar ident -> TEChar ident
     | EShort ident -> TEShort ident
