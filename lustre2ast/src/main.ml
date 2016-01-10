@@ -2,12 +2,17 @@
 
 open Tree
 
+exception Error of string
+
 let indent depth str = Printf.sprintf "%s%s" (String.make (depth * 4) ' ') str
 
 let rec makeList times elem =
     if times = 1 then [elem] else elem :: (makeList (times - 1) elem)
 
-exception Error of string
+let rec findElem x lst =
+    match lst with
+        | [] -> raise (Error "Not Found")
+        | h :: t -> if x = h then 0 else 1 + findElem x t
 
 let rec kindToString = function
     | AtomType Bool -> "bool"
@@ -435,10 +440,10 @@ and fieldToAST = function
         TDeclStmt (idents, kindToAST kind, NULL_COMMENT)
 
 and eqStmtToAST = function
-    EqStmt (lhss, expr) -> let guess = match List.hd lhss with
+    EqStmt (lhss, expr) -> let guess = List.map (fun x -> match x with
         | ID ident -> ExpIdent ident
-        | ANNOYMITY -> NoExp
-    in let guidOp = match expr with
+        | ANNOYMITY -> NoExp) lhss in
+    let guidOp = match expr with
         | PrefixExpr (Ident name, _) -> TGUIDOp name
         | _ -> TNOCALL
     in TAssignStmt (List.map lhsToAST lhss, exprToAST guess expr, guidOp)
@@ -461,8 +466,8 @@ and kindOut = function
     | TArray (kind, len) -> Printf.sprintf "array(%s, INT(%s))" (kindOut kind) len
     | TTypeName ident -> kindOut (getKind ident)
 
-and typeInfer = function
-    | AtomExpr (EIdent ident) -> getKind ident
+and inferType order e = match e with
+    | AtomExpr (EIdent ident) -> getOriginalKind (getKind ident)
     | AtomExpr (EBool _) -> TBool
     | AtomExpr (EChar _) -> TChar
     | AtomExpr (EShort _) -> TShort
@@ -471,30 +476,49 @@ and typeInfer = function
     | AtomExpr (EUInt _) -> TUInt
     | AtomExpr (EFloat _) -> TFloat
     | AtomExpr (EReal _) -> TReal
-    | UnOpExpr (_, expr) -> typeInfer expr
-    | BinOpExpr (_, expr, _) -> typeInfer expr
-    | IfExpr (_, expr, _) -> typeInfer expr
-    | ArrowExpr (_, expr) -> typeInfer expr
-    | _ -> TInt
+    | UnOpExpr (_, expr) -> inferType order expr
+    | BinOpExpr (_, expr, _) -> inferType order expr
+    | IfExpr (_, expr, _) -> inferType order expr
+    | ArrowExpr (_, expr) -> inferType order expr
+    | ArrAccessExpr (expr, _) -> (match inferType order expr with
+        | TArray (kind, _) -> kind
+        | _ -> raise (Error "not an array1")
+    )
+    | FieldExpr (expr, ident) -> (match inferType order expr with
+        | TConstruct cons -> (match List.hd (List.filter (fun (i, k) -> i = ident) cons) with
+            (_, k) -> k)
+        | _ -> raise (Error "not a construct")
+    )
+    | StructExpr _ -> raise (Error "here1")
+    | DynamicProjectExpr _ -> raise (Error "here2")
+    | ArrConstructExpr cons -> TArray (inferType order (List.hd cons), string_of_int (List.length cons))
+    | ArrNameConstructExpr _ -> raise (Error "here4")
+    | WithExpr _ -> raise (Error "here5")
+    | ExprList _ -> TBool
+    | FbyExpr _ -> raise (Error "here6")
+    | PreExpr _ -> raise (Error "here7")
+    | PrefixExpr _ -> TBool
+    | _ -> raise (Error "unknown type")
 
 and exprToAST expected e =
-    let kind = match expected with
+    let kinds = List.map (fun x -> match x with
         | ExpKind k -> k
         | ExpIdent ident -> getKind ident
-        | NoExp -> typeInfer e
-    in match e with
+        | NoExp -> inferType (findElem x expected) e) expected in
+    let kind = List.hd kinds in
+    match e with
         | AtomExpr expr -> TAtomExpr (atomExprToAST expr)
-        | UnOpExpr (op, expr) -> TUnOpExpr (op, kind, NOCLOCK, exprToAST (match op with
+        | UnOpExpr (op, expr) -> TUnOpExpr (op, kind, NOCLOCK, exprToAST [(match op with
                 | AtomTypeOp _ -> NoExp
                 | NOT -> ExpKind TBool
-                | POS | NEG -> expected
-            ) expr)
+                | POS | NEG -> List.hd expected
+            )] expr)
         | BinOpExpr (op, exprL, exprR) -> let guess = (match op with
             | AND | OR | XOR -> ExpKind TBool
-            | _ -> expected
-        ) in TBinOpExpr (op, kind, NOCLOCK, exprToAST guess exprL, exprToAST guess exprR)
-        | IfExpr (exprC, exprT, exprF) -> TIfExpr (kind, NOCLOCK, exprToAST (ExpKind TBool) exprC, exprToAST expected exprT, exprToAST expected exprF)
-        | CaseExpr (sel, cases) -> TSwitchExpr (kind, NOCLOCK, exprToAST NoExp sel, List.map (fun case -> (match case with CaseItem (p, e) -> (match p with
+            | _ -> List.hd expected
+        ) in TBinOpExpr (op, kind, NOCLOCK, exprToAST [guess] exprL, exprToAST [guess] exprR)
+        | IfExpr (exprC, exprT, exprF) -> TIfExpr (kind, NOCLOCK, exprToAST [ExpKind TBool] exprC, exprToAST expected exprT, exprToAST expected exprF)
+        | CaseExpr (sel, cases) -> TSwitchExpr (kind, NOCLOCK, exprToAST [NoExp] sel, List.map (fun case -> (match case with CaseItem (p, e) -> (match p with
             | PIdent ident -> TVIdent (ident, getKind ident)
             | PBool ident -> TVBool ident
             | PChar ident -> TVChar ident
@@ -506,35 +530,41 @@ and exprToAST expected e =
             | PReal ident -> TVReal ident
             | DefaultPattern -> TVPatternAny
         ), exprToAST expected e)) cases)
-        | PreExpr expr -> TTempoPreExpr ([kind], [NOCLOCK], exprToAST expected expr)
-        | ArrowExpr (exprL, exprR) -> TTempoArrowExpr ([kind], [NOCLOCK], exprToAST expected exprL, exprToAST expected exprR)
-        | FbyExpr (exprs1, value, exprs2) -> TTempoFbyExpr ([kind], [NOCLOCK], List.map (exprToAST expected) exprs1, TAtomExpr (TEInt value), List.map (exprToAST expected) exprs2)
-        | FieldExpr (expr, ident) -> TFieldAccessExpr (kind, NOCLOCK, exprToAST NoExp expr, ident)
-        | ArrNameConstructExpr items -> TConstructExpr (kind, NOCLOCK, List.map (fun x -> match x with NameArrItem (i, e) -> (i, exprToAST (match expected with
+        | PreExpr expr -> TTempoPreExpr (kinds, [NOCLOCK], exprToAST expected expr)
+        | ArrowExpr (exprL, exprR) -> TTempoArrowExpr (kinds, [NOCLOCK], exprToAST expected exprL, exprToAST expected exprR)
+        | FbyExpr (exprs1, value, exprs2) -> TTempoFbyExpr (kinds, [NOCLOCK], List.map (exprToAST expected) exprs1, TAtomExpr (TEInt value), List.map (exprToAST expected) exprs2)
+        | FieldExpr (expr, ident) -> TFieldAccessExpr (kind, NOCLOCK, exprToAST [NoExp] expr, ident)
+        | ArrNameConstructExpr items -> TConstructExpr (kind, NOCLOCK, List.map (fun x -> match x with NameArrItem (i, e) -> (i, exprToAST [match List.hd expected with
             | ExpIdent sym -> ExpKind (getFieldKind sym i)
             | _ -> NoExp
-        ) e)) items)
+        ] e)) items)
         | ArrConstructExpr exprs -> let guess = match getOriginalKind kind with
             | TArray (k, _) -> ExpKind k
             | _ -> NoExp
-        in TConstructArrExpr (kind, NOCLOCK, List.map (exprToAST guess) exprs)
+        in TConstructArrExpr (kind, NOCLOCK, List.map (exprToAST [guess]) exprs)
         | WithExpr (ident, items, expr) -> let guess = match getOriginalKind kind with
             | TArray (k, _) -> ExpKind k
             | _ -> NoExp
         in TMixedConstructorExpr (kind, NOCLOCK, TAtomExpr (TEID (ident, getKind ident, NOCLOCK)), List.map (fun i -> match i with
             | FieldItem ident -> TIdent ident
-            | AccessItem expr -> TExpr (exprToAST NoExp expr)
-        ) items, exprToAST guess expr)
-        | ArrAccessExpr (expr, exprV) -> TArrIdxExpr (kind,  NOCLOCK, exprToAST NoExp expr, exprToInteger exprV)
-        | ArrInitExpr (expr, exprV) -> TArrDimExpr (kind,  NOCLOCK, exprToAST NoExp expr, exprToInteger exprV)
-        | DynamicProjectExpr (expr1, exprs, expr2) -> TDynamicProjExpr (kind, NOCLOCK, exprToAST NoExp expr1, List.map (exprToAST NoExp) exprs, exprToAST expected expr2)
+            | AccessItem expr -> TExpr (exprToAST [NoExp] expr)
+        ) items, exprToAST [guess] expr)
+        | ArrAccessExpr (expr, exprV) ->
+            TArrIdxExpr (kind, NOCLOCK, exprToAST [NoExp] expr, exprToInteger exprV)
+        | ArrInitExpr (expr, exprV) ->
+            let guess = (match getOriginalKind kind with
+                | TArray (k, _) -> ExpKind k
+                | _ -> raise (Error "nicht glaube")
+            ) in
+            TArrDimExpr (kind, NOCLOCK, exprToAST [guess] expr, exprToInteger exprV)
+        | DynamicProjectExpr (expr1, exprs, expr2) -> TDynamicProjExpr (kind, NOCLOCK, exprToAST [NoExp] expr1, List.map (exprToAST [NoExp]) exprs, exprToAST expected expr2)
         | PrefixExpr (op, exprs) -> let blk = prefixOpToAST1 op
-        in TApplyExpr ([kind], [NOCLOCK], blk, List.map (exprToAST NoExp) exprs)
-        | HighOrderExpr (hop, op, value, exprs) -> TApplyExpr ([kind], [NOCLOCK], THighOrderStmt (hop, prefixOpToAST op, value), List.map (exprToAST NoExp) exprs)
-        | MapwExpr (op, value, expr1, expr2, exprs) -> TApplyExpr ([kind], [NOCLOCK], TMapwDefaultStmt (prefixOpToAST op, value, exprToAST NoExp expr1, exprToAST NoExp expr2), List.map (exprToAST NoExp) exprs)
-        | MapwiExpr (op, value, expr1, expr2, exprs) -> TApplyExpr ([kind], [NOCLOCK], TMapwiDefaultStmt (prefixOpToAST op, value, exprToAST NoExp expr1, exprToAST NoExp expr2), List.map (exprToAST NoExp) exprs)
-        | FoldwiExpr (op, value, expr, exprs) -> TApplyExpr ([kind], [NOCLOCK], TFoldwiStmt (prefixOpToAST op, value, exprToAST NoExp expr), List.map (exprToAST NoExp) exprs)
-        | FoldwExpr (op, value, expr, exprs) -> TApplyExpr ([kind], [NOCLOCK], TFoldwIfStmt (prefixOpToAST op, value, exprToAST NoExp expr), List.map (exprToAST NoExp) exprs)
+        in TApplyExpr (kinds, [NOCLOCK], blk, List.map (exprToAST [NoExp]) exprs)
+        | HighOrderExpr (hop, op, value, exprs) -> TApplyExpr (kinds, [NOCLOCK], THighOrderStmt (hop, prefixOpToAST op, value), List.map (exprToAST [NoExp]) exprs)
+        | MapwExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, [NOCLOCK], TMapwDefaultStmt (prefixOpToAST op, value, exprToAST [NoExp] expr1, exprToAST [NoExp] expr2), List.map (exprToAST [NoExp]) exprs)
+        | MapwiExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, [NOCLOCK], TMapwiDefaultStmt (prefixOpToAST op, value, exprToAST [NoExp] expr1, exprToAST [NoExp] expr2), List.map (exprToAST [NoExp]) exprs)
+        | FoldwiExpr (op, value, expr, exprs) -> TApplyExpr (kinds, [NOCLOCK], TFoldwiStmt (prefixOpToAST op, value, exprToAST [NoExp] expr), List.map (exprToAST [NoExp]) exprs)
+        | FoldwExpr (op, value, expr, exprs) -> TApplyExpr (kinds, [NOCLOCK], TFoldwIfStmt (prefixOpToAST op, value, exprToAST [NoExp] expr), List.map (exprToAST [NoExp]) exprs)
         | ExprList exprs -> TListExpr (List.map (exprToAST expected) exprs)
         | _ -> raise (Error "cannot parse this expr")
 
