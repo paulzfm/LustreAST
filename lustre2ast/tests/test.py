@@ -17,19 +17,21 @@ lackNum = 0
 for fileName in fileList:
 	fName = fileName[:len(fileName)-7]
 	print fName
-	lustreData = os.popen("cat "+lustreFolder+"/"+fName+".lustre | ../src/lustre").readlines()
-
-	if (len(lustreData) > 1):
-		lustreData = reduce(lambda x,y:x+y, lustreData)
-	elif (len(lustreData) == 1):
-		lustreData = lustreData[0]
-	else:
-		mistakeNum = mistakeNum + 1
-		foutHead.write(fName+"\t: mistake"+"\n")
-		foutHead.write("No output\n\n")
-		continue
+	
 	astFile = astFolder+"/"+fName+".ast"
 	if (os.path.isfile(astFile)):
+		lustreData = os.popen("cat "+lustreFolder+"/"+fName+".lustre | ../src/lustre").readlines()
+
+		if (len(lustreData) > 1):
+			lustreData = reduce(lambda x,y:x+y, lustreData)
+		elif (len(lustreData) == 1):
+			lustreData = lustreData[0]
+		else:
+			mistakeNum = mistakeNum + 1
+			foutHead.write(fName+"\t: mistake"+"\n")
+			foutHead.write("No output\n\n")
+			continue
+
 		fin = open(astFile,'r')
 		astData = fin.readlines()
 		astData = reduce(lambda x,y:x+y, astData)
@@ -64,8 +66,8 @@ for fileName in fileList:
 			foutHead.write(fName+"\t: match\n\n")
 			matchNum = matchNum + 1
 	else:
-		print fName+"\t: lack lustre file"
-		foutHead.write(fName+"\t: lack lustre file\n\n")
+		print fName+"\t: lack ast file"
+		foutHead.write(fName+"\t: lack ast file\n\n")
 		fout = open("../tests/result/"+fName+".output",'w')
 		fout.write(astData+'\n')
 		fout.close()
