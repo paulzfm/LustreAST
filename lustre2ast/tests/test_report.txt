@@ -1,0 +1,20 @@
+const:
+unary_const_add
+srs_l2c_syn_042_004
+srs_l2c_syn_039_003
+binary_const_add
+unary_type_add
+binary_const_sub
+binary_const_mul
+binary_const_div_float
+
+main funcion:
+srs_l2c_syn_049_018
+srs_l2c_syn_046_002
+srs_l2c_syn_046_001
+
+binary_const_div_float unfold:
+srs_l2c_syn_010_005
+
+special (main function, const, binary_const_div_float unfold, nocall):
+srs_l2c_syn_046_003
