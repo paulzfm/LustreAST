@@ -26,7 +26,9 @@ let rec kindToString = function
     | AtomType Real -> "real"
     | AtomType Char -> "char"
     | EnumType idents -> Printf.sprintf "enum { %s }" (String.concat ", " idents)
-    | Struct cons -> Printf.sprintf "struct { %s }" (String.concat ", " (List.map (fun c -> match c with Field (is, k) -> Printf.sprintf "%s: %s" (String.concat ", " is) (kindToString k)) cons))
+    | Struct cons -> Printf.sprintf "struct { %s }" (String.concat ", " (List.map (
+        fun c -> match c with Field (is, k) ->
+            Printf.sprintf "%s: %s" (String.concat ", " is) (kindToString k)) cons))
     | Array (kind, _) -> Printf.sprintf "[%s]" (kindToString kind)
     | IDENT ident -> Printf.sprintf "ref %s" ident
 
@@ -40,7 +42,8 @@ let rec kindOut1 = function
     | TReal -> "real"
     | TChar -> "char"
     | TEnum idents -> Printf.sprintf "construct_enum(%s)" (String.concat ", " idents)
-    | TConstruct cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut1 k)) cons))
+    | TConstruct cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (
+           fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut1 k)) cons))
     | TArray (kind, len) -> Printf.sprintf "array(%s, INT(%s))" (kindOut1 kind) len
     | TTypeName ident -> Printf.sprintf "typename(%s)" ident
 
@@ -179,30 +182,43 @@ let rec eval kind e = match e with
                 let func = opToFunc op
                 in let ffunc = opToFFunc op
                 in (match (x, y) with
-                    | (TVInt a, TVInt b) -> TVInt (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVUInt a, TVUInt b) -> TVUInt (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVShort a, TVShort b) -> TVShort (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVUShort a, TVUShort b) -> TVUShort (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVFloat a, TVFloat b) -> TVFloat (string_of_float (ffunc (float_of_string a) (float_of_string b)))
-                    | (TVReal a, TVReal b) -> TVReal (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (TVInt a, TVInt b) ->
+                        TVInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUInt a, TVUInt b) ->
+                        TVUInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVShort a, TVShort b) ->
+                        TVShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUShort a, TVUShort b) ->
+                        TVUShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVFloat a, TVFloat b) ->
+                        TVFloat (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (TVReal a, TVReal b) ->
+                        TVReal (string_of_float (ffunc (float_of_string a) (float_of_string b)))
                     | (_, _) -> raise (Error "eval: type mismatched for numeric operator")
                 )
             | GT | LT | GE | LE ->
                 let cfunc = opToCmpFunc op
                 in let cfuncf = opToCmpFuncF op
                 in (match (x, y) with
-                    | (TVInt a, TVInt b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
-                    | (TVUInt a, TVUInt b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
-                    | (TVShort a, TVShort b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
-                    | (TVUShort a, TVUShort b) -> TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
-                    | (TVFloat a, TVFloat b) -> TVBool (string_of_bool (cfuncf (float_of_string a) (float_of_string b)))
-                    | (TVReal a, TVReal b) -> TVBool (string_of_bool (cfuncf (float_of_string a) (float_of_string b)))
+                    | (TVInt a, TVInt b) ->
+                        TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVUInt a, TVUInt b) ->
+                        TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVShort a, TVShort b) ->
+                        TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVUShort a, TVUShort b) ->
+                        TVBool (string_of_bool (cfunc (int_of_string a) (int_of_string b)))
+                    | (TVFloat a, TVFloat b) ->
+                        TVBool (string_of_bool (cfuncf (float_of_string a) (float_of_string b)))
+                    | (TVReal a, TVReal b) ->
+                        TVBool (string_of_bool (cfuncf (float_of_string a) (float_of_string b)))
                     | (_, _) -> raise (Error "eval: type mismatched for compare operator")
                 )
             | AND | OR | XOR ->
                 let bfunc = opToBoolFunc op
                 in (match (x, y) with
-                    | (TVBool a, TVBool b) -> TVBool (string_of_bool (bfunc (bool_of_string a) (bool_of_string b)))
+                    | (TVBool a, TVBool b) ->
+                        TVBool (string_of_bool (bfunc (bool_of_string a) (bool_of_string b)))
                     | (_, _) -> raise (Error "eval: type mismatched for boolean operator")
                 )
             | EQ | NE ->
@@ -210,19 +226,27 @@ let rec eval kind e = match e with
                 in let ffunc = opToFFunc op
                 in let bfunc = opToBoolFunc op
                 in (match (x, y) with
-                    | (TVInt a, TVInt b) -> TVInt (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVUInt a, TVUInt b) -> TVUInt (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVShort a, TVShort b) -> TVShort (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVUShort a, TVUShort b) -> TVUShort (string_of_int (func (int_of_string a) (int_of_string b)))
-                    | (TVFloat a, TVFloat b) -> TVFloat (string_of_float (ffunc (float_of_string a) (float_of_string b)))
-                    | (TVReal a, TVReal b) -> TVReal (string_of_float (ffunc (float_of_string a) (float_of_string b)))
-                    | (TVBool a, TVBool b) -> TVBool (string_of_bool (bfunc (bool_of_string a) (bool_of_string b)))
+                    | (TVInt a, TVInt b) ->
+                        TVInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUInt a, TVUInt b) ->
+                        TVUInt (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVShort a, TVShort b) ->
+                        TVShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVUShort a, TVUShort b) ->
+                        TVUShort (string_of_int (func (int_of_string a) (int_of_string b)))
+                    | (TVFloat a, TVFloat b) ->
+                        TVFloat (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (TVReal a, TVReal b) ->
+                        TVReal (string_of_float (ffunc (float_of_string a) (float_of_string b)))
+                    | (TVBool a, TVBool b) ->
+                        TVBool (string_of_bool (bfunc (bool_of_string a) (bool_of_string b)))
                     | (_, _) -> raise (Error "eval: type mismatched for equal operator")
                 )
             )
         )
     | ArrConstructExpr exprs -> TVArray (List.map (eval kind) exprs)
-    | ArrNameConstructExpr items -> TVConstructor (List.map (fun item -> match item with NameArrItem (i, e) -> (i, eval kind e)) items)
+    | ArrNameConstructExpr items -> TVConstructor (List.map (
+        fun item -> match item with NameArrItem (i, e) -> (i, eval kind e)) items)
     | ExprList exprs -> eval kind (List.hd exprs)
     | _ -> raise (Error "eval: expr not supported")
 
@@ -274,7 +298,9 @@ let rec kindToAST = function
     | AtomType Float -> TFloat
     | AtomType Real -> TReal
     | AtomType Char -> TChar
-    | Struct fields -> TConstruct (List.concat (List.map (fun f -> match f with Field (is, k) -> (List.map (fun i -> (i, kindToAST k)) is)) fields))
+    | Struct fields -> TConstruct (List.concat (List.map (
+          fun f -> match f with Field (is, k) -> (List.map (
+              fun i -> (i, kindToAST k)) is)) fields))
     | Array (kind, expr) -> TArray (kindToAST kind, exprToInteger expr)
     | IDENT ident -> TTypeName ident
     | EnumType idents -> TEnum idents
@@ -295,7 +321,8 @@ let genSymTable ast =
     match ast with Program nodes -> List.iter (fun node ->
         match node with
             | TypeBlk stmts -> List.iter (fun stmt ->
-                match stmt with TypeStmt (_, i, k) -> SymbolTable.insert i (SymbolTable.VarSym (kindToAST k))
+                match stmt with TypeStmt (_, i, k) ->
+                    SymbolTable.insert i (SymbolTable.VarSym (kindToAST k))
             ) stmts
             | _ -> ()
     ) nodes;
@@ -311,10 +338,12 @@ let genSymTable ast =
     match ast with Program nodes -> List.iter (fun node ->
         match node with
             | FuncBlk (_, _, ident, params, rets, _) ->
-                let ps = List.concat (match params with ParamBlk fields -> List.map (fun field ->
-                    match field with Field (is, k) -> makeList (List.length is) (kindToAST k)) fields)
-                in let rs = List.concat (match rets with ReturnBlk fields -> List.map (fun field ->
-                    match field with Field (is, k) -> makeList (List.length is) (kindToAST k)) fields)
+                let ps = List.concat (match params with ParamBlk fields ->
+                    List.map (fun field -> match field with Field (is, k) ->
+                        makeList (List.length is) (kindToAST k)) fields)
+                in let rs = List.concat (match rets with ReturnBlk fields ->
+                    List.map (fun field -> match field with Field (is, k) ->
+                        makeList (List.length is) (kindToAST k)) fields)
                 in SymbolTable.insert ident (SymbolTable.FuncSym (ps, rs))
             | _ -> ()
     ) nodes
@@ -353,7 +382,8 @@ and typeStmtToAST = function
     TypeStmt (_, ident, kind) -> TTypeStmt (ident, kindToAST kind, NULL_COMMENT)
 
 and constStmtToAST = function
-    ConstStmt (_, ident, kind, expr) -> TConstStmt (ident, kindToAST kind, exprToValue (kindToAST kind) expr, NULL_COMMENT)
+    ConstStmt (_, ident, kind, expr) ->
+        TConstStmt (ident, kindToAST kind, exprToValue (kindToAST kind) expr, NULL_COMMENT)
 
 and paramBlkToAST = function
     ParamBlk fields -> TParamBlk (List.map fieldToAST fields)
@@ -401,7 +431,8 @@ and kindOut = function
     | TReal -> "real"
     | TChar -> "char"
     | TEnum idents -> Printf.sprintf "construct_enum(%s)" (String.concat ", " idents)
-    | TConstruct cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut k)) cons))
+    | TConstruct cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (
+        fun (i, k) -> Printf.sprintf "field(%s, %s)" i (kindOut k)) cons))
     | TArray (kind, len) -> Printf.sprintf "array(%s, INT(%s))" (kindOut kind) len
     | TTypeName ident -> kindOut (getKind ident)
 
@@ -428,7 +459,8 @@ and inferType order e = match e with
             (_, k) -> k)
         | _ -> TInt
     )
-    | ArrConstructExpr cons -> TArray (inferType order (List.hd cons), string_of_int (List.length cons))
+    | ArrConstructExpr cons ->
+        TArray (inferType order (List.hd cons), string_of_int (List.length cons))
     | FbyExpr (exprs, _, _) -> inferType order (List.hd exprs)
     | PrefixExpr (op, _) -> (match op with
         | Ident func -> getElem order (getFuncRets func)
@@ -453,28 +485,36 @@ and exprToAST order expected e =
             | AND | OR | XOR -> ExpKind TBool
             | _ -> List.hd expected
         ) in TBinOpExpr (op, kind, NOCLOCK, exprToAST 0 [guess] exprL, exprToAST 0 [guess] exprR)
-        | IfExpr (exprC, exprT, exprF) -> TIfExpr (kind, NOCLOCK, exprToAST 0 [ExpKind TBool] exprC, exprToAST 0 expected exprT, exprToAST 0 expected exprF)
-        | CaseExpr (sel, cases) -> TSwitchExpr (kind, NOCLOCK, exprToAST 0 [NoExp] sel, List.map (fun case -> (match case with CaseItem (p, e) -> (match p with
-            | PIdent ident -> TVIdent (ident, getKind ident)
-            | PBool ident -> TVBool ident
-            | PChar ident -> TVChar ident
-            | PShort ident -> TVShort ident
-            | PUShort ident -> TVUShort ident
-            | PInt ident -> TVInt ident
-            | PUInt ident -> TVUInt ident
-            | PFloat ident -> TVFloat ident
-            | PReal ident -> TVReal ident
-            | DefaultPattern -> TVPatternAny
-        ), exprToAST 0 expected e)) cases)
-        | PreExpr expr -> TTempoPreExpr (kinds, makeList (List.length kinds) NOCLOCK, exprToAST 0 expected expr)
-        | ArrowExpr (exprL, exprR) -> TTempoArrowExpr (kinds, makeList (List.length kinds) NOCLOCK, exprToAST 0 expected exprL, exprToAST 0 expected exprR)
+        | IfExpr (exprC, exprT, exprF) ->
+            TIfExpr (kind, NOCLOCK, exprToAST 0 [ExpKind TBool] exprC,
+                exprToAST 0 expected exprT, exprToAST 0 expected exprF)
+        | CaseExpr (sel, cases) ->
+            TSwitchExpr (kind, NOCLOCK, exprToAST 0 [NoExp] sel, List.map (
+                fun case -> (match case with CaseItem (p, e) -> (match p with
+                    | PIdent ident -> TVIdent (ident, getKind ident)
+                    | PBool ident -> TVBool ident
+                    | PChar ident -> TVChar ident
+                    | PShort ident -> TVShort ident
+                    | PUShort ident -> TVUShort ident
+                    | PInt ident -> TVInt ident
+                    | PUInt ident -> TVUInt ident
+                    | PFloat ident -> TVFloat ident
+                    | PReal ident -> TVReal ident
+                    | DefaultPattern -> TVPatternAny
+                ), exprToAST 0 expected e)) cases)
+        | PreExpr expr ->
+            TTempoPreExpr (kinds, makeList (List.length kinds) NOCLOCK, exprToAST 0 expected expr)
+        | ArrowExpr (exprL, exprR) ->
+            TTempoArrowExpr (kinds, makeList (List.length kinds) NOCLOCK,
+                exprToAST 0 expected exprL, exprToAST 0 expected exprR)
         | FbyExpr (exprs1, value, exprs2) ->
             TTempoFbyExpr (kinds, makeList (List.length kinds) NOCLOCK,
                 List.map (fun e -> exprToAST (findElem e exprs1) expected e) exprs1,
                 TAtomExpr (TEInt value),
                 List.map (fun e -> exprToAST (findElem e exprs2) expected e) exprs2
             )
-        | FieldExpr (expr, ident) -> TFieldAccessExpr (kind, NOCLOCK, exprToAST 0 [NoExp] expr, ident)
+        | FieldExpr (expr, ident) ->
+            TFieldAccessExpr (kind, NOCLOCK, exprToAST 0 [NoExp] expr, ident)
         | ArrNameConstructExpr items ->
             TConstructExpr (getElem order kinds, NOCLOCK, List.map (
                 fun x -> match x with NameArrItem (i, e) -> (i, exprToAST 0 [
@@ -489,10 +529,11 @@ and exprToAST order expected e =
         | WithExpr (ident, items, expr) -> let guess = match getOriginalKind kind with
             | TArray (k, _) -> ExpKind k
             | _ -> NoExp
-        in TMixedConstructorExpr (kind, NOCLOCK, TAtomExpr (TEID (ident, getKind ident, NOCLOCK)), List.map (fun i -> match i with
-            | FieldItem ident -> TIdent ident
-            | AccessItem expr -> TExpr (exprToAST 0 [NoExp] expr)
-        ) items, exprToAST 0 [guess] expr)
+        in TMixedConstructorExpr (kind, NOCLOCK, TAtomExpr (TEID (ident, getKind ident, NOCLOCK)),
+            List.map (fun i -> match i with
+                | FieldItem ident -> TIdent ident
+                | AccessItem expr -> TExpr (exprToAST 0 [NoExp] expr)
+            ) items, exprToAST 0 [guess] expr)
         | ArrAccessExpr (expr, exprV) ->
             TArrIdxExpr (kind, NOCLOCK, exprToAST 0 [NoExp] expr, exprToInteger exprV)
         | ArrInitExpr (expr, exprV) ->
@@ -501,14 +542,31 @@ and exprToAST order expected e =
                 | _ -> NoExp
             ) in
             TArrDimExpr (kind, NOCLOCK, exprToAST 0 [guess] expr, exprToInteger exprV)
-        | DynamicProjectExpr (expr1, exprs, expr2) -> TDynamicProjExpr (kind, NOCLOCK, exprToAST 0 [NoExp] expr1, List.map (exprToAST 0 [NoExp]) exprs, exprToAST 0 expected expr2)
+        | DynamicProjectExpr (expr1, exprs, expr2) -> TDynamicProjExpr (kind, NOCLOCK,
+            exprToAST 0 [NoExp] expr1, List.map (exprToAST 0 [NoExp]) exprs,
+            exprToAST 0 expected expr2)
         | PrefixExpr (op, exprs) -> let blk = prefixOpToAST1 op
-        in TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, blk, List.map (exprToAST 0 [NoExp]) exprs)
-        | HighOrderExpr (hop, op, value, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, THighOrderStmt (hop, prefixOpToAST op, value), List.map (exprToAST 0 [NoExp]) exprs)
-        | MapwExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TMapwDefaultStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr1, exprToAST 0 [NoExp] expr2), List.map (exprToAST 0 [NoExp]) exprs)
-        | MapwiExpr (op, value, expr1, expr2, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TMapwiDefaultStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr1, exprToAST 0 [NoExp] expr2), List.map (exprToAST 0 [NoExp]) exprs)
-        | FoldwiExpr (op, value, expr, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TFoldwiStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr), List.map (exprToAST 0 [NoExp]) exprs)
-        | FoldwExpr (op, value, expr, exprs) -> TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, TFoldwIfStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr), List.map (exprToAST 0 [NoExp]) exprs)
+        in TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK, blk,
+            List.map (exprToAST 0 [NoExp]) exprs)
+        | HighOrderExpr (hop, op, value, exprs) ->
+            TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK,
+            THighOrderStmt (hop, prefixOpToAST op, value), List.map (exprToAST 0 [NoExp]) exprs)
+        | MapwExpr (op, value, expr1, expr2, exprs) ->
+            TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK,
+            TMapwDefaultStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr1,
+                exprToAST 0 [NoExp] expr2), List.map (exprToAST 0 [NoExp]) exprs)
+        | MapwiExpr (op, value, expr1, expr2, exprs) ->
+            TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK,
+            TMapwiDefaultStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr1,
+                exprToAST 0 [NoExp] expr2), List.map (exprToAST 0 [NoExp]) exprs)
+        | FoldwiExpr (op, value, expr, exprs) ->
+            TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK,
+            TFoldwiStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr),
+                List.map (exprToAST 0 [NoExp]) exprs)
+        | FoldwExpr (op, value, expr, exprs) ->
+            TApplyExpr (kinds, makeList (List.length kinds) NOCLOCK,
+            TFoldwIfStmt (prefixOpToAST op, value, exprToAST 0 [NoExp] expr),
+                List.map (exprToAST 0 [NoExp]) exprs)
         | ExprList exprs -> TListExpr (List.map (exprToAST 0 expected) exprs)
         | _ -> raise (Error "cannot parse this expr")
 
@@ -605,10 +663,13 @@ and stmtBlkOut depth blk = match blk with
     ]
 
 and typeStmtOut depth stmt = match stmt with
-    TTypeStmt (ident, kind, com) -> indent depth (Printf.sprintf "type(%s, %s, %s)" ident (kindOut1 kind) (commentOut com))
+    TTypeStmt (ident, kind, com) ->
+        indent depth (Printf.sprintf "type(%s, %s, %s)" ident (kindOut1 kind) (commentOut com))
 
 and constStmtOut depth stmt = match stmt with
-    TConstStmt (ident, kind, value, com) -> indent depth (Printf.sprintf "const(%s, %s, %s, %s)" ident (kindOut1 kind) (valueOut value) (commentOut com))
+    TConstStmt (ident, kind, value, com) ->
+        indent depth (Printf.sprintf "const(%s, %s, %s, %s)" ident
+            (kindOut1 kind) (valueOut value) (commentOut com))
 
 and funcTypeOut = function
     | Node -> "node"
@@ -637,7 +698,9 @@ and returnBlkOut depth stmt = match stmt with
     ]
 
 and declStmtOut depth stmt = match stmt with
-    TDeclStmt (idents, kind, com) -> indent depth (Printf.sprintf "var_decls(vars(%s), %s, (%s))" (String.concat ", " idents) (kindOut1 kind) (commentOut com))
+    TDeclStmt (idents, kind, com) ->
+        indent depth (Printf.sprintf "var_decls(vars(%s), %s, (%s))"
+            (String.concat ", " idents) (kindOut1 kind) (commentOut com))
 
 and bodyBlkOut depth stmt = match stmt with
     | TBodyBlk ([], eqs) -> String.concat "\n" [
@@ -655,7 +718,9 @@ and bodyBlkOut depth stmt = match stmt with
     ]
 
 and assignStmtOut depth stmt = match stmt with
-    TAssignStmt (lhss, expr, op) -> indent depth (Printf.sprintf "=(lvalue(%s), %s, %s, NOGUID, NOIMPORT, 0)" (String.concat ", " (List.map lhsOut lhss)) (exprOut expr) (guidOpOut op))
+    TAssignStmt (lhss, expr, op) ->
+        indent depth (Printf.sprintf "=(lvalue(%s), %s, %s, NOGUID, NOIMPORT, 0)"
+            (String.concat ", " (List.map lhsOut lhss)) (exprOut expr) (guidOpOut op))
 
 and guidOpOut = function
     | TGUIDOp ident -> ident
@@ -675,12 +740,17 @@ and valueOut = function
     | TVFloat ident -> Printf.sprintf "FLOAT(%s)" ident
     | TVReal ident -> Printf.sprintf "REAL(%s)" ident
     | TVChar ident -> Printf.sprintf "CHAR(%s)" (string_of_int (int_of_char (String.get ident 0)))
-    | TVConstructor cons -> Printf.sprintf "construct(%s)" (String.concat ", " (List.map (fun (i, k) -> Printf.sprintf "label_const(%s, %s)" i (valueOut k)) cons))
-    | TVArray vals -> Printf.sprintf "construct_array(%s)" (String.concat ", " (List.map valueOut vals))
+    | TVConstructor cons ->
+        Printf.sprintf "construct(%s)" (String.concat ", " (List.map (
+            fun (i, k) -> Printf.sprintf "label_const(%s, %s)" i (valueOut k)) cons))
+    | TVArray vals ->
+        Printf.sprintf "construct_array(%s)" (String.concat ", " (List.map valueOut vals))
     | TVPatternAny -> "pattern_any"
 
 and prefixStmtOut = function
-    | TFuncStmt (ident, params, rets) -> Printf.sprintf "prefix(%s, param_types(%s), ret_types(%s))" ident (String.concat ", " (List.map kindOut1 params)) (String.concat ", " (List.map kindOut1 rets))
+    | TFuncStmt (ident, params, rets) ->
+        Printf.sprintf "prefix(%s, param_types(%s), ret_types(%s))" ident (String.concat ", "
+            (List.map kindOut1 params)) (String.concat ", " (List.map kindOut1 rets))
     | TUnOpStmt op -> Printf.sprintf "prefix(%s)" (prefixUnOpOut op)
     | TBinOpStmt op -> Printf.sprintf "prefix(%s)" (prefixBinOpOut op)
 
@@ -697,39 +767,88 @@ and atomExprOut = function
     | TEReal ident -> Printf.sprintf "REAL(%s)" ident
 
 and exprOut = function
-    | TAtomExpr expr -> atomExprOut expr
-    | TBinOpExpr (op, kind, clk, exprL, exprR) -> Printf.sprintf "%s(%s, %s, %s, %s)" (binOpOut op) (kindOut kind) (clockOut clk) (exprOut exprL) (exprOut exprR)
-    | TUnOpExpr (op, kind, clk, expr) -> Printf.sprintf "%s(%s, %s, %s)" (unOpOut op) (kindOut kind) (clockOut clk) (exprOut expr)
-    | TIfExpr (kind, clk, exprC, exprT, exprF) -> Printf.sprintf "if_expr((%s), (%s), %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut exprC) (exprOut exprT) (exprOut exprF)
-    | TSwitchExpr (kind, clk, expr, cases) -> Printf.sprintf "switch_expr((%s), (%s), %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr) (String.concat ", " (List.map (fun (v, e) -> Printf.sprintf "case(%s, %s)" (valueOut v) (exprOut e)) cases))
-    | TTempoPreExpr (kinds, clks, expr) -> Printf.sprintf "tempo_pre((%s), (%s), %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks)) (exprOut expr)
-    | TTempoArrowExpr (kinds, clks, exprL, exprR) -> Printf.sprintf "tempo_arrow((%s), (%s), %s, %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))  (exprOut exprL) (exprOut exprR)
-    | TTempoFbyExpr (kinds, clks, exprs1, expr, exprs2) -> Printf.sprintf "tempo_fby((%s), (%s), %s, %s, %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks)) (exprOut (TListExpr exprs1)) (exprOut expr) (exprOut (TListExpr exprs2))
-    | TFieldAccessExpr (kind, clk, expr, ident) -> Printf.sprintf "field_access(%s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr) ident
-    | TConstructExpr (kind, clk, cons) -> Printf.sprintf "construct(%s, %s, %s)" (kindOut kind) (clockOut clk) (String.concat " " (List.map (fun (i, e) -> Printf.sprintf "label_expr(%s, %s)," i (exprOut e)) cons))
-    | TConstructArrExpr (kind, clk, exprs) -> Printf.sprintf "construct_array(%s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut (TListExpr exprs))
-    | TMixedConstructorExpr (kind, clk, expr1, labels, expr2) -> Printf.sprintf "mixed_constructor(%s, %s, %s, (%s), %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (String.concat ", " (List.map labelIdxOut labels)) (exprOut expr2)
-    | TArrDimExpr (kind, clk, expr, len) -> Printf.sprintf "array_dim((%s), (%s), %s, INT(%s))" (kindOut kind) (clockOut clk) (exprOut expr) len
-    | TArrIdxExpr (kind, clk, expr, idx) -> Printf.sprintf "array_index(%s, %s, %s, INT(%s))" (kindOut kind) (clockOut clk) (exprOut expr) idx
-    | TArrSliceExpr (kind, clk, expr1, expr2, expr3) -> Printf.sprintf "array_slice(%s, %s, %s, %s, %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (exprOut expr2) (exprOut expr3)
-    | TApplyExpr (kinds, clks, blk, exprs) -> Printf.sprintf "apply_expr((%s), (%s), %s, %s)" (String.concat ", " (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))
-    (applyBlkOut blk) (exprOut (TListExpr exprs))
-    | TDynamicProjExpr (kind, clk, expr1, exprs, expr2) -> Printf.sprintf "dynamic_project(%s, %s, %s, (%s), %s)" (kindOut kind) (clockOut clk) (exprOut expr1) (String.concat ", " (List.map exprOut exprs)) (exprOut expr2)
-    | TListExpr exprs -> Printf.sprintf "list_expr(%s)" (String.concat ", " (List.map exprOut exprs))
+    | TAtomExpr expr ->
+        atomExprOut expr
+    | TBinOpExpr (op, kind, clk, exprL, exprR) ->
+        Printf.sprintf "%s(%s, %s, %s, %s)" (binOpOut op)
+            (kindOut kind) (clockOut clk) (exprOut exprL) (exprOut exprR)
+    | TUnOpExpr (op, kind, clk, expr) ->
+        Printf.sprintf "%s(%s, %s, %s)" (unOpOut op)
+            (kindOut kind) (clockOut clk) (exprOut expr)
+    | TIfExpr (kind, clk, exprC, exprT, exprF) ->
+        Printf.sprintf "if_expr((%s), (%s), %s, %s, %s)"
+            (kindOut kind) (clockOut clk) (exprOut exprC) (exprOut exprT) (exprOut exprF)
+    | TSwitchExpr (kind, clk, expr, cases) ->
+        Printf.sprintf "switch_expr((%s), (%s), %s, %s)"
+            (kindOut kind) (clockOut clk) (exprOut expr) (String.concat ", " (List.map (
+                fun (v, e) -> Printf.sprintf "case(%s, %s)" (valueOut v) (exprOut e)) cases))
+    | TTempoPreExpr (kinds, clks, expr) ->
+        Printf.sprintf "tempo_pre((%s), (%s), %s)"
+            (String.concat ", " (List.map kindOut kinds)) (String.concat ", "
+                (List.map clockOut clks)) (exprOut expr)
+    | TTempoArrowExpr (kinds, clks, exprL, exprR) ->
+        Printf.sprintf "tempo_arrow((%s), (%s), %s, %s)" (String.concat ", "
+            (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))
+                (exprOut exprL) (exprOut exprR)
+    | TTempoFbyExpr (kinds, clks, exprs1, expr, exprs2) ->
+        Printf.sprintf "tempo_fby((%s), (%s), %s, %s, %s)" (String.concat ", "
+            (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))
+                (exprOut (TListExpr exprs1)) (exprOut expr) (exprOut (TListExpr exprs2))
+    | TFieldAccessExpr (kind, clk, expr, ident) ->
+        Printf.sprintf "field_access(%s, %s, %s, %s)" (kindOut kind) (clockOut clk)
+            (exprOut expr) ident
+    | TConstructExpr (kind, clk, cons) ->
+        Printf.sprintf "construct(%s, %s, %s)" (kindOut kind) (clockOut clk) (String.concat " "
+            (List.map (fun (i, e) -> Printf.sprintf "label_expr(%s, %s)," i (exprOut e)) cons))
+    | TConstructArrExpr (kind, clk, exprs) ->
+        Printf.sprintf "construct_array(%s, %s, %s)" (kindOut kind) (clockOut clk)
+            (exprOut (TListExpr exprs))
+    | TMixedConstructorExpr (kind, clk, expr1, labels, expr2) ->
+        Printf.sprintf "mixed_constructor(%s, %s, %s, (%s), %s)" (kindOut kind) (clockOut clk)
+            (exprOut expr1) (String.concat ", " (List.map labelIdxOut labels)) (exprOut expr2)
+    | TArrDimExpr (kind, clk, expr, len) ->
+        Printf.sprintf "array_dim((%s), (%s), %s, INT(%s))" (kindOut kind) (clockOut clk)
+            (exprOut expr) len
+    | TArrIdxExpr (kind, clk, expr, idx) ->
+        Printf.sprintf "array_index(%s, %s, %s, INT(%s))" (kindOut kind) (clockOut clk)
+            (exprOut expr) idx
+    | TArrSliceExpr (kind, clk, expr1, expr2, expr3) ->
+        Printf.sprintf "array_slice(%s, %s, %s, %s, %s)" (kindOut kind) (clockOut clk)
+            (exprOut expr1) (exprOut expr2) (exprOut expr3)
+    | TApplyExpr (kinds, clks, blk, exprs) ->
+        Printf.sprintf "apply_expr((%s), (%s), %s, %s)" (String.concat ", "
+            (List.map kindOut kinds)) (String.concat ", " (List.map clockOut clks))
+                (applyBlkOut blk) (exprOut (TListExpr exprs))
+    | TDynamicProjExpr (kind, clk, expr1, exprs, expr2) ->
+        Printf.sprintf "dynamic_project(%s, %s, %s, (%s), %s)" (kindOut kind) (clockOut clk)
+            (exprOut expr1) (String.concat ", " (List.map exprOut exprs)) (exprOut expr2)
+    | TListExpr exprs -> Printf.sprintf "list_expr(%s)" (String.concat ", "
+        (List.map exprOut exprs))
 
 and labelIdxOut = function
     | TIdent ident -> Printf.sprintf "struct_item(%s)" ident
     | TExpr expr -> exprOut expr
 
 and applyBlkOut = function
-    | TMakeStmt (ident, kind) -> Printf.sprintf "make(%s, %s)" ident (kindOut kind)
-    | TFlattenStmt (ident, kind) -> Printf.sprintf "flatten(%s, %s)" ident (kindOut kind)
-    | THighOrderStmt (op, stmt, value) -> Printf.sprintf "high_order(%s, %s, INT(%s))" (highOrderOpOut op) (prefixStmtOut stmt) value
-    | TPrefixStmt stmt -> prefixStmtOut stmt
-    | TMapwDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapw_default(%s, INT(%s), %s, %s,)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
-    | TMapwiDefaultStmt (stmt, value, expr1, expr2) -> Printf.sprintf "mapwi_default(%s, INT(%s), %s, %s,)" (prefixStmtOut stmt) value (exprOut expr1) (exprOut expr2)
-    | TFoldwIfStmt (stmt, value, expr) -> Printf.sprintf "foldw_if(%s, INT(%s), %s)" (prefixStmtOut stmt) value (exprOut expr)
-    | TFoldwiStmt (stmt, value, expr) -> Printf.sprintf "foldwi(%s, INT(%s), %s)" (prefixStmtOut stmt) value (exprOut expr)
+    | TMakeStmt (ident, kind) ->
+        Printf.sprintf "make(%s, %s)" ident (kindOut kind)
+    | TFlattenStmt (ident, kind) ->
+        Printf.sprintf "flatten(%s, %s)" ident (kindOut kind)
+    | THighOrderStmt (op, stmt, value) ->
+        Printf.sprintf "high_order(%s, %s, INT(%s))"
+        (highOrderOpOut op) (prefixStmtOut stmt) value
+    | TPrefixStmt stmt ->
+        prefixStmtOut stmt
+    | TMapwDefaultStmt (stmt, value, expr1, expr2) ->
+        Printf.sprintf "mapw_default(%s, INT(%s), %s, %s,)" (prefixStmtOut stmt) value
+            (exprOut expr1) (exprOut expr2)
+    | TMapwiDefaultStmt (stmt, value, expr1, expr2) ->
+        Printf.sprintf "mapwi_default(%s, INT(%s), %s, %s,)" (prefixStmtOut stmt) value
+            (exprOut expr1) (exprOut expr2)
+    | TFoldwIfStmt (stmt, value, expr) -> Printf.sprintf "foldw_if(%s, INT(%s), %s)"
+        (prefixStmtOut stmt) value (exprOut expr)
+    | TFoldwiStmt (stmt, value, expr) -> Printf.sprintf "foldwi(%s, INT(%s), %s)"
+        (prefixStmtOut stmt) value (exprOut expr)
 
 and unOpOut = function
     | AtomTypeOp Bool -> "unop_boolcast"
